@@ -1,0 +1,191 @@
+{
+    "code": 0,
+    "message": "success",
+    "data": [{
+             "id": "5b52bcb240c1680b6c507046",
+             "visitor": {
+             "uid": "5b4096f8e43d130352e488e7",
+             "udid": "9f78a27d53d3ddf798a77d331c45e5d2",
+             "avatar_thumbnail": {
+             "file_id": "5b4096efe43d130352e488e1",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b4096efe43d130352e488e1",
+             "width": 50,
+             "height": 50,
+             "type": "image/jpeg"
+             },
+             "avatar_medium": {
+             "file_id": "5b4096f6e43d130352e488e3",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b4096f6e43d130352e488e3",
+             "width": 200,
+             "height": 200,
+             "type": "image/jpeg"
+             },
+             "avatar_large": {
+             "file_id": "5b4096f7e43d130352e488e5",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b4096f7e43d130352e488e5",
+             "width": 500,
+             "height": 500,
+             "type": "image/jpeg"
+             }
+             },
+             "msg_type": "system",
+             "msg_content": "欢迎来到群聊，服务器大概走神啦，你看到的是本地数据～[可爱]",
+             "pic_thumbnail": null,
+             "pic_medium": null,
+             "pic_large": null,
+             "pic_original": null,
+             "create_time": 1532148914
+             }, {
+             "id": "5b5deb2740c1680b6c5070f8",
+             "visitor": {
+             "uid": "5b5de89040c1680b6c5070c3",
+             "udid": "b45ecb2a6cca69d623a0a619bb8af07d",
+             "avatar_thumbnail": {
+             "file_id": "5b5de89040c1680b6c5070bd",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de89040c1680b6c5070bd",
+             "width": 50,
+             "height": 50,
+             "type": "image/jpeg"
+             },
+             "avatar_medium": {
+             "file_id": "5b5de89040c1680b6c5070bf",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de89040c1680b6c5070bf",
+             "width": 200,
+             "height": 200,
+             "type": "image/jpeg"
+             },
+             "avatar_large": {
+             "file_id": "5b5de89040c1680b6c5070c1",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de89040c1680b6c5070c1",
+             "width": 500,
+             "height": 500,
+             "type": "image/jpeg"
+             }
+             },
+             "msg_type": "image",
+             "msg_content": "file",
+             "pic_thumbnail": {
+             "file_id": "5b5deb2740c1680b6c5070f6",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5deb2740c1680b6c5070f6",
+             "width": 100,
+             "height": 66,
+             "type": null
+             },
+             "pic_medium": {
+             "file_id": "5b5deb2740c1680b6c5070f4",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5deb2740c1680b6c5070f4",
+             "width": 500,
+             "height": 333,
+             "type": null
+             },
+             "pic_large": {
+             "file_id": "5b5deb2740c1680b6c5070f2",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5deb2740c1680b6c5070f2",
+             "width": 1000,
+             "height": 666,
+             "type": null
+             },
+             "pic_original": {
+             "file_id": "5b5deb2740c1680b6c5070e2",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5deb2740c1680b6c5070e2",
+             "width": 3072,
+             "height": 2047,
+             "type": null
+             },
+             "create_time": 1532881703
+             }, {
+             "id": "5b5dec9740c1680b6c507110",
+             "visitor": {
+             "uid": "5b52ba1540c1680b6c507045",
+             "udid": "a7b4c3c9b768179ae7c2aceefea5a0c8",
+             "avatar_thumbnail": {
+             "file_id": "5b52ba1540c1680b6c50703f",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b52ba1540c1680b6c50703f",
+             "width": 50,
+             "height": 50,
+             "type": "image/jpeg"
+             },
+             "avatar_medium": {
+             "file_id": "5b52ba1540c1680b6c507041",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b52ba1540c1680b6c507041",
+             "width": 200,
+             "height": 200,
+             "type": "image/jpeg"
+             },
+             "avatar_large": {
+             "file_id": "5b52ba1540c1680b6c507043",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b52ba1540c1680b6c507043",
+             "width": 500,
+             "height": 500,
+             "type": "image/jpeg"
+             }
+             },
+             "msg_type": "text",
+             "msg_content": "[可爱][可爱][可爱]",
+             "pic_thumbnail": null,
+             "pic_medium": null,
+             "pic_large": null,
+             "pic_original": null,
+             "create_time": 1532882071
+             }, {
+             "id": "5b5dec9d40c1680b6c50711b",
+             "visitor": {
+             "uid": "5b5de9b340c1680b6c5070cc",
+             "udid": "88a9b063bfd050681347a8cfbe674700",
+             "avatar_thumbnail": {
+             "file_id": "5b5de9b340c1680b6c5070c6",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de9b340c1680b6c5070c6",
+             "width": 50,
+             "height": 50,
+             "type": "image/jpeg"
+             },
+             "avatar_medium": {
+             "file_id": "5b5de9b340c1680b6c5070c8",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de9b340c1680b6c5070c8",
+             "width": 200,
+             "height": 200,
+             "type": "image/jpeg"
+             },
+             "avatar_large": {
+             "file_id": "5b5de9b340c1680b6c5070ca",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5de9b340c1680b6c5070ca",
+             "width": 500,
+             "height": 500,
+             "type": "image/jpeg"
+             }
+             },
+             "msg_type": "image",
+             "msg_content": "file",
+             "pic_thumbnail": {
+             "file_id": "5b5dec9d40c1680b6c507119",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5dec9d40c1680b6c507119",
+             "width": 57,
+             "height": 100,
+             "type": null
+             },
+             "pic_medium": {
+             "file_id": "5b5dec9d40c1680b6c507117",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5dec9d40c1680b6c507117",
+             "width": 287,
+             "height": 500,
+             "type": null
+             },
+             "pic_large": {
+             "file_id": "5b5dec9d40c1680b6c507114",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5dec9d40c1680b6c507114",
+             "width": 564,
+             "height": 981,
+             "type": null
+             },
+             "pic_original": {
+             "file_id": "5b5dec9d40c1680b6c507111",
+             "url": "http://116.62.9.17:8080/douyin/groupchat/image?id=5b5dec9d40c1680b6c507111",
+             "width": 564,
+             "height": 981,
+             "type": null
+             },
+             "create_time": 1532882077
+             }],
+    "total_count": 4,
+    "has_more": 0
+}

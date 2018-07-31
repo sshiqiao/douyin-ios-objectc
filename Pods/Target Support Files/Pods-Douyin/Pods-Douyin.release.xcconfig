@@ -1,0 +1,9 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/JSONModel" "${PODS_ROOT}/Headers/Public/Masonry" "${PODS_ROOT}/Headers/Public/SocketRocket" "${PODS_ROOT}/Headers/Public/libwebp"
+LIBRARY_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/AFNetworking" "${PODS_CONFIGURATION_BUILD_DIR}/JSONModel" "${PODS_CONFIGURATION_BUILD_DIR}/Masonry" "${PODS_CONFIGURATION_BUILD_DIR}/SocketRocket" "${PODS_CONFIGURATION_BUILD_DIR}/libwebp"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/AFNetworking" -isystem "${PODS_ROOT}/Headers/Public/JSONModel" -isystem "${PODS_ROOT}/Headers/Public/Masonry" -isystem "${PODS_ROOT}/Headers/Public/SocketRocket" -isystem "${PODS_ROOT}/Headers/Public/libwebp"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"AFNetworking" -l"JSONModel" -l"Masonry" -l"SocketRocket" -l"icucore" -l"libwebp" -framework "CFNetwork" -framework "CoreGraphics" -framework "Foundation" -framework "MobileCoreServices" -framework "Security" -framework "SystemConfiguration" -framework "UIKit"
+PODS_BUILD_DIR = ${BUILD_DIR}
+PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
+PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
+PODS_ROOT = ${SRCROOT}/Pods

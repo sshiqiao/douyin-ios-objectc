@@ -1,0 +1,69 @@
+PODS:
+  - AFNetworking (3.2.0):
+    - AFNetworking/NSURLSession (= 3.2.0)
+    - AFNetworking/Reachability (= 3.2.0)
+    - AFNetworking/Security (= 3.2.0)
+    - AFNetworking/Serialization (= 3.2.0)
+    - AFNetworking/UIKit (= 3.2.0)
+  - AFNetworking/NSURLSession (3.2.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.2.0)
+  - AFNetworking/Security (3.2.0)
+  - AFNetworking/Serialization (3.2.0)
+  - AFNetworking/UIKit (3.2.0):
+    - AFNetworking/NSURLSession
+  - JSONModel (1.7.0)
+  - libwebp (0.6.1):
+    - libwebp/core (= 0.6.1)
+    - libwebp/dec (= 0.6.1)
+    - libwebp/demux (= 0.6.1)
+    - libwebp/dsp (= 0.6.1)
+    - libwebp/enc (= 0.6.1)
+    - libwebp/mux (= 0.6.1)
+    - libwebp/utils (= 0.6.1)
+    - libwebp/webp (= 0.6.1)
+  - libwebp/core (0.6.1):
+    - libwebp/webp
+  - libwebp/dec (0.6.1):
+    - libwebp/core
+  - libwebp/demux (0.6.1):
+    - libwebp/core
+  - libwebp/dsp (0.6.1):
+    - libwebp/core
+  - libwebp/enc (0.6.1):
+    - libwebp/core
+  - libwebp/mux (0.6.1):
+    - libwebp/core
+  - libwebp/utils (0.6.1):
+    - libwebp/core
+  - libwebp/webp (0.6.1)
+  - Masonry (1.1.0)
+  - SocketRocket (0.5.1)
+
+DEPENDENCIES:
+  - AFNetworking
+  - JSONModel
+  - libwebp
+  - Masonry
+  - SocketRocket
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - AFNetworking
+    - JSONModel
+    - libwebp
+    - Masonry
+    - SocketRocket
+
+SPEC CHECKSUMS:
+  AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
+  JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
+  libwebp: 38b601da310fe7c329c638d0c0d10aed006a54fe
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
+
+PODFILE CHECKSUM: ec1ab94d13c93b9bec07de295de1201a67a2b4a6
+
+COCOAPODS: 1.5.0
