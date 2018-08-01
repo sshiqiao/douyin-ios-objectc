@@ -293,7 +293,7 @@
         }
             break;
         case GITHUB_TAG:
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.baidu.com"]];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/sshiqiao/douyin-ios-objectc"]];
             break;
         default:
             break;

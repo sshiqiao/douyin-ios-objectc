@@ -128,15 +128,8 @@
 
 - (void)onShareItemTap:(UITapGestureRecognizer *)sender {
     switch (sender.view.tag) {
-        case 0:
-            break;
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
         default:
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://sshiqiao.github.io/document/douyin.html"]];
             break;
     }
     [self dismiss];
