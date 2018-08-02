@@ -70,6 +70,15 @@
 }
 
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self setNavigationBarTitleColor:ColorClear];
+    [self setNavigationBarBackgroundColor:ColorClear];
+    [self setStatusBarBackgroundColor:ColorClear];
+    [self setStatusBarHidden:NO];
+
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initCollectionView];
@@ -77,13 +86,6 @@
     [self loadData:_pageIndex pageSize:_pageSize];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [self setNavigationBarTitleColor:ColorClear];
-    [self setNavigationBarBackgroundColor:ColorClear];
-    [self setStatusBarBackgroundColor:ColorClear];
-    [self setStatusBarHidden:NO];
-}
 
 - (void)initCollectionView {
     _itemWidth = (SCREEN_WIDTH - 2) / 3.0f;

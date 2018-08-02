@@ -195,16 +195,16 @@
     }
 }
 
-//-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable))completionHandler {
-//    NSCachedURLResponse *cachedResponse = proposedResponse;
-//    if (dataTask.currentRequest.cachePolicy == NSURLRequestReloadIgnoringLocalCacheData
-//        || [dataTask.currentRequest.URL.absoluteString isEqualToString:self.task.currentRequest.URL.absoluteString]) {
-//        cachedResponse = nil;
-//    }
-//    if (completionHandler) {
-//        completionHandler(cachedResponse);
-//    }
-//}
+-(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable))completionHandler {
+    NSCachedURLResponse *cachedResponse = proposedResponse;
+    if (dataTask.currentRequest.cachePolicy == NSURLRequestReloadIgnoringLocalCacheData
+        || [dataTask.currentRequest.URL.absoluteString isEqualToString:self.task.currentRequest.URL.absoluteString]) {
+        cachedResponse = nil;
+    }
+    if (completionHandler) {
+        completionHandler(cachedResponse);
+    }
+}
 
 //AVAssetResourceLoaderDelegate
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
@@ -299,7 +299,10 @@
     if([keyPath isEqualToString:@"status"]) {
         //视频源装备完毕，则显示playerLayer
         if(_playerItem.status == AVPlayerItemStatusReadyToPlay) {
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
             [self.playerLayer setHidden:NO];
+            [CATransaction commit];
             self.playerLayer.backgroundColor = ColorBlack.CGColor;
         }
         //视频播放状体更新方法回调
