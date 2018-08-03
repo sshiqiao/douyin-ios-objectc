@@ -1,6 +1,6 @@
 # iOS仿抖音app 
 
-*作为一名移动端开发者，出于对这款火速爆红的短视频社交app的好奇以及对其独特设计的欣赏，我打算"复制"抖音的部分功能，仿抖音demo使用Object-C语言编写。*
+作为一名移动端开发者，出于对这款火速爆红的短视频社交app的好奇以及对其独特设计的欣赏，我打算"复制"抖音的部分功能，仿抖音demo使用Object-C语言编写。
 
 ## 结构
 
@@ -14,7 +14,7 @@
 
 ## 目录
 
-[当我看抖音时我在看什么？](https://sshiqiao.github.io/document/douyin.html#1)
+[iOS仿抖音app介绍](https://sshiqiao.github.io/document/douyin.html#1)
 - [x] [1.1 引言](https://sshiqiao.github.io/document/douyin.html#1.1)
 - [x] [1.2 展示图](https://sshiqiao.github.io/document/douyin.html#1.2)
 - [x] [1.3 结构总览](https://sshiqiao.github.io/document/douyin.html#1.3)
@@ -42,8 +42,6 @@
 - [x] [4.2 Websocket实现即时聊天](https://sshiqiao.github.io/document/douyin.html#4.2)
 - [x] [4.3 文本长宽计算汇总](https://sshiqiao.github.io/document/douyin.html#4.3)
 - [x] [4.4 表情编辑功能实现](https://sshiqiao.github.io/document/douyin.html#4.4)
-
-[总结](https://sshiqiao.github.io/document/douyin.html#5)
 
 ## 作者
 
