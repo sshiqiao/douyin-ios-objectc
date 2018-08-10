@@ -32,9 +32,9 @@
 @property (nonatomic , strong) UIImage             *picImage;
 @property (nonatomic , assign) CGFloat             cellHeight;
 
--(instancetype)initImageChat:(UIImage *)image taskId:(NSInteger)taskId;
+-(instancetype)initImageChat:(UIImage *)image;
 
--(instancetype)initTextChat:(NSString *)text taskId:(NSInteger)taskId;
+-(instancetype)initTextChat:(NSString *)text;
 
 -(instancetype)updateTempImageChat:(GroupChat *)chat;
 

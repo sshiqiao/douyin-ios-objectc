@@ -385,4 +385,8 @@
 - (void)dismiss {
     [self removeFromSuperview];
 }
+
+- (void)dealloc {
+    [self removeObserver:self forKeyPath:@"containerBoardHeight"];
+}
 @end

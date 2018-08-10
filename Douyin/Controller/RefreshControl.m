@@ -28,8 +28,10 @@
         make.center.equalTo(self);
         make.width.height.mas_equalTo(25);
     }];
-    UIScrollView *superView = (UIScrollView *)[self superview];
-    [superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    if (!_superView) {
+        _superView = (UIScrollView *)[self superview];
+        [_superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+    }
 }
 - (void)setOnRefresh:(OnRefresh)onRefresh {
     _onRefresh = onRefresh;
@@ -95,4 +97,7 @@
     [self.indicatorView.layer removeAllAnimations];
 }
 
+- (void)dealloc {
+    [_superView removeObserver:self forKeyPath:@"contentOffset"];
+}
 @end

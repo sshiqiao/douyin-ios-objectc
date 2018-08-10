@@ -74,35 +74,26 @@
     }
     [CATransaction commit];
 }
+
 -(void)initData:(GroupChat *)chat {
     _chat = chat;
     _imageWidth = [ImageMessageCell imageWidth:_chat];
     _imageHeight = [ImageMessageCell imageHeight:_chat];
     
     _rectImage = nil;
-    [_progressView setHidden:NO];
     [_progressView setTipHidden:YES];
     
     __weak __typeof(self) wself = self;
     
     if(chat.picImage) {
+        [_progressView setHidden:YES];
         _rectImage = chat.picImage;
         UIImage *image = [chat.picImage drawRoundedRectImage:MSG_IMAGE_CORNOR_RADIUS width:_imageWidth height:_imageHeight];
         [_imageMsg setImage:image];
         [self updateImageFrame];
-    }
     
-    if(_chat.isTemp) {
-        [_progressView setProgress:_chat.percent];
-        if(_chat.isFailed) {
-            [_progressView setTipHidden:NO];
-            return;
-        }
-        if(_chat.isCompleted) {
-            [_progressView setHidden:YES];
-            return;
-        }
     }else {
+        [_progressView setHidden:NO];
         [_imageMsg setImageWithURL:[NSURL URLWithString:chat.pic_medium.url] progressBlock:^(CGFloat percent) {
             [wself.progressView setProgress:percent];
         } completedBlock:^(UIImage *image, NSError *error) {
@@ -120,6 +111,22 @@
     [_avatar setImageWithURL:[NSURL URLWithString:chat.visitor.avatar_thumbnail.url] completedBlock:^(UIImage *image, NSError *error) {
         wself.avatar.image = [image drawCircleImage];
     }];
+}
+
+-(void)updateUploadStatus:(GroupChat *)chat {
+    [_progressView setHidden:NO];
+    [_progressView setTipHidden:YES];
+    if(_chat.isTemp) {
+        [_progressView setProgress:_chat.percent];
+        if(_chat.isFailed) {
+            [_progressView setTipHidden:NO];
+            return;
+        }
+        if(_chat.isCompleted) {
+            [_progressView setHidden:YES];
+            return;
+        }
+    }
 }
 
 

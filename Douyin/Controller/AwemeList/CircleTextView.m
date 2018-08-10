@@ -90,9 +90,8 @@
     CGSize size = [text singleLineSizeWithAttributeText:_font];
     _textWidth = size.width;
     _textHeight = size.height;
-    CGSize textSize = CGSizeMake(_textWidth, _textHeight);
-    _textLayerFrame = CGRectMake(0, 0, _textWidth*3 + _textSeparateWidth*2, textSize.height);
-    _translationX = textSize.width + _textSeparateWidth;
+    _textLayerFrame = CGRectMake(0, 0, _textWidth*3 + _textSeparateWidth*2, _textHeight);
+    _translationX = _textWidth + _textSeparateWidth;
     [self drawTextLayer];
     [self startAnimation];
 }
@@ -102,9 +101,7 @@
     CGSize size = [_text singleLineSizeWithAttributeText:_font];
     _textWidth = size.width;
     _textHeight = size.height;
-    CGSize textSize = CGSizeMake(_textWidth, _textHeight);
-    _textWidth = textSize.width;
-    _textLayerFrame = CGRectMake(0, 0, _textWidth*3 + _textSeparateWidth*2, textSize.height);
+    _textLayerFrame = CGRectMake(0, 0, _textWidth*3 + _textSeparateWidth*2, _textHeight);
     _translationX = _textWidth + _textSeparateWidth;
     [self drawTextLayer];
     [self startAnimation];

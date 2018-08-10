@@ -288,7 +288,7 @@
     [_nickName setText:user.nickname];
     [_douyinNum setText:[NSString stringWithFormat:@"抖音号:%@", user.short_id]];
     if(![user.signature isEqual: @""]) {
-        [wself.brief setText:user.signature];
+        [_brief setText:user.signature];
     }
     [_genderIcon setImage:[UIImage imageNamed:user.gender == 0 ? @"iconUserProfileBoy" : @"iconUserProfileGirl"]];
     [_constellation setText:[_constellations objectAtIndex:user.constellation]];

@@ -227,4 +227,8 @@ NSInteger const EmotionSelectorHeight = 220;
     _emotion.image = [UIImage imageWithContentsOfFile:arrowPath];
 }
 
+- (void)dealloc {
+    
+}
+
 @end

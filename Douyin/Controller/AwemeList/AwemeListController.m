@@ -172,7 +172,7 @@
         //判断当前cell的视频源是否已经准备播放
         if(cell.isPlayerReady) {
             //播放视频
-            [wcell play];
+            [cell play];
         }else {
             [[AVPlayerManager shareManager] pauseAll];
             //当前cell的视频源还未准备好播放，则实现cell的OnPlayerReady Block 用于等带视频准备好后通知播放
@@ -235,4 +235,5 @@
         }];
     }
 }
+
 @end

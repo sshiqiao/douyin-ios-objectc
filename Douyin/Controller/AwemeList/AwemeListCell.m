@@ -72,7 +72,7 @@
     _hoverTextView = [HoverTextView new];
     _hoverTextView.delegate = self;
     _hoverTextView.hoverDelegate = self;
-    [_hoverTextView showInView:self];
+    [self addSubview:_hoverTextView];
     
     //init player status bar
     _playerStatusBar = [[UIView alloc]init];
@@ -107,7 +107,7 @@
     
     //init music alum view
     _musicAlum = [MusicAlbumView new];
-    [self.contentView addSubview:_musicAlum];
+    [_container addSubview:_musicAlum];
     
     //init share、comment、like action view
     _share = [[UIImageView alloc]init];
@@ -305,7 +305,7 @@
             //获取点击坐标，用于设置爱心显示位置
             CGPoint point = [sender locationInView:self.container];
             //获取当前时间
-            NSTimeInterval time=[[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
+            NSTimeInterval time = [[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
             //判断当前点击时间与上次点击时间的时间间隔
             if(time - self.lastTapTime > 0.25f) {
                 //推迟0.25秒执行单击方法

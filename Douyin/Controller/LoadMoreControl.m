@@ -9,7 +9,6 @@
 #import "LoadMoreControl.h"
 #import "Masonry.h"
 @interface LoadMoreControl ()
-@property (nonatomic, strong) id  superView;
 @property (nonatomic, assign) NSInteger  surplusCount;
 @property (nonatomic, assign) CGRect     originalFrame;
 @end
@@ -46,9 +45,8 @@
 }
 
 -(NSInteger)cellNumInTableView:(UITableView *)tableView {
-    NSInteger sectionNum = tableView.numberOfSections;
     NSInteger cellNum = 0;
-    for (int section = 0; section < sectionNum; section++) {
+    for (int section = 0; section < tableView.numberOfSections; section++) {
         NSInteger rowNum =  [tableView numberOfRowsInSection:section];
         cellNum += rowNum;
     }
@@ -127,18 +125,13 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
-    _superView = [self superview];
-    UIScrollView *superView = (UIScrollView *)_superView;
-    [superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
-    
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        UIScrollView *superView = (UIScrollView *)[self superview];
-        UIEdgeInsets edgeInsets = superView.contentInset;
+    if (!_superView) {
+        _superView = (UIScrollView *)[self superview];
+        [_superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
+        UIEdgeInsets edgeInsets = _superView.contentInset;
         edgeInsets.bottom += 50;
-        superView.contentInset = edgeInsets;
-    });
+        _superView.contentInset = edgeInsets;
+    }
 }
 
 - (void)setOnLoad:(OnLoad)onLoad {
@@ -237,8 +230,7 @@
 }
 
 - (void)startAnim {
-    CABasicAnimation* rotationAnimation;
-    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    CABasicAnimation* rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0];
     rotationAnimation.duration = 1.5;
     rotationAnimation.cumulative = YES;
@@ -247,5 +239,9 @@
 }
 - (void)stopAnim {
     [self.indicatorView.layer removeAllAnimations];
+}
+
+- (void)dealloc {
+    [_superView removeObserver:self forKeyPath:@"contentOffset"];
 }
 @end

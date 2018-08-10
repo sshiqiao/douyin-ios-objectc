@@ -43,7 +43,6 @@
 @interface CommentTextView : UIView
 @property (nonatomic, strong) UITextView                     *textView;
 @property (nonatomic, strong) id<CommentTextViewDelegate>    delegate;
-- (void)hoverOnKeyboard;
 - (void)show;
 - (void)dismiss;
 @end

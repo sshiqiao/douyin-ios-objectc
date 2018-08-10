@@ -139,7 +139,6 @@
 - (void)removeObserver {
     @try {
         [self.playerItem removeObserver:self forKeyPath:@"status"];
-        [self.player removeObserver:self forKeyPath:@"rate"];
         [self.player removeTimeObserver:self.timeObserver];
     } @catch (NSException *exception) {
         NSLog(@"%@", exception.description);
@@ -312,5 +311,9 @@
     }else {
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)dealloc {
+    [self removeObserver];
 }
 @end

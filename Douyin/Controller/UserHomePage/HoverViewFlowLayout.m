@@ -20,7 +20,8 @@
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect{
     NSMutableArray<UICollectionViewLayoutAttributes *> *superArray = [[super layoutAttributesForElementsInRect:rect] mutableCopy];
     for (UICollectionViewLayoutAttributes *attributes in [superArray mutableCopy]) {
-        if ([attributes.representedElementKind isEqualToString:UICollectionElementKindSectionHeader]) {
+        if ([attributes.representedElementKind isEqualToString:UICollectionElementKindSectionHeader]
+            || [attributes.representedElementKind isEqualToString:UICollectionElementKindSectionFooter]) {
             [superArray removeObject:attributes];
         }
     }

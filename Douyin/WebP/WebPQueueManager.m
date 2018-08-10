@@ -54,7 +54,7 @@
     }
 }
 
-//刮起NSOperationQueue队列
+//挂起NSOperationQueue队列
 -(void)suspendQueue:(NSOperationQueue *)queue suspended:(BOOL)suspended {
     @synchronized(_requestQueueArray) {
         if([_requestQueueArray containsObject:queue]) {
@@ -94,4 +94,9 @@
     }
 }
 
+- (void)dealloc {
+    for (NSOperationQueue *queue in _requestQueueArray) {
+        [queue removeObserver:self forKeyPath:@"operations"];
+    }
+}
 @end

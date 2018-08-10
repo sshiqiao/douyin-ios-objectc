@@ -25,7 +25,7 @@
     CGRect rect = [string boundingRectWithSize:CGSizeMake(maxWidth, 10000) options:NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading context:nil];
     CGSize size = CGSizeMake(ceilf(rect.size.width), ceilf(rect.size.height < maxHeight ? rect.size.height : maxHeight));
     
-    CGRect textFrame = CGRectMake(window.frame.size.width/2 - (size.width + commonInset * 2)/2 , window.frame.size.height - (size.height + commonInset * 2) - 100, size.width  + commonInset * 2 + 10, size.height + commonInset * 2);
+    CGRect textFrame = CGRectMake(window.frame.size.width/2 - (size.width + commonInset * 2)/2 , window.frame.size.height - (size.height + commonInset * 2) - 100, size.width  + commonInset * 2, size.height + commonInset * 2);
     tips = [[UITextView alloc] initWithFrame:textFrame];
     tips.text = text;
     tips.font = font;
@@ -34,6 +34,8 @@
     tips.layer.cornerRadius = 5;
     tips.editable = NO;
     tips.selectable = NO;
+    tips.scrollEnabled = NO;
+    tips.textContainer.lineFragmentPadding = 0;
     tips.contentInset = UIEdgeInsetsMake(commonInset, commonInset, commonInset, commonInset);
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handlerGuesture:)];

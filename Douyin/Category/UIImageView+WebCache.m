@@ -63,7 +63,10 @@
             progressBlock(percent);
         });
     } completedBlock:^(NSData *data, NSError *error, BOOL finished) {
-        WebPImage *image = [[WebPImage alloc] initWithData:data];
+        WebPImage *image = nil;
+        if (finished) {
+            image = [[WebPImage alloc] initWithData:data];
+        }
         dispatch_main_sync_safe(^{
             completedBlock(image, error);
         });

@@ -15,7 +15,6 @@ NSInteger const MaxReConnectTime = 5;
 @interface WebSocketManager ()<SRWebSocketDelegate>
 @property (nonatomic, strong) SRWebSocket            *webSocket;  //Websocket对象
 @property (nonatomic, strong) NSMutableURLRequest    *request;    //Websocket请求
-@property (nonatomic, strong) NSTimer                *timer;      //用于重新建立连接的定时器
 @property (nonatomic, assign) NSInteger              reOpenCount; //已经重新建立连接的次数
 @end
 
@@ -55,6 +54,7 @@ NSInteger const MaxReConnectTime = 5;
         if(_webSocket.readyState == SR_CLOSING || _webSocket.readyState == SR_CLOSED) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                 if(self.webSocket.readyState == SR_OPEN) {
+                    self.reOpenCount = 0;
                     return;
                 }
                 if(self.reOpenCount >= MaxReConnectTime) {
@@ -112,5 +112,7 @@ NSInteger const MaxReConnectTime = 5;
     [[NSNotificationCenter defaultCenter] postNotificationName:WebSocketDidReceiveMessageNotification object:message];
 }
 
-
+- (void)dealloc {
+    [_webSocket removeObserver:self forKeyPath:@"readyState"];
+}
 @end

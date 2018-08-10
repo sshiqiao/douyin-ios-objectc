@@ -39,6 +39,7 @@
 }
 
 - (void)startAnimation:(CGFloat)rate {
+    rate = rate <= 0 ? 15 : rate;
     [self resetView];
     
     [self initMusicNotoAnimation:@"icon_home_musicnote1" delayTime:0.0f rate:rate];
@@ -72,7 +73,6 @@
     
     //bezier路径帧动画
     CAKeyframeAnimation * pathAnimation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
-    CGMutablePathRef path = CGPathCreateMutable();
     
     CGFloat sideXLength = 40.0f;
     CGFloat sideYLength = 100.0f;
@@ -88,7 +88,6 @@
     [customPath addQuadCurveToPoint:endPoint controlPoint:controlPoint];
     
     pathAnimation.path = customPath.CGPath;
-    CGPathRelease(path);
     
     
     //旋转帧动画

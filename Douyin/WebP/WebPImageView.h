@@ -9,5 +9,4 @@
 #import <UIKit/UIKit.h>
 
 @interface WebPImageView : UIImageView
-@property (nonatomic, strong) NSData        *imageData;
 @end

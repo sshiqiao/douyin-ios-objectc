@@ -48,8 +48,8 @@
         
         attachment.image = [UIImage imageWithContentsOfFile:emotionPath];
         attachment.bounds = CGRectMake(0, EmotionFont.descender, EmotionFont.lineHeight, EmotionFont.lineHeight/(attachment.image.size.width/attachment.image.size.height));
-        NSAttributedString *mathcStr = [NSAttributedString attributedStringWithAttachment:attachment];
-        NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:mathcStr];
+        NSAttributedString *matchStr = [NSAttributedString attributedStringWithAttachment:attachment];
+        NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:matchStr];
         [emotionStr addAttribute:NSFontAttributeName value:EmotionFont range:NSMakeRange(0, 1)];
         [attributedString replaceCharactersInRange:NSMakeRange(range.location-lengthOffset, range.length) withAttributedString:emotionStr];
         lengthOffset += range.length - 1;
@@ -99,8 +99,8 @@
     NSString *emotionPath = [EmotionHelper emotionIconPath:key];
     attachment.image = [UIImage imageWithContentsOfFile:emotionPath];
     attachment.bounds = CGRectMake(0, EmotionFont.descender,EmotionFont.lineHeight, EmotionFont.lineHeight/(attachment.image.size.width/attachment.image.size.height));
-    NSAttributedString *mathcStr = [NSAttributedString attributedStringWithAttachment:attachment];
-    NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:mathcStr];
+    NSAttributedString *matchStr = [NSAttributedString attributedStringWithAttachment:attachment];
+    NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:matchStr];
     [emotionStr addAttribute:NSFontAttributeName value:EmotionFont range:NSMakeRange(0, emotionStr.length)];
     NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithAttributedString:str];
     

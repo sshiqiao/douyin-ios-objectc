@@ -58,7 +58,7 @@
                 [UIWindow showTips:@"当前正使用流量进行浏览"];
                 break;
             case AFNetworkReachabilityStatusReachableViaWiFi:
-                [UIWindow showTips:@"连接到无线网"];
+//                [UIWindow showTips:@"连接到无线网"];
                 break;
             default:
                 break;

@@ -10,14 +10,12 @@
 #import "Constants.h"
 @interface SwipeLeftInteractiveTransition()
 @property (nonatomic, strong) UIViewController *presentingVC;
-@property (nonatomic, assign) CGRect viewControllerFrame;
 @property (nonatomic, assign) CGPoint viewControllerCenter;
 @end
 
 @implementation SwipeLeftInteractiveTransition
 -(void)wireToViewController:(AwemeListController *)viewController {
     _presentingVC = viewController;
-    _viewControllerFrame = viewController.view.frame;
     _viewControllerCenter = viewController.view.center;
     [self prepareGestureRecognizerInView:viewController.view];
 }

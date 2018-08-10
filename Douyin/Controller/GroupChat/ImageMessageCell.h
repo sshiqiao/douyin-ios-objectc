@@ -21,6 +21,7 @@ typedef void (^OnMenuAction)(MenuActionType actionType);
 @property (nonatomic, strong) GroupChat                *chat;
 @property (nonatomic, strong) OnMenuAction             onMenuAction;
 -(void)initData:(GroupChat *)chat;
+-(void)updateUploadStatus:(GroupChat *)chat;
 - (CGRect)menuFrame;
 +(CGFloat)cellHeight:(GroupChat *)chat;
 @end

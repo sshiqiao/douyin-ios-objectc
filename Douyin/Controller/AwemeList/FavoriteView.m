@@ -101,8 +101,7 @@
         }
         [_favoriteAfter setHidden:NO];
         _favoriteAfter.alpha = 0.0f;
-        _favoriteAfter.alpha = 0.0f;
-        self.favoriteAfter.transform = CGAffineTransformScale(CGAffineTransformMakeRotation(-M_PI/3*2), 0.5f, 0.5f);
+        _favoriteAfter.transform = CGAffineTransformScale(CGAffineTransformMakeRotation(-M_PI/3*2), 0.5f, 0.5f);
         [UIView animateWithDuration:0.4f
                               delay:0.2f
              usingSpringWithDamping:0.6f

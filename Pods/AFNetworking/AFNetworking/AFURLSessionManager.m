@@ -1225,5 +1225,6 @@ expectedTotalBytes:(int64_t)expectedTotalBytes
 - (instancetype)copyWithZone:(NSZone *)zone {
     return [[[self class] allocWithZone:zone] initWithSessionConfiguration:self.session.configuration];
 }
+    
 
 @end

@@ -22,7 +22,7 @@
 #import "NetworkHelper.h"
 #import "LoadMoreControl.h"
 
-#define USER_INFO_HEADER_HEIGHT         355 + STATUS_BAR_HEIGHT
+#define USER_INFO_HEADER_HEIGHT         340 + STATUS_BAR_HEIGHT
 #define SLIDE_TABBAR_FOOTER_HEIGHT      40
 
 #define USER_INFO_CELL                  @"UserInfoCell"
@@ -110,7 +110,7 @@
     [_collectionView registerClass:[AwemeCollectionCell class] forCellWithReuseIdentifier:AWEME_COLLECTION_CELL];
     [self.view addSubview:_collectionView];
     
-    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, USER_INFO_HEADER_HEIGHT + SLIDE_TABBAR_FOOTER_HEIGHT, SCREEN_WIDTH, 50) surplusCount:9];
+    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, USER_INFO_HEADER_HEIGHT + SLIDE_TABBAR_FOOTER_HEIGHT, SCREEN_WIDTH, 50) surplusCount:15];
     [_loadMore startLoading];
     __weak __typeof(self) wself = self;
     [_loadMore setOnLoad:^{
@@ -202,6 +202,7 @@
     }
     return CGSizeZero;
 }
+
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
     if(section == 0) {
         return CGSizeMake(SCREEN_WIDTH, SLIDE_TABBAR_FOOTER_HEIGHT);
@@ -255,13 +256,13 @@
         }
     } completion:^(BOOL finished) {
         [UIView setAnimationsEnabled:YES];
+        
+        [self.loadMore reset];
+        [self.loadMore startLoading];
+        
+        [self loadData:self.pageIndex pageSize:self.pageSize];
     }];
     
-    
-    [self.loadMore reset];
-    [self.loadMore startLoading];
-    
-    [self loadData:_pageIndex pageSize:_pageSize];
 }
 
 

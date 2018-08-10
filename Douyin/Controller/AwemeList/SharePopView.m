@@ -104,8 +104,8 @@
             item.label.text = bottomTexts[i];
             item.tag = i;
             [item addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onActionItemTap:)]];
-            [bottomScrollView addSubview:item];
             [item startAnimation:i*0.03f];
+            [bottomScrollView addSubview:item];
         }
         
         
@@ -128,21 +128,17 @@
 
 - (void)onShareItemTap:(UITapGestureRecognizer *)sender {
     switch (sender.view.tag) {
+        case 0:
+            break;
         default:
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://sshiqiao.github.io/document/douyin.html"]];
             break;
     }
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://sshiqiao.github.io/document/douyin.html"]];
     [self dismiss];
 }
 - (void)onActionItemTap:(UITapGestureRecognizer *)sender {
     switch (sender.view.tag) {
         case 0:
-            break;
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
             break;
         default:
             break;

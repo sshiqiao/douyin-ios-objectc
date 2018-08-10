@@ -204,7 +204,7 @@
     
     while((fileName = [enumerator nextObject])) {
         NSString *filePath = [_diskCacheDirectoryURL.path stringByAppendingPathComponent:fileName];
-        folderSize += [[NSFileManager defaultManager]attributesOfItemAtPath:filePath error:nil].fileSize;
+        folderSize += [_fileManager attributesOfItemAtPath:filePath error:nil].fileSize;
         [_fileManager removeItemAtPath:filePath error:NULL];
     }
     return [NSString stringWithFormat:@"%.2f",folderSize/1024.0f/1024.0f];

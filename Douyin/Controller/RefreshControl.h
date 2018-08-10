@@ -11,6 +11,7 @@
 
 typedef void (^OnRefresh)(void);
 @interface RefreshControl:UIControl
+@property (nonatomic, strong) UIScrollView      *superView;
 @property (nonatomic, strong) UIImageView       *indicatorView;
 @property (nonatomic, strong) OnRefresh         onRefresh;
 @property (nonatomic, assign) RefreshingType    refreshingType;

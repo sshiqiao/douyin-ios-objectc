@@ -12,6 +12,7 @@
 typedef void (^OnLoad)(void);
 
 @interface LoadMoreControl:UIControl
+@property (nonatomic, strong) UIScrollView               *superView;
 @property (nonatomic, assign) LoadingType                loadingType;
 @property (nonatomic, strong) UIImageView                *indicatorView;
 @property (nonatomic, strong) UILabel                    *label;

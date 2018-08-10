@@ -54,8 +54,8 @@
         _imageView = [[UIImageView alloc] initWithFrame:SCREEN_FRAME];
         _imageView.image = image;
         __weak typeof(self) wself = self;
-        [_imageView setImageWithURL:[NSURL URLWithString:urlPath] progressBlock:^(CGFloat persent) {
-            [wself.progressView setProgress:persent];
+        [_imageView setImageWithURL:[NSURL URLWithString:urlPath] progressBlock:^(CGFloat percent) {
+            [wself.progressView setProgress:percent];
         } completedBlock:^(UIImage *image, NSError *error) {
             if(!error) {
                 [wself.imageView setImage:image];
@@ -94,10 +94,6 @@
 }
 
 - (void)handleGuesture:(UITapGestureRecognizer *)sender {
-    CGPoint point = [sender locationInView:_container];
-    if(![_container.layer containsPoint:point]) {
-        [self dismiss];
-    }
     [self dismiss];
 }
 

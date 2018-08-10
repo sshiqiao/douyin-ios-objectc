@@ -23,7 +23,6 @@
 @property (nonatomic, strong) UITextView                     *textView;
 @property (nonatomic, weak) id<SendTextDelegate>             delegate;
 @property (nonatomic, weak) id<HoverTextViewDelegate>        hoverDelegate;
-- (void)showInView:(UIView *)superView;
-- (void)dismiss;
+
 @end
 

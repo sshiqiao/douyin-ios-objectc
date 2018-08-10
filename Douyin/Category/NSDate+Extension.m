@@ -43,11 +43,11 @@
 }
 
 - (BOOL)isCurrentWeek {
+    NSDate *nowDate = [[NSDate date] dateFormatYMD];
+    NSDate *selfDate = [self dateFormatYMD];
     NSCalendar *calendar = [NSCalendar currentCalendar];
-    int unit = NSCalendarUnitWeekday | NSCalendarUnitMonth | NSCalendarUnitYear;
-    NSDateComponents *nowComponents = [calendar components:unit fromDate:[NSDate date]];
-    NSDateComponents *selfComponents = [calendar components:unit fromDate:self];
-    return (selfComponents.year == nowComponents.year) && (selfComponents.month == nowComponents.month) && (selfComponents.day == nowComponents.day);
+    NSDateComponents *cmps = [calendar components:NSCalendarUnitDay fromDate:selfDate toDate:nowDate options:0];
+    return cmps.day <= 7;
 }
 
 - (BOOL)isCurrentYear {

@@ -516,14 +516,11 @@
 		3B00F293210EE11300E99DE5 /* AwemeList */ = {
 			isa = PBXGroup;
 			children = (
+				3B79F746211D5A9D005B5F14 /* AVPlayer */,
 				3B00F2CD210EE4F400E99DE5 /* AwemeListController.h */,
 				3B00F2CE210EE50A00E99DE5 /* AwemeListController.m */,
 				3B00F2D0210EE51600E99DE5 /* AwemeListCell.h */,
 				3B00F2D1210EE51F00E99DE5 /* AwemeListCell.m */,
-				3B00F2D3210EE52C00E99DE5 /* AVPlayerView.h */,
-				3B00F2D4210EE53700E99DE5 /* AVPlayerView.m */,
-				3B00F2D6210EE54800E99DE5 /* AVPlayerManager.h */,
-				3B00F2D7210EE55900E99DE5 /* AVPlayerManager.m */,
 				3B00F2D9210EE57100E99DE5 /* FocusView.h */,
 				3B00F2DA210EE57D00E99DE5 /* FocusView.m */,
 				3B00F2DC210EE58F00E99DE5 /* HoverTextView.h */,
@@ -661,6 +658,17 @@
 				3B2A3495210EC9A8005738DD /* groupchats.json */,
 			);
 			path = Resource;
+			sourceTree = "<group>";
+		};
+		3B79F746211D5A9D005B5F14 /* AVPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				3B00F2D3210EE52C00E99DE5 /* AVPlayerView.h */,
+				3B00F2D4210EE53700E99DE5 /* AVPlayerView.m */,
+				3B00F2D6210EE54800E99DE5 /* AVPlayerManager.h */,
+				3B00F2D7210EE55900E99DE5 /* AVPlayerManager.m */,
+			);
+			path = AVPlayer;
 			sourceTree = "<group>";
 		};
 		76DDCE54F77DAC5BF7635A72 /* Frameworks */ = {

@@ -108,7 +108,6 @@
         
         _textView = [[CommentTextView alloc] init];
         _textView.delegate = self;
-        [_textView hoverOnKeyboard];
         
         [self loadData:_pageIndex pageSize:_pageSize];
         
@@ -188,15 +187,11 @@
     request.cid = comment.cid;
     request.udid = UDID;
     [NetworkHelper deleteWithUrlPath:DELETE_COMMENT_BY_ID_URL request:request success:^(id data) {
-        for(NSInteger i = wself.data.count-1; i>=0; i--) {
-            if(wself.data[i].cid == comment.cid) {
-                [wself.tableView beginUpdates];
-                [wself.data removeObjectAtIndex:i];
-                [wself.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:i inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
-                [wself.tableView endUpdates];
-                break;
-            }
-        }
+        NSInteger index = [wself.data indexOfObject:comment];
+        [wself.tableView beginUpdates];
+        [wself.data removeObjectAtIndex:index];
+        [wself.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationRight];
+        [wself.tableView endUpdates];
         [UIWindow showTips:@"评论删除成功"];
     } failure:^(NSError *error) {
         [UIWindow showTips:@"评论删除失败"];
@@ -440,7 +435,6 @@
 //#define RIGHT_INSET 50
 //#define TOP_BOTTOM_INSET 15
 @interface CommentTextView ()<UITextViewDelegate, UIGestureRecognizerDelegate>
-@property (nonatomic, assign) int                maxNumberOfLine;
 @property (nonatomic, assign) CGFloat            textHeight;
 @property (nonatomic, assign) CGFloat            keyboardHeight;
 @property (nonatomic, retain) UILabel            *placeHolderLabel;
@@ -481,6 +475,11 @@
         _atImageView.image = [UIImage imageNamed:@"iconWhiteaBefore"];
         [_textView addSubview:_atImageView];
         [self addSubview:_textView];
+        
+        
+        _textView.delegate = self;
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     }
     return self;
 }
@@ -488,12 +487,6 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     [self updateViewFrame];
-}
-
-- (void)hoverOnKeyboard {
-    _textView.delegate = self;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)updateViewFrame {
@@ -535,7 +528,6 @@
 //textView delegate
 -(void)textViewDidChange:(UITextView *)textView {
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:textView.attributedText];
-    textView.attributedText = attributedText;
     
     if([textView.attributedText.string isEqualToString:@""]){
         _textHeight = ceilf(_textView.font.lineHeight);
@@ -584,6 +576,9 @@
 
 - (void)dismiss {
     [self removeFromSuperview];
+}
+
+- (void)dealloc {
 }
 
 @end

@@ -15,7 +15,6 @@
 #define TOP_BOTTOM_INSET 15
 
 @interface HoverTextView ()<UITextViewDelegate>
-@property (nonatomic, assign) int              maxNumberOfLine;
 @property (nonatomic, assign) CGFloat          textHeight;
 @property (nonatomic, assign) CGFloat          keyboardHeight;
 @property (nonatomic, retain) UILabel          *placeHolderLabel;
@@ -185,13 +184,6 @@
     return hitView;
 }
 
-//update method
-- (void)showInView:(UIView *)superView {
-    [superView addSubview:self];
+- (void)dealloc {
 }
-
-- (void)dismiss {
-    [self removeFromSuperview];
-}
-
 @end

@@ -50,7 +50,7 @@
     _pageIndex = 0;
     _pageSize = 20;
     
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, [self navagationBarHeight] + STATUS_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - ([self navagationBarHeight] + STATUS_BAR_HEIGHT))];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, [self navagationBarHeight] + STATUS_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - ([self navagationBarHeight] + STATUS_BAR_HEIGHT) - 10)];
     _tableView.backgroundColor = ColorClear;
     _refreshControl = [RefreshControl new];
     __weak __typeof(self) weakSelf = self;
@@ -200,23 +200,18 @@
     if(indexPaths.count == 0) {
         return;
     }
-    if([MD5_UDID isEqualToString:chat.visitor.udid]) {
-        DeleteGroupChatRequest *request = [DeleteGroupChatRequest new];
-        request.udid = UDID;
-        request.id = chat.id;
-        [NetworkHelper deleteWithUrlPath:DELETE_GROUP_CHAT_BY_ID_URL request:request success:^(id data) {
-        } failure:^(NSError *error) {
-        }];
-        [_tableView beginUpdates];
-        [_data removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPaths.firstObject.row, indexPaths.count)]];
-        [_tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationRight];
-        [_tableView endUpdates];
-    }else {
-        [_tableView beginUpdates];
-        [_data removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPaths.firstObject.row, indexPaths.count)]];
-        [_tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationLeft];
-        [_tableView endUpdates];
-    }
+    __weak __typeof(self) wself = self;
+    DeleteGroupChatRequest *request = [DeleteGroupChatRequest new];
+    request.udid = UDID;
+    request.id = chat.id;
+    [NetworkHelper deleteWithUrlPath:DELETE_GROUP_CHAT_BY_ID_URL request:request success:^(id data) {
+        [wself.tableView beginUpdates];
+        [wself.data removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPaths.firstObject.row, indexPaths.count)]];
+        [wself.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationRight];
+        [wself.tableView endUpdates];
+    } failure:^(NSError *error) {
+        [UIWindow showTips:@"删除失败"];
+    }];
 }
 
 - (void)scrollToBottom {
@@ -227,91 +222,8 @@
 
 //chat textview delegate
 -(void)onSendText:(NSString *)text {
-    __weak __typeof(self) wself = self;
-    PostGroupChatTextRequest *request = [PostGroupChatTextRequest new];
-    request.udid = UDID;
-    request.text = text;
-    __block NSURLSessionDataTask *task = [NetworkHelper postWithUrlPath:POST_GROUP_CHAT_TEXT_URL request:request success:^(id data) {
-        @synchronized(wself.data) {
-            GroupChatResponse *response = [[GroupChatResponse alloc] initWithDictionary:data error:nil];
-            GroupChat *chat = response.data;
-            [wself.data enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(GroupChat *obj, NSUInteger idx, BOOL *stop) {
-                if(task.taskIdentifier == obj.taskId) {
-                    [obj updateTempTextChat:chat];
-                    [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                    return;
-                }
-            }];
-        }
-    } failure:^(NSError *error) {
-        @synchronized(wself.data) {
-            [wself.data enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(GroupChat *obj, NSUInteger idx, BOOL *stop) {
-                if(task.taskIdentifier == obj.taskId) {
-                    obj.isCompleted = NO;
-                    obj.isFailed = YES;
-                    [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                    return;
-                }
-            }];
-        }
-    }];
-    GroupChat *chat = [[GroupChat alloc] initTextChat:text taskId:task.taskIdentifier];
-    chat.visitor = _visitor;
-    chat.cellHeight = [self cellHeight:chat];
-    
-    [UIView setAnimationsEnabled:NO];
-    [_tableView beginUpdates];
-    [_data addObject:chat];
-    [_tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_data.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-    [_tableView endUpdates];
-    [UIView setAnimationsEnabled:YES];
-    [self scrollToBottom];
-}
-
--(void)onSendImages:(NSMutableArray<UIImage *> *)images {
-    __weak __typeof(self) wself = self;
-    for(UIImage *image in images) {
-        NSData *data = UIImageJPEGRepresentation(image, 1.0);
-        PostGroupChatImageRequest *request = [PostGroupChatImageRequest new];
-        request.udid = UDID;
-        __block NSURLSessionDataTask *task = [NetworkHelper uploadWithUrlPath:POST_GROUP_CHAT_IMAGE_URL data:data request:request progress:^(CGFloat percent) {
-            @synchronized(wself.data) {
-                [wself.data enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(GroupChat *obj, NSUInteger idx, BOOL *stop) {
-                    if(task.taskIdentifier == obj.taskId) {
-                        obj.percent = percent;
-                        obj.isCompleted = NO;
-                        obj.isFailed = NO;
-                        [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                        return;
-                    }
-                }];
-            }
-        } success:^(id data) {
-            @synchronized(wself.data) {
-                GroupChatResponse *response = [[GroupChatResponse alloc] initWithDictionary:data error:nil];
-                GroupChat *chat = response.data;
-                [wself.data enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(GroupChat *obj, NSUInteger idx, BOOL *stop) {
-                    if(task.taskIdentifier == obj.taskId) {
-                        [obj updateTempImageChat:chat];
-                        [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                        return;
-                    }
-                }];
-            }
-        } failure:^(NSError *error) {
-            @synchronized(wself.data) {
-                [wself.data enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(GroupChat *obj, NSUInteger idx, BOOL *stop) {
-                    if(task.taskIdentifier == obj.taskId) {
-                        obj.percent = 0;
-                        obj.isCompleted = NO;
-                        obj.isFailed = YES;
-                        [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-                        return;
-                    }
-                }];
-            }
-        }];
-        GroupChat *chat = [[GroupChat alloc] initImageChat:image taskId:task.taskIdentifier];
+    @synchronized(_data) {
+        GroupChat *chat = [[GroupChat alloc] initTextChat:text];
         chat.visitor = _visitor;
         chat.cellHeight = [self cellHeight:chat];
         
@@ -321,6 +233,68 @@
         [_tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_data.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
         [_tableView endUpdates];
         [UIView setAnimationsEnabled:YES];
+        [self scrollToBottom];
+        
+        NSInteger index = [_data indexOfObject:chat];
+        
+        __weak __typeof(self) wself = self;
+        PostGroupChatTextRequest *request = [PostGroupChatTextRequest new];
+        request.udid = UDID;
+        request.text = text;
+        [NetworkHelper postWithUrlPath:POST_GROUP_CHAT_TEXT_URL request:request success:^(id data) {
+            GroupChatResponse *response = [[GroupChatResponse alloc] initWithDictionary:data error:nil];
+            [chat updateTempTextChat:response.data];
+            [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        } failure:^(NSError *error) {
+            chat.isCompleted = NO;
+            chat.isFailed = YES;
+            [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+        }];
+    }
+}
+
+-(void)onSendImages:(NSMutableArray<UIImage *> *)images {
+    @synchronized(_data) {
+        __weak __typeof(self) wself = self;
+        for(UIImage *image in images) {
+            NSData *data = UIImageJPEGRepresentation(image, 1.0);
+            GroupChat *chat = [[GroupChat alloc] initImageChat:image];
+            chat.visitor = _visitor;
+            chat.cellHeight = [self cellHeight:chat];
+            
+            [UIView setAnimationsEnabled:NO];
+            [_tableView beginUpdates];
+            [_data addObject:chat];
+            [_tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_data.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            [_tableView endUpdates];
+            [UIView setAnimationsEnabled:YES];
+            
+            NSInteger index = [_data indexOfObject:chat];
+            
+            PostGroupChatImageRequest *request = [PostGroupChatImageRequest new];
+            request.udid = UDID;
+            [NetworkHelper uploadWithUrlPath:POST_GROUP_CHAT_IMAGE_URL data:data request:request progress:^(CGFloat percent) {
+                chat.percent = percent;
+                chat.isCompleted = NO;
+                chat.isFailed = NO;
+                ImageMessageCell *cell = [wself.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+                if (cell != nil) {
+                    [cell updateUploadStatus:chat];
+                }
+            } success:^(id data) {
+                GroupChatResponse *response = [[GroupChatResponse alloc] initWithDictionary:data error:nil];
+                [chat updateTempImageChat:response.data];
+                [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            } failure:^(NSError *error) {
+                chat.percent = 0;
+                chat.isCompleted = NO;
+                chat.isFailed = YES;
+                ImageMessageCell *cell = [wself.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+                if (cell != nil) {
+                    [cell updateUploadStatus:chat];
+                }
+            }];
+        }
     }
     [self scrollToBottom];
 }
@@ -400,5 +374,8 @@
     }else {
         return [TimeCell cellHeight:chat];
     }
+}
+
+- (void)dealloc {
 }
 @end

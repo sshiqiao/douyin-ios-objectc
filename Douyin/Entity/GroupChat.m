@@ -9,12 +9,11 @@
 #import "GroupChat.h"
 @implementation GroupChat
 
--(instancetype)initImageChat:(UIImage *)image taskId:(NSInteger)taskId {
+-(instancetype)initImageChat:(UIImage *)image {
     self = [super init];
     if(self) {
         _msg_type = @"image";
         _isTemp = YES;
-        _taskId = taskId;
         _picImage = image;
         PictureInfo *picInfo = [PictureInfo new];
         picInfo.width = image.size.width;
@@ -24,12 +23,11 @@
     return self;
 }
 
--(instancetype)initTextChat:(NSString *)text taskId:(NSInteger)taskId {
+-(instancetype)initTextChat:(NSString *)text {
     self = [super init];
     if(self) {
         _msg_type = @"text";
         _isTemp = YES;
-        _taskId = taskId;
         _msg_content = text;
     }
     return self;
