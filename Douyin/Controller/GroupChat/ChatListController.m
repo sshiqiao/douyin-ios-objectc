@@ -233,6 +233,7 @@
         [_tableView insertRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:_data.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
         [_tableView endUpdates];
         [UIView setAnimationsEnabled:YES];
+        
         [self scrollToBottom];
         
         NSInteger index = [_data indexOfObject:chat];
@@ -377,5 +378,6 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

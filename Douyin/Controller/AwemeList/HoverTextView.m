@@ -17,7 +17,7 @@
 @interface HoverTextView ()<UITextViewDelegate>
 @property (nonatomic, assign) CGFloat          textHeight;
 @property (nonatomic, assign) CGFloat          keyboardHeight;
-@property (nonatomic, retain) UILabel          *placeHolderLabel;
+@property (nonatomic, retain) UILabel          *placeholderLabel;
 @property (nonatomic, strong) UIImageView      *editImageView;
 @property (nonatomic, strong) UIImageView      *atImageView;
 @property (nonatomic, strong) UIImageView      *sendImageView;
@@ -45,24 +45,24 @@
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
-        _placeHolderLabel = [[UILabel alloc]init];
-        _placeHolderLabel.text = @"有爱评论，说点儿好听的~";
-        _placeHolderLabel.textColor = ColorWhiteAlpha40;
-        _placeHolderLabel.font = BigFont;
-        [_textView addSubview:_placeHolderLabel];
-        [_textView setValue:_placeHolderLabel forKey:@"_placeholderLabel"];
+        _placeholderLabel = [[UILabel alloc]init];
+        _placeholderLabel.text = @"有爱评论，说点儿好听的~";
+        _placeholderLabel.textColor = ColorWhiteAlpha40;
+        _placeholderLabel.font = BigFont;
+        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        [_textView addSubview:_placeholderLabel];
         
         _editImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 50)];
         _editImageView.contentMode = UIViewContentModeCenter;
         _editImageView.image = [UIImage imageNamed:@"ic30Pen1"];
         [_textView addSubview:_editImageView];
         
-        _atImageView = [[UIImageView alloc] init];
+        _atImageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50)];
         _atImageView.contentMode = UIViewContentModeCenter;
         _atImageView.image = [UIImage imageNamed:@"ic30WhiteAt"];
         [_textView addSubview:_atImageView];
         
-        _sendImageView = [[UIImageView alloc] init];
+        _sendImageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH, 0, 50, 50)];
         _sendImageView.contentMode = UIViewContentModeCenter;
         _sendImageView.image = [UIImage imageNamed:@"ic30WhiteSend"];
         _sendImageView.userInteractionEnabled = YES;
@@ -149,9 +149,11 @@
 -(void)textViewDidChange:(UITextView *)textView {
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:textView.attributedText];
     textView.attributedText = attributedText;
-    if([textView.attributedText.string isEqualToString:@""]) {
+    if(!textView.hasText) {
+        [_placeholderLabel setHidden:NO];
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
+        [_placeholderLabel setHidden:YES];
         _textHeight = [attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
     }
     [self updateViewFrameAndState];
@@ -185,5 +187,6 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

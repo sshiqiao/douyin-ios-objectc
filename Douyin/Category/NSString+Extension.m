@@ -77,7 +77,7 @@
 
 + (NSString *)formatCount:(NSInteger)count {
     if(count < 10000) {
-        return [NSString stringWithFormat:@"%ld",count];
+        return [NSString stringWithFormat:@"%ld",(long)count];
     }else {
         return [NSString stringWithFormat:@"%.1fw",count/10000.0f];
     }

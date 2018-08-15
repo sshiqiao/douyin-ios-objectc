@@ -33,6 +33,7 @@
 #import "PostCommentRequest.h"
 #import "DeleteCommentRequest.h"
 
+extern NSString *const NetworkStatesChangeNotification;
 
 typedef enum {
     HttpResquestFailed = -1000,
@@ -63,5 +64,14 @@ typedef void (^HttpFailure)(NSError *error);
 
 +(NSURLSessionDataTask *)uploadWithUrlPath:(NSString *)urlPath dataArray:(NSArray<NSData *> *)dataArray request:(BaseRequest *)request progress:(UploadProgress)progress success:(HttpSuccess)success failure:(HttpFailure)failure;
 
+
+//Reachability
++ (AFNetworkReachabilityManager *)shareReachabilityManager;
+
++ (void)startListening;
+
++ (AFNetworkReachabilityStatus)networkStatus;
+
++ (BOOL)isNotReachableStatus:(AFNetworkReachabilityStatus)status;
 
 @end

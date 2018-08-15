@@ -22,6 +22,7 @@ extern NSInteger const EmotionSelectorHeight;
 @property (nonatomic, strong) UICollectionView       *collectionView;
 @property (nonatomic, weak) id<EmotionSelectorDelegate> delegate;
 -(void)addTextViewObserver:(UITextView *)textView;
+- (void)removeTextViewObserver:(UITextView *)textView;
 @end
 
 

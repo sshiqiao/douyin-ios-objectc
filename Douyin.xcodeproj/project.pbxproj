@@ -1086,6 +1086,7 @@
 			baseConfigurationReference = 70671669E659B6CCC077AFBD /* Pods-Douyin.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
 				INFOPLIST_FILE = Douyin/Info.plist;
@@ -1096,6 +1097,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.start.douyin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1105,6 +1108,7 @@
 			baseConfigurationReference = 7CEEF714730F86EBDB840A5B /* Pods-Douyin.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
 				INFOPLIST_FILE = Douyin/Info.plist;
@@ -1115,6 +1119,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.start.douyin;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

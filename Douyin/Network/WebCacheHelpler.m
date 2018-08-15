@@ -269,14 +269,16 @@
         [self done];
         return;
     }
-    //创建网络资源下载请求，并设置网络请求代理
-    NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-    sessionConfig.timeoutIntervalForRequest = 30;
-    _session = [NSURLSession sessionWithConfiguration:sessionConfig
-                                             delegate:self
-                                        delegateQueue:nil];
-    _dataTask = [_session dataTaskWithRequest:_request];
-    [_dataTask resume];
+    @synchronized (self) {
+        //创建网络资源下载请求，并设置网络请求代理
+        NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
+        sessionConfig.timeoutIntervalForRequest = 30;
+        _session = [NSURLSession sessionWithConfiguration:sessionConfig
+                                                 delegate:self
+                                            delegateQueue:nil];
+        _dataTask = [_session dataTaskWithRequest:_request];
+        [_dataTask resume];
+    }
 }
 
 

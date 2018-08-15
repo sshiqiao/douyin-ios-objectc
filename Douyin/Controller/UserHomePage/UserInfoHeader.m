@@ -154,7 +154,7 @@
 
 - (void)initInfoView {
     _nickName = [[UILabel alloc] init];
-    _nickName.text = @"NickName";
+    _nickName.text = @"name";
     _nickName.textColor = ColorWhite;
     _nickName.font = SuperBigBoldFont;
     [_containerView addSubview:_nickName];
@@ -165,7 +165,7 @@
     }];
     
     _douyinNum = [[UILabel alloc] init];
-    _douyinNum.text = @"抖音号：No.01";
+    _douyinNum.text = @"抖音号：";
     _douyinNum.textColor = ColorWhite;
     _douyinNum.font = SmallFont;
     [_containerView addSubview:_douyinNum];
@@ -292,9 +292,9 @@
     }
     [_genderIcon setImage:[UIImage imageNamed:user.gender == 0 ? @"iconUserProfileBoy" : @"iconUserProfileGirl"]];
     [_constellation setText:[_constellations objectAtIndex:user.constellation]];
-    [_likeNum setText:[NSString stringWithFormat:@"%ld%@",user.total_favorited,@"获赞"]];
-    [_followNum setText:[NSString stringWithFormat:@"%ld%@",user.following_count,@"关注"]];
-    [_followedNum setText:[NSString stringWithFormat:@"%ld%@",user.follower_count,@"粉丝"]];
+    [_likeNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.total_favorited,@"获赞"]];
+    [_followNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.following_count,@"关注"]];
+    [_followedNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.follower_count,@"粉丝"]];
 }
 
 - (void)onTapAction:(UITapGestureRecognizer *)sender {

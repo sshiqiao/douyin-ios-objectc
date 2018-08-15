@@ -13,10 +13,10 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self){
+        self.clipsToBounds = YES;
         _imageView = [[WebPImageView alloc] init];
         _imageView.backgroundColor = ColorThemeGray;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
-        _imageView.clipsToBounds = YES;
         [self addSubview:_imageView];
         
         CAGradientLayer *gradientLayer = [CAGradientLayer layer];

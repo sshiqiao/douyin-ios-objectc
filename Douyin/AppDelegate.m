@@ -11,6 +11,7 @@
 #import "NetworkHelper.h"
 #import "WebSocketManager.h"
 #import "Visitor.h"
+#import "AVPlayerManager.h"
 @interface AppDelegate ()
 
 @end
@@ -23,69 +24,13 @@
     self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[[UserHomePageController alloc] init]];
     [self.window makeKeyAndVisible];
     
-    [self registerUserInfo];
+    [NetworkHelper startListening];
     
-    [self startReachability];
+    [[WebSocketManager shareManager] connect];
+    
+    [AVPlayerManager setAudioMode];
     
     return YES;
-}
-
-- (void)registerUserInfo {
-    VisitorRequest *request = [VisitorRequest new];
-    request.udid = UDID;
-    [NetworkHelper postWithUrlPath:CREATE_VISITOR_BY_UDID_URL request:request success:^(id data) {
-        VisitorResponse *response = [[VisitorResponse alloc] initWithDictionary:data error:nil];
-        writeVisitor(response.data);
-        WebSocketManager *manager = [WebSocketManager shareManager];
-        [manager connect];
-    } failure:^(NSError *error) {
-        [UIWindow showTips:@"注册访客用户失败"];
-    }];
-}
-
-- (void)startReachability {
-    AFNetworkReachabilityManager *reachabilityManager = [AFNetworkReachabilityManager sharedManager];
-    [reachabilityManager startMonitoring];
-    [reachabilityManager setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
-        switch (status) {
-            case AFNetworkReachabilityStatusUnknown:
-                [UIWindow showTips:@"网络环境未知"];
-                break;
-            case AFNetworkReachabilityStatusNotReachable:
-                [UIWindow showTips:@"未连接到网络"];
-                break;
-            case AFNetworkReachabilityStatusReachableViaWWAN:
-                [UIWindow showTips:@"当前正使用流量进行浏览"];
-                break;
-            case AFNetworkReachabilityStatusReachableViaWiFi:
-//                [UIWindow showTips:@"连接到无线网"];
-                break;
-            default:
-                break;
-        }
-    }];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityCallBack:) name:AFNetworkingReachabilityDidChangeNotification object:nil];
-}
-
-- (void)reachabilityCallBack:(NSNotification *)sender {
-    NSDictionary *userInfo = sender.userInfo;
-    AFNetworkReachabilityStatus status = [userInfo[@"AFNetworkingReachabilityNotificationStatusItem"] integerValue];
-    switch (status) {
-        case AFNetworkReachabilityStatusUnknown:
-            [UIWindow showTips:@"网络环境未知"];
-            break;
-        case AFNetworkReachabilityStatusNotReachable:
-            [UIWindow showTips:@"未连接到网络"];
-            break;
-        case AFNetworkReachabilityStatusReachableViaWWAN:
-            [UIWindow showTips:@"当前正使用流量进行浏览"];
-            break;
-        case AFNetworkReachabilityStatusReachableViaWiFi:
-            [UIWindow showTips:@"连接到无线网"];
-            break;
-        default:
-            break;
-    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

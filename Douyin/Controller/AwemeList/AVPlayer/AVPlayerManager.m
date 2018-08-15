@@ -22,11 +22,18 @@
     });
     return manager;
 }
+
++ (void)setAudioMode {
+    [[AVAudioSession sharedInstance]setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionAllowBluetooth error:nil];
+    [[AVAudioSession sharedInstance]setActive:YES error:nil];
+}
+
 - (instancetype)init {
     self = [super init];
     if (self) {
         _playerArray = [NSMutableArray array];
     }
+    
     return self;
 }
 - (void)play:(AVPlayer *)player {

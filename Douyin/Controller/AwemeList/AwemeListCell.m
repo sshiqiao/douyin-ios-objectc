@@ -33,7 +33,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if(self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        self.backgroundColor = ColorClear;
+        self.backgroundColor = ColorBlackAlpha1;
         self.lastTapTime = 0;
         self.lastTapPoint = CGPointZero;
         [self initSubViews];
@@ -453,7 +453,7 @@
     [_favoriteNum setText:[NSString formatCount:aweme.statistics.digg_count]];
     [_commentNum setText:[NSString formatCount:aweme.statistics.comment_count]];
     [_shareNum setText:[NSString formatCount:aweme.statistics.share_count]];
-    
+
     __weak __typeof(self) wself = self;
     [_musicAlum.album setImageWithURL:[NSURL URLWithString:aweme.music.cover_thumb.url_list.firstObject] completedBlock:^(UIImage *image, NSError *error) {
         if(!error) {
@@ -480,6 +480,10 @@
 -(void)replay {
     [_playerView replay];
     [_pauseIcon setHidden:YES];
+}
+
+- (void)dealloc {
+    _playerView = nil;
 }
 
 @end

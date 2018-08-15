@@ -27,7 +27,7 @@
 @property (nonatomic, assign) int                              maxNumberOfLine;
 @property (nonatomic, assign) CGFloat                          textHeight;
 @property (nonatomic, assign) CGFloat                          containerBoardHeight;
-@property (nonatomic, retain) UILabel                          *placeHolderLabel;
+@property (nonatomic, retain) UILabel                          *placeholderLabel;
 @property (nonatomic, strong) UIButton                         *emotionBtn;
 @property (nonatomic, strong) UIButton                         *photoBtn;
 @property (nonatomic, strong) UIVisualEffectView               *visualEffectView;
@@ -35,11 +35,11 @@
 
 @implementation ChatTextView
 - (instancetype)init {
-    return [self initWithFrame:CGRectZero];
+    return [self initWithFrame:SCREEN_FRAME];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:SCREEN_FRAME];
+    self = [super initWithFrame:frame];
     if(self) {
         self.backgroundColor = ColorClear;
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)];
@@ -64,12 +64,13 @@
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
-        _placeHolderLabel = [[UILabel alloc]init];
-        _placeHolderLabel.text = @"发送消息...";
-        _placeHolderLabel.textColor = ColorGray;
-        _placeHolderLabel.font = BigFont;
-        [_textView addSubview:_placeHolderLabel];
-        [_textView setValue:_placeHolderLabel forKey:@"_placeholderLabel"];
+        _placeholderLabel = [[UILabel alloc]init];
+        _placeholderLabel.text = @"发送消息...";
+        _placeholderLabel.textColor = ColorGray;
+        _placeholderLabel.font = BigFont;
+        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        [_textView addSubview:_placeholderLabel];
+
         _textView.delegate = self;
         [_container addSubview:_textView];
         
@@ -243,11 +244,11 @@
 -(void)textViewDidChange:(UITextView *)textView {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:textView.attributedText];
     
-    [textView setAttributedText:attributedString];
-    
-    if(![textView hasText]) {
+    if(!textView.hasText) {
+        [_placeholderLabel setHidden:NO];
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
+        [_placeholderLabel setHidden:YES];
         _textHeight = [attributedString multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
     }
     [self updateContainerFrame];
@@ -387,6 +388,8 @@
 }
 
 - (void)dealloc {
+    [emotionSelector removeTextViewObserver:_textView];
     [self removeObserver:self forKeyPath:@"containerBoardHeight"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

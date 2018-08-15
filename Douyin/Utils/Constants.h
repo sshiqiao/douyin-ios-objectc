@@ -158,6 +158,7 @@ alpha:1.0]
 #define ColorWhiteAlpha60 RGBA(255.0, 255.0, 255.0, 0.6)
 #define ColorWhiteAlpha80 RGBA(255.0, 255.0, 255.0, 0.8)
 
+#define ColorBlackAlpha1 RGBA(0.0, 0.0, 0.0, 0.01)
 #define ColorBlackAlpha5 RGBA(0.0, 0.0, 0.0, 0.05)
 #define ColorBlackAlpha10 RGBA(0.0, 0.0, 0.0, 0.1)
 #define ColorBlackAlpha20 RGBA(0.0, 0.0, 0.0, 0.2)

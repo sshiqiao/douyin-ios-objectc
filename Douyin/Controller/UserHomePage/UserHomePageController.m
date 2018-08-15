@@ -82,8 +82,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self initCollectionView];
-    [self loadUserData];
-    [self loadData:_pageIndex pageSize:_pageSize];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNetworkStatusChange:) name:NetworkStatesChangeNotification object:nil];
 }
 
 
@@ -150,8 +149,8 @@
         }else {
             SlideTabBarFooter *footer = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:SLIDE_TABBAR_CELL forIndexPath:indexPath];
             footer.delegate = self;
-            [footer setLabels:@[[@"作品" stringByAppendingString:[NSString stringWithFormat:@"%ld", _user == nil ? 0 : _user.aweme_count]],
-                                [@"喜欢" stringByAppendingString:[NSString stringWithFormat:@"%ld", _user == nil ? 0 : _user.favoriting_count]]] tabIndex:_tabIndex];
+            [footer setLabels:@[[@"作品" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)(_user == nil ? 0 : _user.aweme_count)]],
+                                [@"喜欢" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)(_user == nil ? 0 : _user.favoriting_count)]]] tabIndex:_tabIndex];
             return footer;
         }
     }
@@ -303,6 +302,18 @@
     }
 }
 
+//网络状态发送变化
+-(void)onNetworkStatusChange:(NSNotification *)notification {
+    if(![NetworkHelper isNotReachableStatus:[NetworkHelper networkStatus]]) {
+        if(_user == nil) {
+            [self loadUserData];
+        }
+        if(_favoriteAwemes.count == 0 && _workAwemes.count == 0) {
+            [self loadData:_pageIndex pageSize:_pageSize];
+        }
+    }
+}
+
 //HTTP data request
 -(void)loadUserData {
     __weak typeof (self) wself = self;
@@ -350,7 +361,6 @@
             if(!response.has_more) {
                 [wself.loadMore loadingAll];
             }
-            
         } failure:^(NSError *error) {
             [wself.loadMore loadingFailed];
         }];

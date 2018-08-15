@@ -121,6 +121,11 @@ NSInteger const EmotionSelectorHeight = 220;
     [textView addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew context:nil];
 }
 
+
+- (void)removeTextViewObserver:(UITextView *)textView {
+    [textView removeObserver:self forKeyPath:@"attributedText"];
+}
+
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if([keyPath isEqualToString:@"attributedText"]){
         NSAttributedString *attributedString = [change objectForKey:NSKeyValueChangeNewKey];
@@ -199,6 +204,7 @@ NSInteger const EmotionSelectorHeight = 220;
     });
 }
 
+
 @end
 
 #pragma Emotion Cell
@@ -225,10 +231,6 @@ NSInteger const EmotionSelectorHeight = 220;
     NSString *emoticonsPath = [[NSBundle mainBundle]pathForResource:@"Emoticons"ofType:@"bundle"];
     NSString *arrowPath = [emoticonsPath stringByAppendingPathComponent:key];
     _emotion.image = [UIImage imageWithContentsOfFile:arrowPath];
-}
-
-- (void)dealloc {
-    
 }
 
 @end

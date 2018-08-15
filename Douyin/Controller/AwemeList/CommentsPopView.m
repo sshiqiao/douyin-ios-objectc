@@ -280,7 +280,7 @@
         if(!response.has_more) {
             [wself.loadMore loadingAll];
         }
-        wself.label.text = [NSString stringWithFormat:@"%ld条评论",response.total_count];
+        wself.label.text = [NSString stringWithFormat:@"%ld条评论",(long)response.total_count];
     } failure:^(NSError *error) {
         [wself.loadMore loadingFailed];
     }];
@@ -437,7 +437,7 @@
 @interface CommentTextView ()<UITextViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, assign) CGFloat            textHeight;
 @property (nonatomic, assign) CGFloat            keyboardHeight;
-@property (nonatomic, retain) UILabel            *placeHolderLabel;
+@property (nonatomic, retain) UILabel            *placeholderLabel;
 @property (nonatomic, strong) UIImageView        *atImageView;
 @property (nonatomic, strong) UIVisualEffectView *visualEffectView;
 @end
@@ -463,12 +463,12 @@
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
-        _placeHolderLabel = [[UILabel alloc]init];
-        _placeHolderLabel.text = @"有爱评论，说点儿好听的~";
-        _placeHolderLabel.textColor = ColorGray;
-        _placeHolderLabel.font = BigFont;
-        [_textView addSubview:_placeHolderLabel];
-        [_textView setValue:_placeHolderLabel forKey:@"_placeholderLabel"];
+        _placeholderLabel = [[UILabel alloc]init];
+        _placeholderLabel.text = @"有爱评论，说点儿好听的~";
+        _placeholderLabel.textColor = ColorGray;
+        _placeholderLabel.font = BigFont;
+        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        [_textView addSubview:_placeholderLabel];
         
         _atImageView = [[UIImageView alloc] init];
         _atImageView.contentMode = UIViewContentModeCenter;
@@ -529,9 +529,11 @@
 -(void)textViewDidChange:(UITextView *)textView {
     NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] initWithAttributedString:textView.attributedText];
     
-    if([textView.attributedText.string isEqualToString:@""]){
+    if(!textView.hasText) {
+        [_placeholderLabel setHidden:NO];
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
+        [_placeholderLabel setHidden:YES];
         _textHeight = [attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
     }
     [self updateTextViewFrame];
@@ -579,6 +581,7 @@
 }
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

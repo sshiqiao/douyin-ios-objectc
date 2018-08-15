@@ -7,6 +7,7 @@
 //
 
 #import "WebSocketManager.h"
+#import "NetworkHelper.h"
 #import "Constants.h"
 //赋值消息通知常量名称
 NSString *const WebSocketDidReceiveMessageNotification = @"WebSocketDidReceiveMessageNotification";
@@ -43,33 +44,16 @@ NSInteger const MaxReConnectTime = 5;
         //连接参数为udid
         [_request addValue:UDID forHTTPHeaderField:@"udid"];
         _reOpenCount = 0;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNetworkStatusChange:) name:NetworkStatesChangeNotification object:nil];
     }
     return self;
 }
 
-//KVO，观察SRWebSocket.readyState值变化来实时监听当前连接状态
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"readyState"]) {
-        //状态为正在关闭SR_CLOSING或者关闭SR_CLOSED则重新建立连接，重连间隔时间为5s，最大重连次数为5次
-        if(_webSocket.readyState == SR_CLOSING || _webSocket.readyState == SR_CLOSED) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                if(self.webSocket.readyState == SR_OPEN) {
-                    self.reOpenCount = 0;
-                    return;
-                }
-                if(self.reOpenCount >= MaxReConnectTime) {
-                    self.reOpenCount = 0;
-                    return;
-                }
-                [self reConnect];
-                self.reOpenCount++;
-            });
-        }
-        if(_webSocket.readyState == SR_OPEN) {
-            _reOpenCount = 0;
-        }
-    } else {
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+//网络状态发送变化，判断是否重新连接
+-(void)onNetworkStatusChange:(NSNotification *)notification {
+    if(_webSocket != nil && ![NetworkHelper isNotReachableStatus:[NetworkHelper networkStatus]] && [self isClosed]) {
+        [self reConnect];
     }
 }
 
@@ -89,7 +73,6 @@ NSInteger const MaxReConnectTime = 5;
     }
     _webSocket = [[SRWebSocket alloc] initWithURLRequest:_request];
     _webSocket.delegate = self;
-    [_webSocket addObserver:self forKeyPath:@"readyState" options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionPrior context:nil];
     [_webSocket open];
 }
 
@@ -97,6 +80,32 @@ NSInteger const MaxReConnectTime = 5;
 - (void)reConnect {
     [self disConnect];
     [self connect];
+}
+
+//判断连接是否断开
+- (BOOL)isClosed {
+    if(_webSocket.readyState == SR_OPEN || _webSocket.readyState == SR_CLOSED) {
+        return YES;
+    }
+    return NO;
+}
+
+//开启多次重新连接
+- (void)startReconnect {
+    if(![NetworkHelper isNotReachableStatus:[NetworkHelper networkStatus]]) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            if(![self isClosed]) {
+                self.reOpenCount = 0;
+                return;
+            }
+            if(self.reOpenCount >= MaxReConnectTime) {
+                self.reOpenCount = 0;
+                return;
+            }
+            [self reConnect];
+            self.reOpenCount++;
+        });
+    }
 }
 
 //发送消息
@@ -112,7 +121,19 @@ NSInteger const MaxReConnectTime = 5;
     [[NSNotificationCenter defaultCenter] postNotificationName:WebSocketDidReceiveMessageNotification object:message];
 }
 
+- (void)webSocketDidOpen:(SRWebSocket *)webSocket {
+    _reOpenCount = 0;
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didFailWithError:(NSError *)error {
+    [self startReconnect];
+}
+
+- (void)webSocket:(SRWebSocket *)webSocket didCloseWithCode:(NSInteger)code reason:(NSString *)reason wasClean:(BOOL)wasClean {
+    [self startReconnect];
+}
+
 - (void)dealloc {
-    [_webSocket removeObserver:self forKeyPath:@"readyState"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end

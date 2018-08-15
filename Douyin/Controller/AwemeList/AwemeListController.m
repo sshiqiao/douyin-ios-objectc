@@ -95,10 +95,11 @@
     NSArray<AwemeListCell *> *cells = [_tableView visibleCells];
     for(AwemeListCell *cell in cells) {
         [cell.playerView cancelLoading];
-        [cell.playerView removeObserver];
     }
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeObserver:self forKeyPath:@"currentIndex"];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma tableView delegate
@@ -126,7 +127,7 @@
         CGPoint translatedPoint = [scrollView.panGestureRecognizer translationInView:scrollView];
         //UITableView禁止响应其他滑动手势
         scrollView.panGestureRecognizer.enabled = NO;
-        
+    
         if(translatedPoint.y < -50 && self.currentIndex < (self.data.count - 1)) {
             self.currentIndex ++;   //向下滑动索引递增
         }

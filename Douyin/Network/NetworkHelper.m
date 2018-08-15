@@ -7,6 +7,8 @@
 //
 
 #import "NetworkHelper.h"
+NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotification";
+
 @implementation NetworkHelper
 
 +(AFHTTPSessionManager *)sharedManager{
@@ -22,10 +24,7 @@
 }
 
 
-
-
 //porcess response data
-
 +(void)processResponseData:(id)responseObject success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSInteger code = -1;
     NSString *message = @"response data error";
@@ -42,8 +41,6 @@
         failure(error);
     }
 }
-
-
 
 +(NSURLSessionDataTask *)getWithUrlPath:(NSString *)urlPath request:(BaseRequest *)request success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
@@ -128,4 +125,43 @@
     }];
 }
 
+//Reachability
++(AFNetworkReachabilityManager *)shareReachabilityManager {
+    static dispatch_once_t once;
+    static AFNetworkReachabilityManager *manager;
+    dispatch_once(&once, ^{
+        manager = [AFNetworkReachabilityManager manager];
+    });
+    return manager;
+}
+
++ (void)startListening {
+    [[NetworkHelper shareReachabilityManager] startMonitoring];
+    [[NetworkHelper shareReachabilityManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:NetworkStatesChangeNotification object:nil];
+        if(![NetworkHelper isNotReachableStatus:status]) {
+            [NetworkHelper registerUserInfo];
+        }
+    }];
+}
+
++ (AFNetworkReachabilityStatus)networkStatus {
+    return [NetworkHelper shareReachabilityManager].networkReachabilityStatus;
+}
+
++ (BOOL)isNotReachableStatus:(AFNetworkReachabilityStatus)status {
+    return status == AFNetworkReachabilityStatusNotReachable;
+}
+
+//visitor
++ (void)registerUserInfo {
+    VisitorRequest *request = [VisitorRequest new];
+    request.udid = UDID;
+    [NetworkHelper postWithUrlPath:CREATE_VISITOR_BY_UDID_URL request:request success:^(id data) {
+        VisitorResponse *response = [[VisitorResponse alloc] initWithDictionary:data error:nil];
+        writeVisitor(response.data);
+    } failure:^(NSError *error) {
+        NSLog(@"Register visitor failed.");
+    }];
+}
 @end
