@@ -133,7 +133,7 @@
         default:
             break;
     }
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://sshiqiao.github.io/document/douyin.html"]];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/sshiqiao/douyin-ios-objectc"]];
     [self dismiss];
 }
 - (void)onActionItemTap:(UITapGestureRecognizer *)sender {

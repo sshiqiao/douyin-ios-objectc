@@ -121,7 +121,6 @@ NSInteger const EmotionSelectorHeight = 220;
     [textView addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew context:nil];
 }
 
-
 - (void)removeTextViewObserver:(UITextView *)textView {
     [textView removeObserver:self forKeyPath:@"attributedText"];
 }

@@ -9,9 +9,6 @@
 #import "RefreshControl.h"
 #import "Masonry.h"
 @implementation RefreshControl
-- (instancetype)init {
-    return [self initWithFrame:CGRectZero];
-}
 
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:CGRectMake(0, -50, SCREEN_WIDTH, 50)];

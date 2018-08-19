@@ -109,6 +109,13 @@
 
 //取消播放
 -(void)cancelLoading {
+    //隐藏playerLayer
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [self.playerLayer setHidden:YES];
+    [CATransaction commit];
+    
+    
     //取消查找本地视频缓存数据的NSOperation任务
     [_queryCacheOperation cancel];
     
@@ -120,11 +127,6 @@
     self.player = nil;
     self.playerItem = nil;
     
-    //隐藏playerLayer
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [self.playerLayer setHidden:YES];
-    [CATransaction commit];
     
     __weak __typeof(self) wself = self;
     dispatch_async(self.cancelLoadingQueue, ^{

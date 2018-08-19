@@ -133,7 +133,9 @@ NSInteger const PhotoSelectorHeight = 220;
         for(PHAsset *asset in _selectedData) {
             CGFloat imageHeight = _originalPhoto.isSelected ? asset.pixelHeight : (asset.pixelHeight > 1000 ? 1000 : asset.pixelHeight);
             [manager requestImageForAsset:asset targetSize:CGSizeMake(imageHeight*((CGFloat)asset.pixelWidth/(CGFloat)asset.pixelHeight), imageHeight) contentMode:PHImageContentModeAspectFit options:options resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
-                [images addObject:result];
+                if (result != nil) {
+                    [images addObject:result];
+                }
                 if(images.count == self.selectedData.count) {
                     [self.delegate onSend:images];
                     [self.selectedData removeAllObjects];

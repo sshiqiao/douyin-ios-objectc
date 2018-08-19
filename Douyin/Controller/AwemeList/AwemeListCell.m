@@ -388,28 +388,34 @@
 }
 
 //加载动画
--(void)startLoadingPlayItemAnim {
-    self.playerStatusBar.backgroundColor = ColorWhite;
-    [self.playerStatusBar setHidden:NO];
-    [self.playerStatusBar.layer removeAllAnimations];
+-(void)startLoadingPlayItemAnim:(BOOL)isStart {
+    if (isStart) {
+        self.playerStatusBar.backgroundColor = ColorWhite;
+        [self.playerStatusBar setHidden:NO];
+        [self.playerStatusBar.layer removeAllAnimations];
+        
+        CAAnimationGroup *animationGroup = [[CAAnimationGroup alloc]init];
+        animationGroup.duration = 0.5;
+        animationGroup.beginTime = CACurrentMediaTime() + 0.5;
+        animationGroup.repeatCount = MAXFLOAT;
+        animationGroup.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        
+        CABasicAnimation * scaleAnimation = [CABasicAnimation animation];
+        scaleAnimation.keyPath = @"transform.scale.x";
+        scaleAnimation.fromValue = @(1.0f);
+        scaleAnimation.toValue = @(1.0f * SCREEN_WIDTH);
+        
+        CABasicAnimation * alphaAnimation = [CABasicAnimation animation];
+        alphaAnimation.keyPath = @"opacity";
+        alphaAnimation.fromValue = @(1.0f);
+        alphaAnimation.toValue = @(0.5f);
+        [animationGroup setAnimations:@[scaleAnimation, alphaAnimation]];
+        [self.playerStatusBar.layer addAnimation:animationGroup forKey:nil];
+    } else {
+        [self.playerStatusBar.layer removeAllAnimations];
+        [self.playerStatusBar setHidden:YES];
+    }
     
-    CAAnimationGroup *animationGroup = [[CAAnimationGroup alloc]init];
-    animationGroup.duration = 0.5;
-    animationGroup.beginTime = CACurrentMediaTime() + 0.5;
-    animationGroup.repeatCount = MAXFLOAT;
-    animationGroup.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    
-    CABasicAnimation * scaleAnimation = [CABasicAnimation animation];
-    scaleAnimation.keyPath = @"transform.scale.x";
-    scaleAnimation.fromValue = @(1.0f);
-    scaleAnimation.toValue = @(1.0f * SCREEN_WIDTH);
-    
-    CABasicAnimation * alphaAnimation = [CABasicAnimation animation];
-    alphaAnimation.keyPath = @"opacity";
-    alphaAnimation.fromValue = @(1.0f);
-    alphaAnimation.toValue = @(0.5f);
-    [animationGroup setAnimations:@[scaleAnimation, alphaAnimation]];
-    [self.playerStatusBar.layer addAnimation:animationGroup forKey:nil];
 }
 
 // AVPlayerUpdateDelegate
@@ -420,11 +426,10 @@
 -(void)onPlayItemStatusUpdate:(AVPlayerItemStatus)status {
     switch (status) {
         case AVPlayerItemStatusUnknown:
-            [self startLoadingPlayItemAnim];
+            [self startLoadingPlayItemAnim:YES];
             break;
         case AVPlayerItemStatusReadyToPlay:
-            [self.playerStatusBar.layer removeAllAnimations];
-            [self.playerStatusBar setHidden:YES];
+            [self startLoadingPlayItemAnim:NO];
             
             self.isPlayerReady = YES;
             [self.musicAlum startAnimation:_aweme.rate];
@@ -434,8 +439,7 @@
             }
             break;
         case AVPlayerItemStatusFailed:
-            [self.playerStatusBar.layer removeAllAnimations];
-            [self.playerStatusBar setHidden:YES];
+            [self startLoadingPlayItemAnim:NO];
             [UIWindow showTips:@"加载失败"];
             break;
         default:

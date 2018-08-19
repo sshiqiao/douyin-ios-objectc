@@ -52,12 +52,6 @@
     
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, [self navagationBarHeight] + STATUS_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - ([self navagationBarHeight] + STATUS_BAR_HEIGHT) - 10)];
     _tableView.backgroundColor = ColorClear;
-    _refreshControl = [RefreshControl new];
-    __weak __typeof(self) weakSelf = self;
-    [_refreshControl setOnRefresh:^{
-        [weakSelf loadData:weakSelf.pageIndex pageSize:weakSelf.pageSize];
-    }];
-    [_tableView addSubview:_refreshControl];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     _tableView.alwaysBounceVertical = YES;
@@ -72,6 +66,13 @@
     [self.tableView registerClass:ImageMessageCell.class forCellReuseIdentifier:IMAGE_MESSAGE_CELL];
     [self.tableView registerClass:TextMessageCell.class forCellReuseIdentifier:TEXT_MESSAGE_CELL];
     [self.view addSubview:_tableView];
+    
+    _refreshControl = [RefreshControl new];
+    __weak __typeof(self) weakSelf = self;
+    [_refreshControl setOnRefresh:^{
+        [weakSelf loadData:weakSelf.pageIndex pageSize:weakSelf.pageSize];
+    }];
+    [_tableView addSubview:_refreshControl];
     
     _textView = [ChatTextView new];
     _textView.delegate = self;
@@ -150,7 +151,9 @@
             [wself.refreshControl loadAll];
         }
         [UIView setAnimationsEnabled:YES];
-    } failure:^(NSError *error) {}];
+    } failure:^(NSError *error) {
+        [wself.refreshControl endRefresh];
+    }];
 }
 
 - (void)processData:(NSArray<GroupChat *> *)data {

@@ -49,6 +49,7 @@
 -(void)prepareForReuse {
     [super prepareForReuse];
     _imageMsg.image = nil;
+    [_progressView setProgress:0];
 }
 
 -(void)layoutSubviews {

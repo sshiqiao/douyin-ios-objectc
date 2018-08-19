@@ -87,11 +87,11 @@
 
 
 - (void)initCollectionView {
-    _itemWidth = (SCREEN_WIDTH - 2) / 3.0f;
+    _itemWidth = (SCREEN_WIDTH - (CGFloat)(((NSInteger)(SCREEN_WIDTH)) % 3) ) / 3.0f - 1.0f;
     _itemHeight = _itemWidth * 1.3f;
     HoverViewFlowLayout  *layout=[[HoverViewFlowLayout alloc] initWithNavHeight:[self navagationBarHeight] + STATUS_BAR_HEIGHT];
     layout.minimumLineSpacing = 1;
-    layout.minimumInteritemSpacing = 1;
+    layout.minimumInteritemSpacing = 0;
     _collectionView = [[UICollectionView  alloc]initWithFrame:SCREEN_FRAME collectionViewLayout:layout];
     _collectionView.backgroundColor = ColorClear;
     if (@available(iOS 11.0, *)) {
