@@ -8,7 +8,10 @@
 
 ## 展示图
 
-![image](https://github.com/sshiqiao/douyin-ios-objectc/cblob/master/screenshot/demo1.png)
+![image](https://sshiqiao.github.io/assets/demo1.gif)
+![image](https://sshiqiao.github.io/assets/demo2.gif)
+![image](https://sshiqiao.github.io/assets/demo3.gif)
+![image](https://sshiqiao.github.io/assets/demo5.gif)
 
 抖音demo使用说明文档地址请点击[这里](https://sshiqiao.github.io/document/douyin-objectc.html)，文档结构如下所示：
 
