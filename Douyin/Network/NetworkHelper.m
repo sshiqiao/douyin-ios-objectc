@@ -16,7 +16,7 @@ NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotificat
     static AFHTTPSessionManager *manager;
     dispatch_once(&once, ^{
         manager = [AFHTTPSessionManager manager];
-        manager.requestSerializer.timeoutInterval = 60.0f;
+        manager.requestSerializer.timeoutInterval = 15.0f;
         
     });
     

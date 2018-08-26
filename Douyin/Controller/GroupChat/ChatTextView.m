@@ -334,10 +334,13 @@
 
 //添加表情
 - (void)onSelect:(NSString *)emotionKey {
+    [_placeholderLabel setHidden:true];
+    
     NSInteger location = _textView.selectedRange.location;
     [_textView setAttributedText:[EmotionHelper insertEmotion:_textView.attributedText index:location emotionKey:emotionKey]];
     [_textView setSelectedRange:NSMakeRange(location + 1, 0)];
     _textHeight = [_textView.attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
+    
     [self updateContainerFrame];
     [self updateSelectorFrame:NO];
 }

@@ -272,7 +272,7 @@
     @synchronized (self) {
         //创建网络资源下载请求，并设置网络请求代理
         NSURLSessionConfiguration *sessionConfig = [NSURLSessionConfiguration defaultSessionConfiguration];
-        sessionConfig.timeoutIntervalForRequest = 30;
+        sessionConfig.timeoutIntervalForRequest = 15;
         _session = [NSURLSession sessionWithConfiguration:sessionConfig
                                                  delegate:self
                                             delegateQueue:nil];

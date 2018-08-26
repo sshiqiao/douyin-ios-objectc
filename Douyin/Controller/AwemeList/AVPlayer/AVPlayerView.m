@@ -234,7 +234,7 @@
     if(self.task == nil) {
         //将当前的请求路径的scheme换成https，进行普通的网球请求
         NSURL *URL = [[loadingRequest.request URL].absoluteString urlScheme:self.sourceScheme];
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:60];
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
         self.task = [self.session dataTaskWithRequest:request];
         [self.task resume];
     }

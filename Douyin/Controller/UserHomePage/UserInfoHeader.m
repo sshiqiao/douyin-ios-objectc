@@ -232,6 +232,7 @@
     }];
     
     _constellation = [[UITextView alloc] init];
+    _constellation.text = @"座";
     _constellation.textColor = ColorWhite;
     _constellation.font = SuperSmallFont;
     _constellation.scrollEnabled = NO;
