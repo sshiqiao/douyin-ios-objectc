@@ -10,8 +10,8 @@
 #import "UserHomePageController.h"
 #import "NetworkHelper.h"
 #import "WebSocketManager.h"
-#import "Visitor.h"
 #import "AVPlayerManager.h"
+
 @interface AppDelegate ()
 
 @end
@@ -31,6 +31,17 @@
     [AVPlayerManager setAudioMode];
     
     return YES;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+    
+    CGPoint touchLocation = [[[event allTouches] anyObject] locationInView:self.window];
+    CGRect statusBarFrame = [UIApplication sharedApplication].statusBarFrame;
+    
+    if (CGRectContainsPoint(statusBarFrame, touchLocation)) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:StatusBarTouchBeginNotification object:nil];
+    }
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {

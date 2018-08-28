@@ -51,7 +51,7 @@
 //获取评论列表
 #define FIND_COMMENT_BY_PAGE_URL               @"comment/list"
 
-
+#define StatusBarTouchBeginNotification        @"StatusBarTouchBeginNotification"
 
 //loading type enum
 typedef NS_ENUM(NSUInteger,LoadingType) {

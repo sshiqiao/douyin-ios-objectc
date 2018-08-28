@@ -43,6 +43,8 @@
         
         _awemes = [data mutableCopy];
         _data = [[NSMutableArray alloc] initWithObjects:[_awemes objectAtIndex:_currentIndex], nil];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarTouchBegin) name:StatusBarTouchBeginNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationBecomeActive) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name: UIApplicationDidEnterBackgroundNotification object:nil];
     }
@@ -148,6 +150,10 @@
 }
 
 #pragma KVO
+- (void)statusBarTouchBegin {
+    _currentIndex = 0;
+}
+
 - (void)applicationBecomeActive {
     AwemeListCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0]];
     if(!_isCurPlayerPause) {
