@@ -65,20 +65,18 @@
 
 //对当前并发的所有队列进行处理，保证正在执行的队列数量不超过最大执行的队列数
 -(void)processQueues {
-    @synchronized(_requestQueueArray) {
-        [_requestQueueArray enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSOperationQueue *queue, NSUInteger idx, BOOL *stop) {
-            if(self.requestQueueArray.count <= self.maxQueueCount) {
+    [_requestQueueArray enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSOperationQueue *queue, NSUInteger idx, BOOL *stop) {
+        if(self.requestQueueArray.count <= self.maxQueueCount) {
+            [self suspendQueue:queue suspended:NO];
+        }else {
+            //判断队列是否在中间，是的话就唤醒，在两边的话则刮起，保证队列从中间开始执行，依次向两端扩散执行
+            if((self.requestQueueArray.count/2 - self.maxQueueCount/2) <= idx && idx <= (self.requestQueueArray.count/2 + self.maxQueueCount/2)) {
                 [self suspendQueue:queue suspended:NO];
             }else {
-                //判断队列是否在中间，是的话就唤醒，在两边的话则刮起，保证队列从中间开始执行，依次向两端扩散执行
-                if((self.requestQueueArray.count/2 - self.maxQueueCount/2) <= idx && idx <= (self.requestQueueArray.count/2 + self.maxQueueCount/2)) {
-                    [self suspendQueue:queue suspended:NO];
-                }else {
-                    [self suspendQueue:queue suspended:YES];
-                }
+                [self suspendQueue:queue suspended:YES];
             }
-        }];
-    }
+        }
+    }];
 }
 
 //移除任务已经完成的队列，并更新当前正在执行的队列
@@ -86,7 +84,9 @@
     if ([keyPath isEqualToString:@"operations"]) {
         NSOperationQueue *queue = object;
         if ([queue.operations count] == 0) {
-            [_requestQueueArray removeObject:queue];
+            @synchronized(_requestQueueArray) {
+                [_requestQueueArray removeObject:queue];
+            }
             [self processQueues];
         }
     }else {
