@@ -58,6 +58,9 @@
 }
 
 - (void)replay:(AVPlayer *)player {
+    [_playerArray enumerateObjectsUsingBlock:^(AVPlayer * obj, NSUInteger idx, BOOL *stop) {
+        [obj pause];
+    }];
     if([_playerArray containsObject:player]) {
         [player seekToTime:kCMTimeZero];
         [self play:player];

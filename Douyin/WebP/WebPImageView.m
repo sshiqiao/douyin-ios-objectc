@@ -184,7 +184,6 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
         WebPImageOperation *operation = [[WebPImageOperation alloc] initWithWebImage:_webPImage completedBlock:^(WebPFrame *frame) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [wself.layer setNeedsDisplay];
-//                wself.layer.contents = (__bridge id _Nullable)(frame.image.CGImage);
             });
         }];
         [_requestQueue addOperation:operation];

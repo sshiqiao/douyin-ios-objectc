@@ -86,7 +86,6 @@
 		3B00F2F9210EE78F00E99DE5 /* AwemeCollectionCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B00F2F8210EE78F00E99DE5 /* AwemeCollectionCell.m */; };
 		3B00F2FC210EE7A700E99DE5 /* HoverViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B00F2FB210EE7A700E99DE5 /* HoverViewFlowLayout.m */; };
 		3B2A3462210EC773005738DD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B2A3461210EC773005738DD /* AppDelegate.m */; };
-		3B2A3468210EC773005738DD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3B2A3466210EC773005738DD /* Main.storyboard */; };
 		3B2A346A210EC775005738DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3B2A3469210EC775005738DD /* Assets.xcassets */; };
 		3B2A3470210EC775005738DD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B2A346F210EC775005738DD /* main.m */; };
 		3B2A347A210EC775005738DD /* DouyinTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B2A3479210EC775005738DD /* DouyinTests.m */; };
@@ -278,7 +277,6 @@
 		3B2A345D210EC773005738DD /* Douyin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Douyin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B2A3460210EC773005738DD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3B2A3461210EC773005738DD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		3B2A3467210EC773005738DD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3B2A3469210EC775005738DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B2A346E210EC775005738DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B2A346F210EC775005738DD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -619,7 +617,6 @@
 				3B00F291210EE0EB00E99DE5 /* Controller */,
 				3B2A3460210EC773005738DD /* AppDelegate.h */,
 				3B2A3461210EC773005738DD /* AppDelegate.m */,
-				3B2A3466210EC773005738DD /* Main.storyboard */,
 				3B00F205210ED68C00E99DE5 /* LaunchScreen.storyboard */,
 				3B2A346E210EC775005738DD /* Info.plist */,
 				3B2A346F210EC775005738DD /* main.m */,
@@ -784,7 +781,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B00F207210ED68C00E99DE5 /* LaunchScreen.storyboard in Resources */,
-				3B2A3468210EC773005738DD /* Main.storyboard in Resources */,
 				3B2A346A210EC775005738DD /* Assets.xcassets in Resources */,
 				3B2A349E210EC9A8005738DD /* Emoticons.bundle in Resources */,
 				3B2A349B210EC9A8005738DD /* groupchats.json in Resources */,
@@ -958,14 +954,6 @@
 				3B00F206210ED68C00E99DE5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		3B2A3466210EC773005738DD /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3B2A3467210EC773005738DD /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
