@@ -176,11 +176,11 @@
             [self setHidden:NO];
             [_indicatorView setHidden:NO];
             [_label setText:@"内容加载中..."];
-            [_label mas_makeConstraints:^(MASConstraintMaker *make) {
+            [_label mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.centerY.equalTo(self);
                 make.centerX.equalTo(self).offset(20);
             }];
-            [_indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
+            [_indicatorView mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.centerY.equalTo(self);
                 make.right.equalTo(self.label.mas_left).inset(5);
                 make.width.height.mas_equalTo(15);
@@ -194,7 +194,7 @@
             [self setHidden:NO];
             [_indicatorView setHidden:YES];
             [_label setText:@"没有更多了哦～"];
-            [_label mas_makeConstraints:^(MASConstraintMaker *make) {
+            [_label mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.center.equalTo(self);
             }];
             [self stopAnim];
@@ -205,7 +205,7 @@
             [self setHidden:NO];
             [_indicatorView setHidden:YES];
             [_label setText:@"加载更多"];
-            [_label mas_makeConstraints:^(MASConstraintMaker *make) {
+            [_label mas_updateConstraints:^(MASConstraintMaker *make) {
                 make.center.equalTo(self);
             }];
             [self stopAnim];
