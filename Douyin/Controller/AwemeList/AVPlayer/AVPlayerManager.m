@@ -64,6 +64,9 @@
     if([_playerArray containsObject:player]) {
         [player seekToTime:kCMTimeZero];
         [self play:player];
+    }else {
+        [_playerArray addObject:player];
+        [self play:player];
     }
 }
 @end
