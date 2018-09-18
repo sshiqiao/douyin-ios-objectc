@@ -206,7 +206,7 @@
         make.left.equalTo(self.musicIcon.mas_right);
         make.centerY.equalTo(self.musicIcon);
         make.width.mas_equalTo(SCREEN_WIDTH/2);
-        make.height.mas_equalTo(20);
+        make.height.mas_equalTo(24);
     }];
     [_desc mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(10);

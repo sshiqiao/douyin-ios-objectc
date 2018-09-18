@@ -51,7 +51,7 @@
     [super layoutSubviews];
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    _textLayer.frame = _textLayerFrame;
+    _textLayer.frame = CGRectMake(0, self.bounds.size.height/2 - _textLayerFrame.size.height/2, _textLayerFrame.size.width, _textLayerFrame.size.height);
     _maskLayer.frame = self.bounds;
     _maskLayer.path = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
     [CATransaction commit];
