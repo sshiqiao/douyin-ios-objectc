@@ -1,6 +1,6 @@
 # iOS仿抖音app 
 
-抖音demo适配了iphone、ipad，同时兼容iOS8.0至iOS11.0系统。当前抖音demo使用Object-C语言编写，Swift版本请点击[这里](https://github.com/sshiqiao/douyin-ios-swift)。
+抖音demo适配了iphone、ipad，同时兼容iOS8.0至iOS12.0系统。当前抖音demo使用Object-C语言编写，Swift版本请点击[这里](https://github.com/sshiqiao/douyin-ios-swift)。
 
 ## 结构
 
