@@ -74,7 +74,7 @@
             [endPath moveToPoint:CGPointMake(-2, -length)];
             [endPath addLineToPoint:CGPointMake(2, -length)];
             [endPath addLineToPoint:CGPointMake(0, -length)];
-            
+
             layer.path = startPath.CGPath;
             layer.transform = CATransform3DMakeRotation(M_PI / 3.0f * i, 0.0, 0.0, 1.0);
             [self.layer addSublayer:layer];

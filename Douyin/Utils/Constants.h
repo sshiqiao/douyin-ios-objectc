@@ -13,6 +13,7 @@
 #import "NSNotification+Extension.h"
 #import "NSAttributedString+Extension.h"
 #import "UIImageView+WebCache.h"
+#import "CADisplayLink+Tool.h"
 
 #define NetworkDomain @"com.start.douyin"
 
@@ -79,9 +80,11 @@ typedef NS_ENUM(NSUInteger,ChatEditMessageType) {
 
 typedef NS_ENUM(NSUInteger,MenuActionType) {
     DeleteAction        = 0,
-    CopyAction         = 1,
+    CopyAction          = 1,
     PasteAction         = 2
 };
+
+//static UIEdgeInsets SafeAreaEdgeInsets;
 
 #define writeVisitor(visitor)\
 ({\
@@ -120,11 +123,14 @@ dispatch_async(dispatch_get_main_queue(), block);\
 #define UDID [[[UIDevice currentDevice] identifierForVendor] UUIDString]
 #define MD5_UDID [UDID md5]
 
-//width
+
+//size
 #define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
 
 #define STATUS_BAR_HEIGHT [UIApplication sharedApplication].statusBarFrame.size.height
+#define SafeAreaTopHeight ((SCREEN_HEIGHT >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"] ? 88 : 64)
+#define SafeAreaBottomHeight ((SCREEN_HEIGHT >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"]  ? 30 : 0)
 
 #define SCREEN_FRAME [UIScreen mainScreen].bounds
 

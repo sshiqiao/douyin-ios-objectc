@@ -43,9 +43,9 @@ typedef void(^WebDownloaderCancelBlock)(void);
 
 
 //处理网络资源缓存类
-@interface WebCache : NSObject
+@interface WebCacheHelpler : NSObject
 //单例
-+ (WebCache *)sharedWebCache;
++ (WebCacheHelpler *)sharedWebCache;
 //根据key值从内存和本地磁盘中查询缓存数据
 -(NSOperation *)queryDataFromMemory:(NSString *)key cacheQueryCompletedBlock:(WebCacheQueryCompletedBlock)cacheQueryCompletedBlock;
 //根据key值从本地磁盘中查询缓存数据

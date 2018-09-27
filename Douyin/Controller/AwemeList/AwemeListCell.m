@@ -190,14 +190,14 @@
     
     [_playerStatusBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
-        make.bottom.equalTo(self).inset(49.5f);
+        make.bottom.equalTo(self).inset(49.5f + SafeAreaBottomHeight);
         make.width.mas_equalTo(1.0f);
         make.height.mas_equalTo(0.5f);
     }];
     
     [_musicIcon mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self);
-        make.bottom.equalTo(self).inset(60);
+        make.bottom.equalTo(self).inset(60 + SafeAreaBottomHeight);
         make.width.mas_equalTo(30);
         make.height.mas_equalTo(25);
     }];

@@ -129,7 +129,7 @@
         _superView = (UIScrollView *)[self superview];
         [_superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
         UIEdgeInsets edgeInsets = _superView.contentInset;
-        edgeInsets.bottom += 50;
+        edgeInsets.bottom += (50 + SafeAreaBottomHeight);
         _superView.contentInset = edgeInsets;
     }
 }

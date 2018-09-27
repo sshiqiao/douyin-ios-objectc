@@ -50,6 +50,7 @@
         _container.backgroundColor = ColorThemeGrayDark;
         [self addSubview:_container];
         
+        _containerBoardHeight = SafeAreaBottomHeight;
         _editMessageType = EditNoneMessage;
         
         _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0)];
@@ -120,7 +121,7 @@
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if([keyPath isEqualToString:@"containerBoardHeight"]) {
-        if(_containerBoardHeight == 0 ){
+        if(_containerBoardHeight == SafeAreaBottomHeight ){
             _container.backgroundColor = ColorThemeGrayDark;
             _textView.textColor = ColorWhite;
             
@@ -163,7 +164,7 @@
 }
 
 - (void)updateContainerFrame {
-    CGFloat textViewHeight = _containerBoardHeight > 0 ? _textHeight + 2*TOP_BOTTOM_INSET : BigFont.lineHeight + 2*TOP_BOTTOM_INSET;
+    CGFloat textViewHeight = _containerBoardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : BigFont.lineHeight + 2*TOP_BOTTOM_INSET;
     _textView.frame = CGRectMake(0, 0, SCREEN_WIDTH,  textViewHeight);
     [UIView animateWithDuration:0.25f
                           delay:0.0f
@@ -373,7 +374,8 @@
 //隐藏编辑板
 - (void)hideContainerBoard {
     _editMessageType = EditNoneMessage;
-    [self setContainerBoardHeight:0];
+    [self setContainerBoardHeight:SafeAreaBottomHeight];
+    [self updateSelectorFrame:YES];
     [self updateContainerFrame];
     [_textView resignFirstResponder];
     [_emotionBtn setSelected:NO];

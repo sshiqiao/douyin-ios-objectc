@@ -32,6 +32,8 @@
         self.backgroundColor = ColorClear;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
         
+        _keyboardHeight = SafeAreaBottomHeight;
+        
         _textView = [[UITextView alloc] init];
         _textView.backgroundColor = ColorClear;
         
@@ -96,13 +98,13 @@
 }
 
 - (void)updateTextViewFrame {
-    CGFloat textViewHeight = _keyboardHeight > 0 ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
+    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
     self.textView.frame = CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight - textViewHeight, SCREEN_WIDTH, textViewHeight);
 }
 
 - (void)updateRightViewsFrame {
     CGFloat originX = SCREEN_WIDTH;
-    originX -= _keyboardHeight > 0 ? 50 : (_textView.text.length > 0 ? 50 : 0);
+    originX -= _keyboardHeight > SafeAreaBottomHeight ? 50 : (_textView.text.length > 0 ? 50 : 0);
     [UIView animateWithDuration:0.25 animations:^{
         self.sendImageView.frame = CGRectMake(originX, 0, 50, 50);
         self.atImageView.frame = CGRectMake(CGRectGetMinX(self.sendImageView.frame) - 50, 0, 50, 50);
@@ -110,8 +112,8 @@
 }
 
 - (void)updateIconState {
-    _editImageView.image = _keyboardHeight > 0 ? [UIImage imageNamed:@"ic90Pen1"] : (_textView.text.length > 0 ? [UIImage imageNamed:@"ic90Pen1"] : [UIImage imageNamed:@"ic30Pen1"]);
-    _atImageView.image = _keyboardHeight > 0 ? [UIImage imageNamed:@"ic90WhiteAt"] : (_textView.text.length > 0 ? [UIImage imageNamed:@"ic90WhiteAt"] : [UIImage imageNamed:@"ic30WhiteAt"]);
+    _editImageView.image = _keyboardHeight > SafeAreaBottomHeight ? [UIImage imageNamed:@"ic90Pen1"] : (_textView.text.length > 0 ? [UIImage imageNamed:@"ic90Pen1"] : [UIImage imageNamed:@"ic30Pen1"]);
+    _atImageView.image = _keyboardHeight > SafeAreaBottomHeight ? [UIImage imageNamed:@"ic90WhiteAt"] : (_textView.text.length > 0 ? [UIImage imageNamed:@"ic90WhiteAt"] : [UIImage imageNamed:@"ic30WhiteAt"]);
     _sendImageView.image = _textView.text.length > 0 ? [UIImage imageNamed:@"ic30RedSend"] : [UIImage imageNamed:@"ic30WhiteSend"];
 }
 // send text action
@@ -138,7 +140,7 @@
 - (void)keyboardWillHide:(NSNotification *)notification {
     self.backgroundColor = ColorClear;
     //软键盘高度置0
-    _keyboardHeight = 0;
+    _keyboardHeight = SafeAreaBottomHeight;
     [self updateViewFrameAndState];
     if(_hoverDelegate){
         [_hoverDelegate hoverTextViewStateChange:NO];

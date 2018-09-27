@@ -89,7 +89,7 @@
 - (void)initCollectionView {
     _itemWidth = (SCREEN_WIDTH - (CGFloat)(((NSInteger)(SCREEN_WIDTH)) % 3) ) / 3.0f - 1.0f;
     _itemHeight = _itemWidth * 1.3f;
-    HoverViewFlowLayout  *layout=[[HoverViewFlowLayout alloc] initWithNavHeight:[self navagationBarHeight] + STATUS_BAR_HEIGHT];
+    HoverViewFlowLayout  *layout = [[HoverViewFlowLayout alloc] initWithNavHeight:SafeAreaTopHeight];
     layout.minimumLineSpacing = 1;
     layout.minimumInteritemSpacing = 0;
     _collectionView = [[UICollectionView  alloc]initWithFrame:SCREEN_FRAME collectionViewLayout:layout];
@@ -99,6 +99,7 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
+
     _collectionView.alwaysBounceVertical = YES;
     _collectionView.showsVerticalScrollIndicator = NO;
     
@@ -286,7 +287,7 @@
         case SETTING_TAG:{
             MenuPopView *menu = [[MenuPopView alloc] initWithTitles:@[@"清除缓存"]];
             [menu setOnAction:^(NSInteger index) {
-                [[WebCache sharedWebCache] clearCache:^(NSString *cacheSize) {
+                [[WebCacheHelpler sharedWebCache] clearCache:^(NSString *cacheSize) {
                     [UIWindow showTips:[NSString stringWithFormat:@"已经清除%@M缓存",cacheSize]];
                 }];
             }];

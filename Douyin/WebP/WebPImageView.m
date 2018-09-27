@@ -5,7 +5,7 @@
 //  Created by Qiao Shi on 2018/7/30.
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
-
+#import "Constants.h"
 #import "WebPImageView.h"
 #import "WebPImage.h"
 #import "WebPQueueManager.h"
@@ -119,7 +119,11 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
         
         //CADisplayLink类似NSTimer，在指定时间内对指定方法进调用，但是相对NSTimer而言更稳定，不会因为处理其他事件导致延误执行方法，默认情况下每1/60s调用一次指定方法
         //设置CADisplayLink的RunLoop模式为NSRunLoopCommonModes，指定调用方法为startAnimation:，并停止循环调用
-        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(startAnimation:)];
+        __weak __typeof(self) wself = self;
+        _displayLink = [CADisplayLink displayLinkWithExecuteBlock:^(CADisplayLink *displayLink) {
+            __strong __typeof(self) sself = wself;
+            [sself startAnimation:displayLink];
+        }];
         [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
         _displayLink.paused = YES;
         
@@ -151,10 +155,11 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
 //重写setImage方法
 - (void)setImage:(UIImage *)image {
     [super setImage:image];
+    
     //避免WebPImageView控件在UICollectionView或UITableView中复用时队列任务错乱，先取消当前队列正在执行的任务以及循环调用方法
     _displayLink.paused = YES;
-    [[WebPQueueManager shareWebPQueueManager] cancelQueue:_requestQueue];
     [_firstFrameQueue cancelAllOperations];
+    [[WebPQueueManager shareWebPQueueManager] cancelQueue:_requestQueue];
     
     //初始化数据
     _webPImage = (WebPImage *)image;
@@ -164,6 +169,7 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
     
     //开始解码WebP格式动图
     [self decodeFrames];
+    
 }
 
 //解码WebP格式动图

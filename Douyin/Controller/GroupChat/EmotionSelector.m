@@ -10,16 +10,15 @@
 #import "Constants.h"
 #import "Masonry.h"
 
-NSInteger const EmotionSelectorHeight = 220;
 
 #define EMOTION_CELL @"EmotionCell"
 
 @interface EmotionSelector () <UICollectionViewDelegate,UICollectionViewDataSource, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 @property (nonatomic, assign) CGFloat            itemWidth;
 @property (nonatomic, assign) CGFloat            itemHeight;
-@property (nonatomic, copy) NSMutableArray       *data;
+@property (nonatomic, strong) NSMutableArray       *data;
 @property (nonatomic, copy) NSDictionary         *emotionDic;
-@property (nonatomic, copy) NSMutableArray       *pointViews;
+@property (nonatomic, strong) NSMutableArray       *pointViews;
 @property (nonatomic, assign) NSInteger          currentIndex;
 @property (nonatomic, strong) UIView             *bottomView;
 @property (nonatomic, strong) UIButton           *send;
@@ -77,15 +76,18 @@ NSInteger const EmotionSelectorHeight = 220;
         }
         
         
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, _collectionView.frame.size.height + 25, SCREEN_WIDTH, 45)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, _collectionView.frame.size.height + 25, SCREEN_WIDTH, 45 + SafeAreaBottomHeight)];
         _bottomView.backgroundColor = ColorWhite;
         [self addSubview:_bottomView];
         
+        UIView *leftView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, _itemWidth, 45 + SafeAreaBottomHeight)];
+        leftView.backgroundColor = ColorSmoke;
+        [_bottomView addSubview:leftView];
+        
         UIImageView *defaultEmotion = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, _itemWidth, 45)];
-        defaultEmotion.backgroundColor = ColorSmoke;
         defaultEmotion.contentMode = UIViewContentModeCenter;
         defaultEmotion.image = [UIImage imageNamed:@"default_emoticon_cover"];
-        [_bottomView addSubview:defaultEmotion];
+        [leftView addSubview:defaultEmotion];
         
         _send = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60 - 15, 10, 60, 25)];
         _send.enabled = NO;
@@ -96,6 +98,8 @@ NSInteger const EmotionSelectorHeight = 220;
         [_send setTintColor:ColorWhite];
         [_send addTarget:self action:@selector(sendMessage) forControlEvents:UIControlEventTouchUpInside];
         [_bottomView addSubview:_send];
+        
+        
     }
     return self;
 }

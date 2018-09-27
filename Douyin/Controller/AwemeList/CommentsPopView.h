@@ -40,7 +40,10 @@
 @required
 -(void)onSendText:(NSString *)text;
 @end
+
+
 @interface CommentTextView : UIView
+@property (nonatomic, strong) UIView                         *container;
 @property (nonatomic, strong) UITextView                     *textView;
 @property (nonatomic, strong) id<CommentTextViewDelegate>    delegate;
 - (void)show;

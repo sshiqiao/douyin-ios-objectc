@@ -22,7 +22,7 @@
 @property (nonatomic , copy) NSString              *reply_id;
 @property (nonatomic , copy) NSString              *aweme_id;
 @property (nonatomic , assign) NSInteger           user_digged;
-@property (nonatomic , copy) NSMutableArray        *text_extra;
+@property (nonatomic , strong) NSMutableArray      *text_extra;
 @property (nonatomic , copy) NSString              *user_type;
 @property (nonatomic , strong) User                *user;
 @property (nonatomic , strong) Visitor             *visitor;

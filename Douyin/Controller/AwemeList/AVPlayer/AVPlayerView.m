@@ -79,7 +79,7 @@
     
     __weak __typeof(self) wself = self;
     //查找本地视频缓存数据
-    _queryCacheOperation = [[WebCache sharedWebCache] queryURLFromDiskMemory:_cacheFileKey cacheQueryCompletedBlock:^(id data, BOOL hasCache) {
+    _queryCacheOperation = [[WebCacheHelpler sharedWebCache] queryURLFromDiskMemory:_cacheFileKey cacheQueryCompletedBlock:^(id data, BOOL hasCache) {
         dispatch_async(dispatch_get_main_queue(), ^{
             //hasCache是否有缓存，data为本地缓存路径
             if(!hasCache) {
@@ -211,7 +211,7 @@
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
     if(!error) {
         //下载完毕，将缓存数据保存到本地
-        [[WebCache sharedWebCache] storeDataToDiskCache:_data key:_cacheFileKey extension:@"mp4"];
+        [[WebCacheHelpler sharedWebCache] storeDataToDiskCache:_data key:_cacheFileKey extension:@"mp4"];
     }else {
         NSLog(@"%@", error.description);
     }

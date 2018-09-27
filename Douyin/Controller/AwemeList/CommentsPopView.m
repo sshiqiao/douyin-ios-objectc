@@ -87,7 +87,7 @@
             make.width.height.mas_equalTo(30);
         }];
         
-        _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 35, SCREEN_WIDTH, SCREEN_HEIGHT*3/4 - 35 - 50) style:UITableViewStyleGrouped];
+        _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 35, SCREEN_WIDTH, SCREEN_HEIGHT*3/4 - 35 - 50 - SafeAreaBottomHeight) style:UITableViewStyleGrouped];
         _tableView.backgroundColor = ColorClear;
         _tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, 0.01f)];
         _tableView.contentInset = UIEdgeInsetsMake(0, 0, 50, 0);
@@ -106,7 +106,7 @@
         
         [_container addSubview:_tableView];
         
-        _textView = [[CommentTextView alloc] init];
+        _textView = [CommentTextView new];
         _textView.delegate = self;
         
         [self loadData:_pageIndex pageSize:_pageSize];
@@ -450,8 +450,15 @@
         self.backgroundColor = ColorClear;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
         
-        _textView = [[UITextView alloc] init];
-        _textView.backgroundColor = ColorBlackAlpha40;
+        
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50 - SafeAreaBottomHeight, SCREEN_WIDTH, 50 + SafeAreaBottomHeight)];
+        _container.backgroundColor = ColorBlackAlpha40;
+        [self addSubview:_container];
+        
+        _keyboardHeight = SafeAreaBottomHeight;
+        
+        _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 50)];
+        _textView.backgroundColor = ColorClear;
         
         _textView.clipsToBounds = NO;
         _textView.textColor = ColorWhite;
@@ -474,8 +481,7 @@
         _atImageView.contentMode = UIViewContentModeCenter;
         _atImageView.image = [UIImage imageNamed:@"iconWhiteaBefore"];
         [_textView addSubview:_atImageView];
-        [self addSubview:_textView];
-        
+        [_container addSubview:_textView];
         
         _textView.delegate = self;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -486,24 +492,22 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [self updateViewFrame];
-}
-
-- (void)updateViewFrame {
-    [self updateTextViewFrame];
     
     _atImageView.frame = CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50);
     
     UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:self.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
     CAShapeLayer* shape = [[CAShapeLayer alloc] init];
     [shape setPath:rounded.CGPath];
-    _textView.layer.mask = shape;
+    _container.layer.mask = shape;
     
+    [self updateTextViewFrame];
 }
 
+
 - (void)updateTextViewFrame {
-    CGFloat textViewHeight = _keyboardHeight > 0 ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
-    _textView.frame = CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight - textViewHeight, SCREEN_WIDTH, textViewHeight);
+    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
+    _textView.frame = CGRectMake(0, 0, SCREEN_WIDTH, textViewHeight);
+    _container.frame = CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight - textViewHeight, SCREEN_WIDTH, textViewHeight + _keyboardHeight);
 }
 
 //keyboard notification
@@ -511,16 +515,16 @@
     _keyboardHeight = [notification keyBoardHeight];
     [self updateTextViewFrame];
     _atImageView.image = [UIImage imageNamed:@"iconBlackaBefore"];
-    _textView.backgroundColor = ColorWhite;
+    _container.backgroundColor = ColorWhite;
     _textView.textColor = ColorBlack;
     self.backgroundColor = ColorBlackAlpha60;
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
-    _keyboardHeight = 0;
+    _keyboardHeight = SafeAreaBottomHeight;
     [self updateTextViewFrame];
     _atImageView.image = [UIImage imageNamed:@"iconWhiteaBefore"];
-    _textView.backgroundColor = ColorBlackAlpha40;
+    _container.backgroundColor = ColorBlackAlpha40;
     _textView.textColor = ColorWhite;
     self.backgroundColor = ColorClear;
 }

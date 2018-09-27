@@ -10,8 +10,6 @@
 #import "Constants.h"
 #import "Masonry.h"
 
-NSInteger const PhotoSelectorHeight = 220;
-
 #define PHOTO_CELL @"PhotoCell"
 
 #define ALBUM_TAG            1000
@@ -21,8 +19,8 @@ NSInteger const PhotoSelectorHeight = 220;
 #define PHOTO_ITEM_HEIGHT          170
 
 @interface PhotoSelector () <UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
-@property (nonatomic, copy) NSMutableArray<PHAsset *>       *data;
-@property (nonatomic, copy) NSMutableArray<PHAsset *>       *selectedData;
+@property (nonatomic, strong) NSMutableArray<PHAsset *>       *data;
+@property (nonatomic, strong) NSMutableArray<PHAsset *>       *selectedData;
 @property (nonatomic, strong) UIView                        *bottomView;
 @property (nonatomic, strong) UIButton                      *album;
 @property (nonatomic, strong) UIButton                      *originalPhoto;
@@ -64,7 +62,7 @@ NSInteger const PhotoSelectorHeight = 220;
         [self addSubview:_collectionView];
         
         
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_collectionView.frame) + 2.5, SCREEN_WIDTH, 45)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_collectionView.frame) + 2.5, SCREEN_WIDTH, 45 + SafeAreaBottomHeight)];
         _bottomView.backgroundColor = ColorWhite;
         [self addSubview:_bottomView];
         

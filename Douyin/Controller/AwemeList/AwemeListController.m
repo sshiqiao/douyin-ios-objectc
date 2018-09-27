@@ -59,7 +59,9 @@
 }
 
 - (void)setUpView {
-    _tableView = [[UITableView alloc] initWithFrame:self.view.frame];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT * 5)];
+    _tableView.contentInset = UIEdgeInsetsMake(0, 0, SCREEN_HEIGHT * 4, 0);
+    
     _tableView.backgroundColor = ColorClear;
     _tableView.delegate = self;
     _tableView.dataSource = self;

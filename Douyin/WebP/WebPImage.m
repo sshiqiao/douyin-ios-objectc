@@ -48,9 +48,11 @@
 
 - (WebPFrame *)decodeCurFrame {
     if(_frames.count > 0) {
-        _curDecodeIndex = _curDecodeIndex % _frames.count;
-        _curDisplayFrame = _frames[_curDecodeIndex];
-        _curDisplayFrame.image = [self decodeWebPImageAtIndex:_curDecodeIndex++];
+        @synchronized (self) {
+            _curDecodeIndex = _curDecodeIndex % _frames.count;
+            _curDisplayFrame = _frames[_curDecodeIndex];
+            _curDisplayFrame.image = [self decodeWebPImageAtIndex:_curDecodeIndex++];
+        }
         return _curDisplayFrame;
     }
     return nil;
@@ -122,6 +124,7 @@ static void freeWebpFrameImageData(void *info, const void *data, size_t size) {
             WebPDemuxReleaseIterator(&iter);
         }
     }
+    WebPDemuxDelete(demux);
 }
 
 - (UIImage *)decodeWebPImageAtIndex:(NSInteger)index {

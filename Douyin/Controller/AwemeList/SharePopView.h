@@ -10,7 +10,7 @@
 #import "Constants.h"
 @interface SharePopView:UIView
 @property (nonatomic, strong) UIView        *container;
-@property (nonatomic, strong) UILabel       *cancel;
+@property (nonatomic, strong) UIButton       *cancel;
 - (void)show;
 - (void)dismiss;
 @end

@@ -41,7 +41,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.automaticallyAdjustsScrollViewInsets = YES;
     
     _visitor = readVisitor();
     
@@ -50,7 +49,7 @@
     _pageIndex = 0;
     _pageSize = 20;
     
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, [self navagationBarHeight] + STATUS_BAR_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT - ([self navagationBarHeight] + STATUS_BAR_HEIGHT) - 10)];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT - SafeAreaTopHeight - 10)];
     _tableView.backgroundColor = ColorClear;
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -61,10 +60,10 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = YES;
     }
-    [self.tableView registerClass:TimeCell.class forCellReuseIdentifier:TIME_CELL];
-    [self.tableView registerClass:SystemMessageCell.class forCellReuseIdentifier:SYSTEM_MESSAGE_CELL];
-    [self.tableView registerClass:ImageMessageCell.class forCellReuseIdentifier:IMAGE_MESSAGE_CELL];
-    [self.tableView registerClass:TextMessageCell.class forCellReuseIdentifier:TEXT_MESSAGE_CELL];
+    [_tableView registerClass:TimeCell.class forCellReuseIdentifier:TIME_CELL];
+    [_tableView registerClass:SystemMessageCell.class forCellReuseIdentifier:SYSTEM_MESSAGE_CELL];
+    [_tableView registerClass:ImageMessageCell.class forCellReuseIdentifier:IMAGE_MESSAGE_CELL];
+    [_tableView registerClass:TextMessageCell.class forCellReuseIdentifier:TEXT_MESSAGE_CELL];
     [self.view addSubview:_tableView];
     
     _refreshControl = [RefreshControl new];
@@ -173,7 +172,6 @@
         }
         chat.cellHeight = [self cellHeight:chat];
         [tempArray addObject:chat];
-        
     }
     
     NSIndexSet *indexes = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0,[tempArray count])];

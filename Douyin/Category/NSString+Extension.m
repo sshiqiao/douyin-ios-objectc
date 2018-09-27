@@ -27,7 +27,13 @@
     CFAttributedStringSetAttribute(string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
     
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(string);
-    return CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), nil, CGSizeMake(DBL_MAX, DBL_MAX), nil);
+    CGSize size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), nil, CGSizeMake(DBL_MAX, DBL_MAX), nil);
+    
+    CFRelease(paragraphStyle);
+    CFRelease(string);
+    CFRelease(cfFont);
+    CFRelease(framesetter);
+    return size;
 }
 
 //固定宽度计算多行文本高度，支持包含emoji表情符的计算。开头空格、自定义插入的文本图片不纳入计算范围、
@@ -50,7 +56,15 @@
     CFAttributedStringSetAttribute(string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
     
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(string);
-    return CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), nil, CGSizeMake(width, DBL_MAX), nil);
+    
+    CGSize size = CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRangeMake(0, 0), nil, CGSizeMake(width, DBL_MAX), nil);
+    
+    CFRelease(paragraphStyle);
+    CFRelease(string);
+    CFRelease(cfFont);
+    CFRelease(framesetter);
+    
+    return size;
 }
 
 //计算单行文本宽度和高度，返回值与UIFont.lineHeight一致，支持开头空格计算。包含emoji表情符的文本行高返回值有较大偏差。

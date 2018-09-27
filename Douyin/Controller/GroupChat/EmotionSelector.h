@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSInteger const EmotionSelectorHeight;
+#define EmotionSelectorHeight         220 + SafeAreaBottomHeight
 
 @protocol EmotionSelectorDelegate
 @required

@@ -34,7 +34,7 @@
 
 
 //处理网络资源缓存类
-@interface WebCache()
+@interface WebCacheHelpler()
 @property (nonatomic, strong) NSCache *memCache;               //内存缓存
 @property (nonatomic, strong) NSFileManager *fileManager;      //文件管理类
 @property (nonatomic, strong) NSURL *diskCacheDirectoryURL;    //本地磁盘文件夹路径
@@ -42,9 +42,9 @@
 
 @end
 
-@implementation WebCache
+@implementation WebCacheHelpler
 //单例
-+ (WebCache *)sharedWebCache {
++ (WebCacheHelpler *)sharedWebCache {
     static dispatch_once_t once;
     static id instance;
     dispatch_once(&once, ^{
@@ -413,7 +413,7 @@
     __block WebCombineOperation *operation = [WebCombineOperation new];
     __weak __typeof(self)wself = self;
     //赋值组合任务WebCombineOperation中的查找缓存NSOperation任务
-    operation.cacheOperation = [[WebCache sharedWebCache] queryDataFromMemory:key cacheQueryCompletedBlock:^(NSData *data, BOOL hasCache) {
+    operation.cacheOperation = [[WebCacheHelpler sharedWebCache] queryDataFromMemory:key cacheQueryCompletedBlock:^(NSData *data, BOOL hasCache) {
         //判断是否查找到缓存
         if(hasCache) {
             //查找到则直接返回缓存数据
@@ -427,7 +427,7 @@
                 if(completedBlock) {
                     if(finished && !error) {
                         //若下载任务没有错误的情况下完成，则将下载数据进行缓存
-                        [[WebCache sharedWebCache] storeDataCache:data forKey:key];
+                        [[WebCacheHelpler sharedWebCache] storeDataCache:data forKey:key];
                         //任务完成回调
                         completedBlock(data, nil, YES);
                     }else {

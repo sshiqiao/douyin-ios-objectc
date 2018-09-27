@@ -95,6 +95,7 @@
 		3B2A349B210EC9A8005738DD /* groupchats.json in Resources */ = {isa = PBXBuildFile; fileRef = 3B2A3495210EC9A8005738DD /* groupchats.json */; };
 		3B2A349D210EC9A8005738DD /* emotion.json in Resources */ = {isa = PBXBuildFile; fileRef = 3B2A3497210EC9A8005738DD /* emotion.json */; };
 		3B2A349E210EC9A8005738DD /* Emoticons.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B2A3498210EC9A8005738DD /* Emoticons.bundle */; };
+		3B963800215CA88300B2D6B8 /* CADisplayLink+Tool.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B9637FF215CA88300B2D6B8 /* CADisplayLink+Tool.m */; };
 		3BF54F8C210F44B9008899F0 /* favorites.json in Resources */ = {isa = PBXBuildFile; fileRef = 3BF54F8B210F44B9008899F0 /* favorites.json */; };
 		3BF54F93210F4D5C008899F0 /* user.json in Resources */ = {isa = PBXBuildFile; fileRef = 3BF54F92210F4D5C008899F0 /* user.json */; };
 		E33BFBBB8F3FAC5885446FD1 /* libPods-Douyin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 788D7E6A99957B05CD68E556 /* libPods-Douyin.a */; };
@@ -291,6 +292,8 @@
 		3B2A3495210EC9A8005738DD /* groupchats.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = groupchats.json; sourceTree = "<group>"; };
 		3B2A3497210EC9A8005738DD /* emotion.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emotion.json; sourceTree = "<group>"; };
 		3B2A3498210EC9A8005738DD /* Emoticons.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Emoticons.bundle; sourceTree = "<group>"; };
+		3B9637FE215CA87700B2D6B8 /* CADisplayLink+Tool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+Tool.h"; sourceTree = "<group>"; };
+		3B9637FF215CA88300B2D6B8 /* CADisplayLink+Tool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CADisplayLink+Tool.m"; sourceTree = "<group>"; };
 		3BF54F8B210F44B9008899F0 /* favorites.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = favorites.json; sourceTree = "<group>"; };
 		3BF54F92210F4D5C008899F0 /* user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user.json; sourceTree = "<group>"; };
 		70671669E659B6CCC077AFBD /* Pods-Douyin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Douyin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Douyin/Pods-Douyin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -373,6 +376,8 @@
 				3B00F228210ED90800E99DE5 /* UIImageView+WebCache.m */,
 				3B00F22A210ED91800E99DE5 /* NSTextAttachment+Emotion.h */,
 				3B00F22B210ED92400E99DE5 /* NSTextAttachment+Emotion.m */,
+				3B9637FE215CA87700B2D6B8 /* CADisplayLink+Tool.h */,
+				3B9637FF215CA88300B2D6B8 /* CADisplayLink+Tool.m */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -866,6 +871,7 @@
 				3B00F27E210EDF6B00E99DE5 /* Music.m in Sources */,
 				3B00F256210EDCDD00E99DE5 /* VisitorResponse.m in Sources */,
 				3B00F2DB210EE57D00E99DE5 /* FocusView.m in Sources */,
+				3B963800215CA88300B2D6B8 /* CADisplayLink+Tool.m in Sources */,
 				3B00F265210EDD7900E99DE5 /* GroupChatListResponse.m in Sources */,
 				3B00F2C0210EE3AB00E99DE5 /* ImageMessageCell.m in Sources */,
 				3B00F284210EDFA000E99DE5 /* Aweme.m in Sources */,

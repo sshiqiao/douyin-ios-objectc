@@ -45,12 +45,12 @@
         
         self.frame = SCREEN_FRAME;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 280)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 280 + SafeAreaBottomHeight)];
         _container.backgroundColor = ColorBlackAlpha60;
         [self addSubview:_container];
         
         
-        UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, SCREEN_WIDTH, 280) byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
+        UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:_container.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
         CAShapeLayer* shape = [[CAShapeLayer alloc] init];
         [shape setPath:rounded.CGPath];
         _container.layer.mask = shape;
@@ -109,11 +109,13 @@
         }
         
         
-        _cancel = [[UILabel alloc] initWithFrame:CGRectMake(0, 230, SCREEN_WIDTH, 50)];
-        _cancel.textAlignment = NSTextAlignmentCenter;
-        _cancel.text = @"取消";
-        _cancel.textColor = ColorWhite;
-        _cancel.font = BigFont;
+        _cancel = [[UIButton alloc] initWithFrame:CGRectMake(0, 230, SCREEN_WIDTH, 50 + SafeAreaBottomHeight)];
+        [_cancel setTitleEdgeInsets:UIEdgeInsetsMake(-SafeAreaBottomHeight, 0, 0, 0)];
+        
+        [_cancel setTitle:@"取消" forState:UIControlStateNormal];
+        [_cancel setTitleColor:ColorWhite forState:UIControlStateNormal];
+        _cancel.titleLabel.font = BigFont;
+
         _cancel.backgroundColor = ColorGrayLight;
         [_container addSubview:_cancel];
         

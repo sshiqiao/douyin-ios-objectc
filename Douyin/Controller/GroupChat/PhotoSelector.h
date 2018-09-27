@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 
-extern NSInteger const PhotoSelectorHeight;
+#define PhotoSelectorHeight         220 + SafeAreaBottomHeight
 
 @protocol PhotoSelectorDelegate
 @required
