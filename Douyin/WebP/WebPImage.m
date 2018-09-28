@@ -147,8 +147,10 @@ static void freeWebpFrameImageData(void *info, const void *data, size_t size) {
     CGColorSpaceRef colorSpaceRef = CGColorSpaceCreateDeviceRGB();
     
     VP8StatusCode status = WebPDecode(frame.bytes, frame.size, &config);
-    if (status != VP8_STATUS_OK)
+    if (status != VP8_STATUS_OK) {
+        CGColorSpaceRelease(colorSpaceRef);
         return nil;
+    }
     int imageWidth, imageHeight;
     uint8_t *data = WebPDecodeRGBA(frame.bytes, frame.size, &imageWidth, &imageHeight);
     if (data == NULL)
