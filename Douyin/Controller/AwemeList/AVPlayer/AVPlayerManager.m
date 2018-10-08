@@ -14,7 +14,7 @@
 @implementation AVPlayerManager
 
 
-+(AVPlayerManager *)shareManager {
++ (AVPlayerManager *)shareManager {
     static dispatch_once_t once;
     static AVPlayerManager *manager;
     dispatch_once(&once, ^{

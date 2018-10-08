@@ -126,6 +126,7 @@
     [self pause];
     self.player = nil;
     self.playerItem = nil;
+    self.playerLayer.player = nil;
     
     
     __weak __typeof(self) wself = self;
@@ -213,7 +214,7 @@
         //下载完毕，将缓存数据保存到本地
         [[WebCacheHelpler sharedWebCache] storeDataToDiskCache:_data key:_cacheFileKey extension:@"mp4"];
     }else {
-        NSLog(@"%@", error.description);
+//        NSLog(@"%@", error.description);
     }
 }
 
