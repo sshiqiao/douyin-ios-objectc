@@ -8,7 +8,7 @@
 
 ## 展示图
 
-![image](https://sshiqiao.github.io/assets/demo1.gif)
+![image](https://github.com/sshiqiao/douyin-ios-objectc/blob/master/screenshot/demo1.gif)
 ![image](https://sshiqiao.github.io/assets/demo2.gif)
 ![image](https://sshiqiao.github.io/assets/demo3.gif)
 ![image](https://sshiqiao.github.io/assets/demo5.gif)
