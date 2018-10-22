@@ -9,10 +9,12 @@
 #import "CircleTextView.h"
 #import "Constants.h"
 #import "NSString+Extension.h"
-#define SEPARATE_TEXT    @"   "
-#define CIRCLE_ANIM      @"CircleAnim"
+
+NSString * const kCircleTextViewAnim           = @"CircleAnim";
+NSString * const kCircleTextViewSeparateText   = @"   ";
 
 @interface CircleTextView()
+
 @property(nonatomic, strong) CATextLayer   *textLayer;
 @property(nonatomic, strong) CAShapeLayer  *maskLayer;
 @property(nonatomic, assign) CGFloat       textSeparateWidth;
@@ -20,16 +22,19 @@
 @property(nonatomic, assign) CGFloat       textHeight;
 @property(nonatomic, assign) CGRect        textLayerFrame;
 @property(nonatomic, assign) CGFloat       translationX;
+
 @end
 
+
 @implementation CircleTextView
+
 -(instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
         _text = @"";
         _textColor = ColorWhite;
         _font = MediumFont;
-        _textSeparateWidth = [SEPARATE_TEXT singleLineSizeWithText:_font].width;
+        _textSeparateWidth = [kCircleTextViewSeparateText singleLineSizeWithText:_font].width;
         [self initLayer];
     }
     return self;
@@ -55,7 +60,6 @@
     _maskLayer.frame = self.bounds;
     _maskLayer.path = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
     [CATransaction commit];
-    
 }
 
 - (void)drawTextLayer {
@@ -65,12 +69,12 @@
     _textLayer.font = fontRef;
     _textLayer.fontSize = _font.pointSize;
     CGFontRelease(fontRef);
-    _textLayer.string = [NSString stringWithFormat:@"%@%@%@%@%@",_text,SEPARATE_TEXT,_text,SEPARATE_TEXT,_text];
+    _textLayer.string = [NSString stringWithFormat:@"%@%@%@%@%@",_text,kCircleTextViewSeparateText,_text,kCircleTextViewSeparateText,_text];
 }
 
 - (void)startAnimation {
-    if([_textLayer animationForKey:CIRCLE_ANIM]) {
-        [_textLayer removeAnimationForKey:CIRCLE_ANIM];
+    if([_textLayer animationForKey:kCircleTextViewAnim]) {
+        [_textLayer removeAnimationForKey:kCircleTextViewAnim];
     }
     CABasicAnimation *animation = [CABasicAnimation animation];
     animation.keyPath = @"transform.translation.x";
@@ -81,7 +85,7 @@
     animation.removedOnCompletion = NO;
     animation.fillMode = kCAFillModeForwards;
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-    [_textLayer addAnimation:animation forKey:CIRCLE_ANIM];
+    [_textLayer addAnimation:animation forKey:kCircleTextViewAnim];
 }
 
 #pragma update method
@@ -111,4 +115,5 @@
     _textColor = textColor;
     _textLayer.foregroundColor = _textColor.CGColor;
 }
+
 @end

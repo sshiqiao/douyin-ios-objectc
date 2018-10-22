@@ -6,11 +6,13 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "BaseRequest.h"
+
 @interface AwemeListRequest:BaseRequest
-@property (nonatomic, assign) NSInteger page;
-@property (nonatomic, assign) NSInteger size;
-@property (nonatomic, copy) NSString *uid;
+
+@property (nonatomic, assign) NSInteger   page;
+@property (nonatomic, assign) NSInteger   size;
+@property (nonatomic, copy) NSString      *uid;
+
 @end
 

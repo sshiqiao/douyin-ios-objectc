@@ -6,8 +6,10 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "BaseRequest.h"
+
 @interface UserRequest:BaseRequest
+
 @property (nonatomic, copy) NSString *uid;
+
 @end

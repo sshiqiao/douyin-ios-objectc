@@ -10,10 +10,13 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface AVPlayerManager:NSObject
+
 + (AVPlayerManager *)shareManager;
 + (void)setAudioMode;
 - (void)play:(AVPlayer *)player;
 - (void)pause:(AVPlayer *)player;
 - (void)pauseAll;
 - (void)replay:(AVPlayer *)player;
+- (void)removeAllPlayers;
+
 @end

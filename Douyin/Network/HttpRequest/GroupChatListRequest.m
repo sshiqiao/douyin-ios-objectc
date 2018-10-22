@@ -7,5 +7,7 @@
 //
 
 #import "GroupChatListRequest.h"
+
 @implementation GroupChatListRequest
+
 @end

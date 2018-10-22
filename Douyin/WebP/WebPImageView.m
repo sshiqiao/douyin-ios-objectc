@@ -15,19 +15,27 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
 
 //专门用于解码WebP画面的NSOperation子类
 @interface WebPImageOperation : NSOperation
+
 -(instancetype)initWithWebImage:(WebPImage *)image completedBlock:(WebPCompletedBlock)completedBlock;
+
 @end
+
 
 @interface WebPImageOperation()
-@property (atomic, copy) WebPCompletedBlock completedBlock;            //解码完后的回调用的block
-@property (atomic, copy) WebPImage *image;                             //WebImageView用于显示的WebPImage
-@property (assign, nonatomic) BOOL executing;    //判断NSOperation是否执行
-@property (assign, nonatomic) BOOL finished;      //判断NSOperation是否结束
+
+@property (atomic, copy) WebPCompletedBlock completedBlock;   //解码完后的回调用的block
+@property (atomic, copy) WebPImage          *image;           //WebImageView用于显示的WebPImage
+@property (assign, nonatomic) BOOL          executing;        //判断NSOperation是否执行
+@property (assign, nonatomic) BOOL          finished;         //判断NSOperation是否结束
+
 @end
 
+
 @implementation WebPImageOperation
-@synthesize executing = _executing;      //指定executing别名为_executing
-@synthesize finished = _finished;        //指定finished别名为_finished
+
+@synthesize executing  = _executing;      //指定executing别名为_executing
+@synthesize finished   = _finished;       //指定finished别名为_finished
+
 -(instancetype)initWithWebImage:(WebPImage *)image completedBlock:(WebPCompletedBlock)completedBlock {
     if ((self = [super init])) {
         _image = [image copy];
@@ -97,6 +105,7 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
 
 
 @interface WebPImageView ()
+
 @property (nonatomic, strong) CADisplayLink      *displayLink;        //CADisplayLink用于更新画面
 @property (nonatomic, strong) NSOperationQueue   *requestQueue;       //用于解码剩余图片的NSOperationQueue
 @property (nonatomic, strong) NSOperationQueue   *firstFrameQueue;    //用于专门解码WebP第一帧画面的NSOperationQueue
@@ -169,7 +178,6 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
     
     //开始解码WebP格式动图
     [self decodeFrames];
-    
 }
 
 //解码WebP格式动图
@@ -186,7 +194,6 @@ typedef void(^WebPCompletedBlock)(WebPFrame *frame);
     
     //在_requestQueue中添加解码剩余帧画面的任务
     while (_operationCount++ < _webPImage.frameCount) {
-        __weak typeof (self) wself = self;
         WebPImageOperation *operation = [[WebPImageOperation alloc] initWithWebImage:_webPImage completedBlock:^(WebPFrame *frame) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [wself.layer setNeedsDisplay];

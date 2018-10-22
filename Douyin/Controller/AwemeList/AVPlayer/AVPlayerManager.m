@@ -7,12 +7,14 @@
 //
 
 #import "AVPlayerManager.h"
+
 @interface AVPlayerManager()
+
 @property (nonatomic, strong) NSMutableArray<AVPlayer *>   *playerArray;  //用于存储AVPlayer的数组
+
 @end
 
 @implementation AVPlayerManager
-
 
 + (AVPlayerManager *)shareManager {
     static dispatch_once_t once;
@@ -69,4 +71,9 @@
         [self play:player];
     }
 }
+
+- (void)removeAllPlayers {
+    [_playerArray removeAllObjects];
+}
+
 @end

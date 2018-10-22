@@ -7,14 +7,16 @@
 //
 
 #import "CommentsPopView.h"
+#import "Constants.h"
 #import "Masonry.h"
-#import "NSNotification+Extension.h"
 #import "MenuPopView.h"
+#import "LoadMoreControl.h"
 #import "NetworkHelper.h"
+#import "Comment.h"
 
-#define COMMENT_CELL @"CommentCell"
-#define COMMENT_HEADER @"CommentHeader"
-#define COMMENT_FOOTER @"CommentFooter"
+NSString * const kCommentListCell     = @"CommentListCell";
+NSString * const kCommentHeaderCell   = @"CommentHeaderCell";
+NSString * const kCommentFooterCell   = @"CommentFooterCell";
 
 @interface CommentsPopView () <UITableViewDelegate,UITableViewDataSource, UIGestureRecognizerDelegate,UIScrollViewDelegate, CommentTextViewDelegate>
 
@@ -28,14 +30,17 @@
 @property (nonatomic, strong) UITableView                      *tableView;
 @property (nonatomic, strong) NSMutableArray<Comment *>        *data;
 @property (nonatomic, strong) CommentTextView                  *textView;
-@property (nonatomic, strong) LoadMoreControl                     *loadMore;
+@property (nonatomic, strong) LoadMoreControl                  *loadMore;
+
 @end
 
+
 @implementation CommentsPopView
+
 - (instancetype)initWithAwemeId:(NSString *)awemeId {
     self = [super init];
     if (self) {
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)];
         tapGestureRecognizer.delegate = self;
         [self addGestureRecognizer:tapGestureRecognizer];
@@ -48,12 +53,12 @@
         
         _data = [NSMutableArray array];
         
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT*3/4)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight, ScreenWidth, ScreenHeight*3/4)];
         _container.backgroundColor = ColorBlackAlpha60;
         [self addSubview:_container];
         
         
-        UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT*3/4) byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
+        UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, ScreenWidth, ScreenHeight*3/4) byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
         CAShapeLayer* shape = [[CAShapeLayer alloc] init];
         [shape setPath:rounded.CGPath];
         _container.layer.mask = shape;
@@ -87,16 +92,16 @@
             make.width.height.mas_equalTo(30);
         }];
         
-        _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 35, SCREEN_WIDTH, SCREEN_HEIGHT*3/4 - 35 - 50 - SafeAreaBottomHeight) style:UITableViewStyleGrouped];
+        _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 35, ScreenWidth, ScreenHeight*3/4 - 35 - 50 - SafeAreaBottomHeight) style:UITableViewStyleGrouped];
         _tableView.backgroundColor = ColorClear;
         _tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, self.tableView.bounds.size.width, 0.01f)];
         _tableView.contentInset = UIEdgeInsetsMake(0, 0, 50, 0);
         _tableView.delegate = self;
         _tableView.dataSource = self;
         _tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        [_tableView registerClass:CommentListCell.class forCellReuseIdentifier:COMMENT_CELL];
+        [_tableView registerClass:CommentListCell.class forCellReuseIdentifier:kCommentListCell];
         
-        _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, SCREEN_WIDTH, 50) surplusCount:10];
+        _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, ScreenWidth, 50) surplusCount:10];
         [_loadMore startLoading];
         __weak __typeof(self) wself = self;
         [_loadMore setOnLoad:^{
@@ -122,7 +127,7 @@
     request.aweme_id = _awemeId;
     request.udid = UDID;
     request.text = text;
-    __block NSURLSessionDataTask *task = [NetworkHelper postWithUrlPath:POST_COMMENT_URL request:request success:^(id data) {
+    __block NSURLSessionDataTask *task = [NetworkHelper postWithUrlPath:PostComentPath request:request success:^(id data) {
         CommentResponse *response = [[CommentResponse alloc] initWithDictionary:data error:nil];
         Comment *comment = response.data;
         for(NSInteger i = wself.data.count-1; i>=0; i--) {
@@ -163,7 +168,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    CommentListCell *cell = [tableView dequeueReusableCellWithIdentifier:COMMENT_CELL];
+    CommentListCell *cell = [tableView dequeueReusableCellWithIdentifier:kCommentListCell];
     [cell initData:_data[indexPath.row]];
     return cell;
 }
@@ -186,7 +191,7 @@
     DeleteCommentRequest *request = [DeleteCommentRequest new];
     request.cid = comment.cid;
     request.udid = UDID;
-    [NetworkHelper deleteWithUrlPath:DELETE_COMMENT_BY_ID_URL request:request success:^(id data) {
+    [NetworkHelper deleteWithUrlPath:DeleteComentByIdPath request:request success:^(id data) {
         NSInteger index = [wself.data indexOfObject:comment];
         [wself.tableView beginUpdates];
         [wself.data removeObjectAtIndex:index];
@@ -258,7 +263,7 @@
     request.page = pageIndex;
     request.size = pageSize;
     request.aweme_id = _awemeId;
-    [NetworkHelper getWithUrlPath:FIND_COMMENT_BY_PAGE_URL request:request success:^(id data) {
+    [NetworkHelper getWithUrlPath:FindComentByPagePath request:request success:^(id data) {
         CommentListResponse *response = [[CommentListResponse alloc] initWithDictionary:data error:nil];
         NSArray<Comment *> *array = response.data;
         
@@ -301,7 +306,7 @@
 
 #pragma comment tableview cell
 
-#define MAX_CONTENT_WIDTH SCREEN_WIDTH - 55 - 35
+#define MAX_CONTENT_WIDTH ScreenWidth - 55 - 35
 //cell
 @implementation CommentListCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -446,18 +451,18 @@
 - (instancetype)init {
     self = [super init];
     if(self) {
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         self.backgroundColor = ColorClear;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
         
         
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT - 50 - SafeAreaBottomHeight, SCREEN_WIDTH, 50 + SafeAreaBottomHeight)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight - 50 - SafeAreaBottomHeight, ScreenWidth, 50 + SafeAreaBottomHeight)];
         _container.backgroundColor = ColorBlackAlpha40;
         [self addSubview:_container];
         
         _keyboardHeight = SafeAreaBottomHeight;
         
-        _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 50)];
+        _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 50)];
         _textView.backgroundColor = ColorClear;
         
         _textView.clipsToBounds = NO;
@@ -474,7 +479,7 @@
         _placeholderLabel.text = @"有爱评论，说点儿好听的~";
         _placeholderLabel.textColor = ColorGray;
         _placeholderLabel.font = BigFont;
-        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, ScreenWidth - LEFT_INSET - RIGHT_INSET, 50);
         [_textView addSubview:_placeholderLabel];
         
         _atImageView = [[UIImageView alloc] init];
@@ -493,7 +498,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     
-    _atImageView.frame = CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50);
+    _atImageView.frame = CGRectMake(ScreenWidth - 50, 0, 50, 50);
     
     UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:self.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
     CAShapeLayer* shape = [[CAShapeLayer alloc] init];
@@ -506,8 +511,8 @@
 
 - (void)updateTextViewFrame {
     CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
-    _textView.frame = CGRectMake(0, 0, SCREEN_WIDTH, textViewHeight);
-    _container.frame = CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight - textViewHeight, SCREEN_WIDTH, textViewHeight + _keyboardHeight);
+    _textView.frame = CGRectMake(0, 0, ScreenWidth, textViewHeight);
+    _container.frame = CGRectMake(0, ScreenHeight - _keyboardHeight - textViewHeight, ScreenWidth, textViewHeight + _keyboardHeight);
 }
 
 //keyboard notification
@@ -538,7 +543,7 @@
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
         [_placeholderLabel setHidden:YES];
-        _textHeight = [attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
+        _textHeight = [attributedText multiLineSize:ScreenWidth - LEFT_INSET - RIGHT_INSET].height;
     }
     [self updateTextViewFrame];
 }
@@ -547,6 +552,7 @@
     if([text isEqualToString:@"\n"]) {
         if(_delegate) {
             [_delegate onSendText:textView.text];
+            [_placeholderLabel setHidden:NO];
             textView.text = @"";
             _textHeight = ceilf(textView.font.lineHeight);
             [textView resignFirstResponder];

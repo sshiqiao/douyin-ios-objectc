@@ -9,10 +9,12 @@
 #import "WebPImage.h"
 
 @implementation WebPFrame
+
 @end
 
 
 @implementation WebPImage
+
 - (instancetype)initWithData:(NSData *)data {
     self = [super init];
     _imageData = data;
@@ -153,8 +155,10 @@ static void freeWebpFrameImageData(void *info, const void *data, size_t size) {
     }
     int imageWidth, imageHeight;
     uint8_t *data = WebPDecodeRGBA(frame.bytes, frame.size, &imageWidth, &imageHeight);
-    if (data == NULL)
+    if (data == NULL) {
+        CGColorSpaceRelease(colorSpaceRef);
         return nil;
+    }
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, data, imageWidth * imageHeight * 4, freeWebpFrameImageData);
     CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault | kCGImageAlphaLast;
     CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;

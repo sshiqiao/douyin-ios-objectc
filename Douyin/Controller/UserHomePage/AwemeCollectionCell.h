@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "WebPImageView.h"
-#import "Aweme.h"
+
+@class WebPImageView;
+@class Aweme;
+
 @interface AwemeCollectionCell : UICollectionViewCell
-@property (nonatomic, strong) WebPImageView *imageView;
-@property (nonatomic, strong) UIButton *favoriteNum;
+
+@property (nonatomic, strong) WebPImageView    *imageView;
+@property (nonatomic, strong) UIButton         *favoriteNum;
 
 - (void)initData:(Aweme *)aweme;
 

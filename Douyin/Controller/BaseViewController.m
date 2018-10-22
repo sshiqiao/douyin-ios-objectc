@@ -99,7 +99,7 @@
 
 - (void) setLeftButton:(NSString *)imageName {
     UIButton *leftButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    leftButton.frame = CGRectMake(15.0f, STATUS_BAR_HEIGHT + 11, 20.0f, 20.0f);
+    leftButton.frame = CGRectMake(15.0f, StatusBarHeight + 11, 20.0f, 20.0f);
     [leftButton setBackgroundImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
     [leftButton addTarget:self action:@selector(dismiss) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:leftButton];

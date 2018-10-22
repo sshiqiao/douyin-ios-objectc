@@ -9,4 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface WebPImageView : UIImageView
+
 @end

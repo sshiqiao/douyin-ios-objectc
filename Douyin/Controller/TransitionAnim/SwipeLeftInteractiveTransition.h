@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "AwemeListController.h"
+
+@class AwemeListController;
+
 @interface SwipeLeftInteractiveTransition : UIPercentDrivenInteractiveTransition
 @property (nonatomic, assign) BOOL interacting;
 -(void)wireToViewController:(AwemeListController *)viewController;

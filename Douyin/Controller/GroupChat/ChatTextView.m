@@ -12,13 +12,12 @@
 #import "PhotoSelector.h"
 #import "EmotionHelper.h"
 
-#define EMOTION_TAG                1000
-#define PHOTO_TAG                  2000
+static const NSInteger kChatTextViewEmotionTag   = 0x01;
+static const NSInteger kChatTextViewPhotoTag     = 0x02;
 
-#define LEFT_INSET                 15
-#define RIGHT_INSET                85
-#define TOP_BOTTOM_INSET           15
-
+static const CGFloat kChatTextViewLeftInset      = 15;
+static const CGFloat kChatTextViewRightInset     = 85;
+static const CGFloat kChatTextViewTopBottomInset = 15;
 
 @interface ChatTextView ()<UITextViewDelegate, UIGestureRecognizerDelegate, EmotionSelectorDelegate, PhotoSelectorDelegate> {
     EmotionSelector        *emotionSelector;
@@ -34,8 +33,9 @@
 @end
 
 @implementation ChatTextView
+
 - (instancetype)init {
-    return [self initWithFrame:SCREEN_FRAME];
+    return [self initWithFrame:ScreenFrame];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
@@ -46,14 +46,14 @@
         tapGestureRecognizer.delegate = self;
         [self addGestureRecognizer:tapGestureRecognizer];
         
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight, ScreenWidth, 0)];
         _container.backgroundColor = ColorThemeGrayDark;
         [self addSubview:_container];
         
         _containerBoardHeight = SafeAreaBottomHeight;
         _editMessageType = EditNoneMessage;
         
-        _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 0)];
+        _textView = [[UITextView alloc] initWithFrame:CGRectMake(0, ScreenHeight, ScreenWidth, 0)];
         _textView.backgroundColor = ColorClear;
         _textView.clipsToBounds = NO;
         _textView.textColor = ColorWhite;
@@ -61,7 +61,7 @@
         _textView.returnKeyType = UIReturnKeySend;
         _textView.scrollEnabled = NO;
         _textView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
-        _textView.textContainerInset = UIEdgeInsetsMake(TOP_BOTTOM_INSET, LEFT_INSET, TOP_BOTTOM_INSET, RIGHT_INSET);
+        _textView.textContainerInset = UIEdgeInsetsMake(kChatTextViewTopBottomInset, kChatTextViewLeftInset, kChatTextViewTopBottomInset, kChatTextViewRightInset);
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
@@ -69,7 +69,7 @@
         _placeholderLabel.text = @"发送消息...";
         _placeholderLabel.textColor = ColorGray;
         _placeholderLabel.font = BigFont;
-        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        _placeholderLabel.frame = CGRectMake(kChatTextViewLeftInset, 0, ScreenWidth - kChatTextViewLeftInset - kChatTextViewRightInset, 50);
         [_textView addSubview:_placeholderLabel];
 
         _textView.delegate = self;
@@ -77,7 +77,7 @@
         
         
         _emotionBtn = [[UIButton alloc] init];
-        _emotionBtn.tag = EMOTION_TAG;
+        _emotionBtn.tag = kChatTextViewEmotionTag;
         [_emotionBtn setImage:[UIImage imageNamed:@"baseline_emotion_white"] forState:UIControlStateNormal];
         [_emotionBtn setImage:[UIImage imageNamed:@"outline_keyboard_grey"] forState:UIControlStateSelected];
         [_emotionBtn addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
@@ -85,7 +85,7 @@
         
         
         _photoBtn = [[UIButton alloc] init];
-        _photoBtn.tag = PHOTO_TAG;
+        _photoBtn.tag = kChatTextViewPhotoTag;
         [_photoBtn setImage:[UIImage imageNamed:@"outline_photo_white"] forState:UIControlStateNormal];
         [_photoBtn setImage:[UIImage imageNamed:@"outline_photo_red"] forState:UIControlStateSelected];
         [_photoBtn addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
@@ -144,8 +144,8 @@
     [super layoutSubviews];
     [self updateContainerFrame];
     
-    _photoBtn.frame = CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50);
-    _emotionBtn.frame = CGRectMake(SCREEN_WIDTH - 85, 0, 50, 50);
+    _photoBtn.frame = CGRectMake(ScreenWidth - 50, 0, 50, 50);
+    _emotionBtn.frame = CGRectMake(ScreenWidth - 85, 0, 50, 50);
     
     UIBezierPath* rounded = [UIBezierPath bezierPathWithRoundedRect:self.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(10.0f, 10.0f)];
     CAShapeLayer* shape = [[CAShapeLayer alloc] init];
@@ -164,13 +164,13 @@
 }
 
 - (void)updateContainerFrame {
-    CGFloat textViewHeight = _containerBoardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : BigFont.lineHeight + 2*TOP_BOTTOM_INSET;
-    _textView.frame = CGRectMake(0, 0, SCREEN_WIDTH,  textViewHeight);
+    CGFloat textViewHeight = _containerBoardHeight > SafeAreaBottomHeight ? _textHeight + 2*kChatTextViewTopBottomInset : BigFont.lineHeight + 2*kChatTextViewTopBottomInset;
+    _textView.frame = CGRectMake(0, 0, ScreenWidth,  textViewHeight);
     [UIView animateWithDuration:0.25f
                           delay:0.0f
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         self.container.frame = CGRectMake(0, SCREEN_HEIGHT - self.containerBoardHeight - textViewHeight, SCREEN_WIDTH,  self.containerBoardHeight + textViewHeight);
+                         self.container.frame = CGRectMake(0, ScreenHeight - self.containerBoardHeight - textViewHeight, ScreenWidth,  self.containerBoardHeight + textViewHeight);
                          if(self.delegate) {
                              [self.delegate onEditBoardHeightChange:self.container.frame.size.height];
                          }
@@ -181,16 +181,16 @@
 }
 
 - (void)updateSelectorFrame:(BOOL)animated {
-    CGFloat textViewHeight = _containerBoardHeight > 0 ? _textHeight + 2*TOP_BOTTOM_INSET : BigFont.lineHeight + 2*TOP_BOTTOM_INSET;
+    CGFloat textViewHeight = _containerBoardHeight > 0 ? _textHeight + 2*kChatTextViewTopBottomInset : BigFont.lineHeight + 2*kChatTextViewTopBottomInset;
     if(animated) {
         switch (self.editMessageType) {
             case EditEmotionMessage:
                 [self.emotionSelector setHidden : NO];
-                self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
+                self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
                 break;
             case EditPhotoMessage:
                 [self.photoSelector setHidden : NO];
-                self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
+                self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
                 break;
             default:
                 break;
@@ -202,16 +202,16 @@
                      animations:^{
                          switch (self.editMessageType) {
                              case EditEmotionMessage:
-                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight, SCREEN_WIDTH,  self.containerBoardHeight);
-                                 self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
+                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight, ScreenWidth,  self.containerBoardHeight);
+                                 self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
                                  break;
                              case EditPhotoMessage:
-                                 self.photoSelector.frame = CGRectMake(0, textViewHeight, SCREEN_WIDTH,  self.containerBoardHeight);
-                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
+                                 self.photoSelector.frame = CGRectMake(0, textViewHeight, ScreenWidth,  self.containerBoardHeight);
+                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
                                  break;
                              default:
-                                 self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
-                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, SCREEN_WIDTH,  self.containerBoardHeight);
+                                 self.photoSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
+                                 self.emotionSelector.frame = CGRectMake(0, textViewHeight + self.containerBoardHeight, ScreenWidth,  self.containerBoardHeight);
                                  break;
                          }
                      }
@@ -250,7 +250,7 @@
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
         [_placeholderLabel setHidden:YES];
-        _textHeight = [attributedString multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
+        _textHeight = [attributedString multiLineSize:ScreenWidth - kChatTextViewLeftInset - kChatTextViewRightInset].height;
     }
     [self updateContainerFrame];
     [self updateSelectorFrame:NO];
@@ -281,7 +281,7 @@
         [self hideContainerBoard];
     }else {
         switch (sender.view.tag) {
-            case EMOTION_TAG:
+            case kChatTextViewEmotionTag:
                 [_emotionBtn setSelected:!_emotionBtn.selected];
                 [_photoBtn setSelected:NO];
                 if(_emotionBtn.isSelected) {
@@ -294,36 +294,31 @@
                     _editMessageType = EditTextMessage;
                     [_textView becomeFirstResponder];
                 }
-                
                 break;
-            case PHOTO_TAG: {
-                __weak __typeof(self) wself = self;
-                [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
-                    if(PHAuthorizationStatusAuthorized == status) {
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            [wself.photoBtn setSelected:!wself.photoBtn.selected];
-                            [wself.emotionBtn setSelected:NO];
-                            if(wself.photoBtn.isSelected) {
-                                wself.editMessageType = EditPhotoMessage;
-                                [wself setContainerBoardHeight:PhotoSelectorHeight];
-                                [wself updateContainerFrame];
-                                [wself updateSelectorFrame:YES];
-                                [wself.textView resignFirstResponder];
-                            }else {
-                                [wself hideContainerBoard];
-                            }
-                        });
-                    }else {
-                        [UIWindow showTips:@"请在设置中开启图库读取权限"];
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
-                        });
-                    }
-                }];
+            case kChatTextViewPhotoTag: {
+                PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+                if(PHAuthorizationStatusAuthorized == status) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        [self.photoBtn setSelected:!self.photoBtn.selected];
+                        [self.emotionBtn setSelected:NO];
+                        if(self.photoBtn.isSelected) {
+                            self.editMessageType = EditPhotoMessage;
+                            [self setContainerBoardHeight:PhotoSelectorHeight];
+                            [self updateContainerFrame];
+                            [self updateSelectorFrame:YES];
+                            [self.textView resignFirstResponder];
+                        }else {
+                            [self hideContainerBoard];
+                        }
+                    });
+                }else {
+                    [UIWindow showTips:@"请在设置中开启图库读取权限"];
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:UIApplicationOpenSettingsURLString]];
+                    });
+                }
                 break;
             }
-            default:
-                break;
         }
     }
 }
@@ -340,7 +335,7 @@
     NSInteger location = _textView.selectedRange.location;
     [_textView setAttributedText:[EmotionHelper insertEmotion:_textView.attributedText index:location emotionKey:emotionKey]];
     [_textView setSelectedRange:NSMakeRange(location + 1, 0)];
-    _textHeight = [_textView.attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
+    _textHeight = [_textView.attributedText multiLineSize:ScreenWidth - kChatTextViewLeftInset - kChatTextViewRightInset].height;
     
     [self updateContainerFrame];
     [self updateSelectorFrame:NO];
@@ -353,6 +348,7 @@
     if(_delegate) {
         if([_textView hasText]) {
             [self.delegate onSendText:text.string];
+            [_placeholderLabel setHidden:NO];
             [_textView setText:@""];
             _textHeight = ceilf(_textView.font.lineHeight);
             [self updateContainerFrame];

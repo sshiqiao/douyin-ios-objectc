@@ -10,29 +10,30 @@
 #import "Constants.h"
 #import "Masonry.h"
 
-#define PHOTO_CELL @"PhotoCell"
+NSString * const kPhotoCell = @"PhotoCell";
 
-#define ALBUM_TAG            1000
-#define ORIGINAL_PHOTO_TAG   2000
-#define SEND_TAG             3000
+static const NSInteger kPhotoSelectorAlbumTag      = 0x01;
+static const NSInteger kPhotoSelectorOrigPhotoTag  = 0x02;
+static const NSInteger kPhotoSelectorSendTag       = 0x03;
 
-#define PHOTO_ITEM_HEIGHT          170
+static const CGFloat kPhotoSelectorItemHeight      = 170;
 
 @interface PhotoSelector () <UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout>
 @property (nonatomic, strong) NSMutableArray<PHAsset *>       *data;
 @property (nonatomic, strong) NSMutableArray<PHAsset *>       *selectedData;
-@property (nonatomic, strong) UIView                        *bottomView;
-@property (nonatomic, strong) UIButton                      *album;
-@property (nonatomic, strong) UIButton                      *originalPhoto;
-@property (nonatomic, strong) UIButton                      *send;
+@property (nonatomic, strong) UIView                          *bottomView;
+@property (nonatomic, strong) UIButton                        *album;
+@property (nonatomic, strong) UIButton                        *originalPhoto;
+@property (nonatomic, strong) UIButton                        *send;
 @end
+
 @implementation PhotoSelector
 -(instancetype)init {
-    return [self initWithFrame:CGRectZero];
+    return [self initWithFrame:CGRectMake(0, 0, ScreenWidth, PhotoSelectorHeight)];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, PhotoSelectorHeight)];
+    self = [super initWithFrame:frame];
     if(self) {
         self.backgroundColor = ColorSmoke;
         self.clipsToBounds = NO;
@@ -51,24 +52,24 @@
         layout.sectionInset = UIEdgeInsetsMake(0, 0, 0, 0);
         layout.minimumLineSpacing = 0;
         layout.minimumInteritemSpacing = 2.5;
-        _collectionView = [[UICollectionView  alloc]initWithFrame:CGRectMake(0, 2.5, SCREEN_WIDTH, PHOTO_ITEM_HEIGHT) collectionViewLayout:layout];
+        _collectionView = [[UICollectionView  alloc]initWithFrame:CGRectMake(0, 2.5, ScreenWidth, kPhotoSelectorItemHeight) collectionViewLayout:layout];
         _collectionView.clipsToBounds = NO;
         _collectionView.backgroundColor = ColorClear;
         _collectionView.alwaysBounceHorizontal = NO;
         _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
-        [_collectionView registerClass:[PhotoCell class] forCellWithReuseIdentifier:PHOTO_CELL];
+        [_collectionView registerClass:[PhotoCell class] forCellWithReuseIdentifier:kPhotoCell];
         [self addSubview:_collectionView];
         
         
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_collectionView.frame) + 2.5, SCREEN_WIDTH, 45 + SafeAreaBottomHeight)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_collectionView.frame) + 2.5, ScreenWidth, 45 + SafeAreaBottomHeight)];
         _bottomView.backgroundColor = ColorWhite;
         [self addSubview:_bottomView];
         
         
         _album = [[UIButton alloc] initWithFrame:CGRectMake(15, 10, 40, 25)];
-        _album.tag = ALBUM_TAG;
+        _album.tag = kPhotoSelectorAlbumTag;
         _album.titleLabel.font = BigFont;
         [_album setTitle:@"相册" forState:UIControlStateNormal];
         [_album setTitleColor:ColorThemeRed forState:UIControlStateNormal];
@@ -77,7 +78,7 @@
         
         
         _originalPhoto = [[UIButton alloc] initWithFrame:CGRectMake(CGRectGetMaxX(_album.frame) + 10, 10, 60, 25)];
-        _originalPhoto.tag = ORIGINAL_PHOTO_TAG;
+        _originalPhoto.tag = kPhotoSelectorOrigPhotoTag;
         [_originalPhoto setTitleEdgeInsets:UIEdgeInsetsMake(0, 2, 0, 0)];
         _originalPhoto.titleLabel.font = BigFont;
         [_originalPhoto setTitle:@"原图" forState:UIControlStateNormal];
@@ -88,8 +89,8 @@
         [_originalPhoto addTarget:self action:@selector(onButtonClick:) forControlEvents:UIControlEventTouchUpInside];
         [_bottomView addSubview:_originalPhoto];
         
-        _send = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60 - 15, 10, 60, 25)];
-        _send.tag = SEND_TAG;
+        _send = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 60 - 15, 10, 60, 25)];
+        _send.tag = kPhotoSelectorSendTag;
         _send.enabled = NO;
         _send.backgroundColor = ColorSmoke;
         _send.layer.cornerRadius = 2;
@@ -104,12 +105,12 @@
 
 -(void)onButtonClick:(UIButton *)sender {
     switch (sender.tag) {
-        case ALBUM_TAG:
+        case kPhotoSelectorAlbumTag:
             break;
-        case ORIGINAL_PHOTO_TAG:
+        case kPhotoSelectorOrigPhotoTag:
             [_originalPhoto setSelected:!_originalPhoto.isSelected];
             break;
-        case SEND_TAG:
+        case kPhotoSelectorSendTag:
             [self processAssets];
             break;
         default:
@@ -153,7 +154,7 @@
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    PhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:PHOTO_CELL forIndexPath:indexPath];
+    PhotoCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kPhotoCell forIndexPath:indexPath];
     PHAsset *asset = [_data objectAtIndex:indexPath.row];
     [cell initData:asset isSelected:[_selectedData containsObject:asset]];
     [cell setOnSelect:^(BOOL isSelected) {
@@ -178,7 +179,7 @@
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     PHAsset *asset = _data[indexPath.row];
-    return CGSizeMake(PHOTO_ITEM_HEIGHT*((CGFloat)asset.pixelWidth/(CGFloat)asset.pixelHeight), PHOTO_ITEM_HEIGHT);
+    return CGSizeMake(kPhotoSelectorItemHeight*((CGFloat)asset.pixelWidth/(CGFloat)asset.pixelHeight), kPhotoSelectorItemHeight);
 }
 
 @end
@@ -230,7 +231,7 @@
     if (self.tag != 0) {
         [manager cancelImageRequest:(PHImageRequestID)self.tag];
     }
-    self.tag = [manager requestImageForAsset:asset targetSize:CGSizeMake(PHOTO_ITEM_HEIGHT*((CGFloat)asset.pixelWidth/(CGFloat)asset.pixelHeight), PHOTO_ITEM_HEIGHT) contentMode:PHImageContentModeAspectFit options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
+    self.tag = [manager requestImageForAsset:asset targetSize:CGSizeMake(kPhotoSelectorItemHeight*((CGFloat)asset.pixelWidth/(CGFloat)asset.pixelHeight), kPhotoSelectorItemHeight) contentMode:PHImageContentModeAspectFit options:nil resultHandler:^(UIImage * _Nullable result, NSDictionary * _Nullable info) {
         self.photo.image = result;
     }];
     [_checkbox setSelected:selected];

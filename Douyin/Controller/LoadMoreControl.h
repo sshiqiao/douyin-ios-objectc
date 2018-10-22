@@ -7,8 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
-#import <objc/message.h>
+
+//loading type enum
+typedef NS_ENUM(NSUInteger,LoadingType) {
+    LoadStateIdle,
+    LoadStateLoading,
+    LoadStateAll,
+    LoadStateFailed
+};
+
 typedef void (^OnLoad)(void);
 
 @interface LoadMoreControl:UIControl

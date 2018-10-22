@@ -7,6 +7,9 @@
 //
 
 #import "UIImageView+WebCache.h"
+#import "Constants.h"
+#import "objc/runtime.h"
+#import "WebPImage.h"
 
 @implementation UIImageView (WebCache)
 
@@ -75,6 +78,7 @@
     }];
     objc_setAssociatedObject(self, &loadOperationKey, operation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
+
 - (void)cancelOperation {
     WebCombineOperation *operation = objc_getAssociatedObject(self, &loadOperationKey);
     if(operation) {

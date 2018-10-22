@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <Photos/Photos.h>
 
-#define PhotoSelectorHeight         220 + SafeAreaBottomHeight
+#define PhotoSelectorHeight   220 + SafeAreaBottomHeight
 
 @protocol PhotoSelectorDelegate
 @required
@@ -22,8 +22,8 @@
 @property (nonatomic, weak) id<PhotoSelectorDelegate>  delegate;
 @end
 
-
 typedef void (^OnSelect)(BOOL isSelected);
+
 @interface PhotoCell:UICollectionViewCell
 @property (nonatomic, strong) UIImageView             *photo;
 @property (nonatomic, strong) UIButton                *checkbox;

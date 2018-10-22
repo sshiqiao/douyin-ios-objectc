@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
-#import "CircleProgressView.h"
+
+@class CircleProgressView;
+
 @interface PhotoView:UIView
+
 @property (nonatomic, strong) CircleProgressView        *progressView;
 @property (nonatomic, strong) UIView                    *container;
 @property (nonatomic, strong) UIImageView               *imageView;

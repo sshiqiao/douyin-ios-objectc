@@ -7,23 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
-
 #import <webp/decode.h>
 #import <webp/demux.h>
 #import <webp/mux_types.h>
 
 @interface WebPFrame : NSObject
+
 @property (nonatomic, strong) UIImage                  *image;
 @property (nonatomic, assign) CGFloat                  duration;
 @property (nonatomic, assign) WebPData                 webPData;
 @property (nonatomic, assign) CGFloat                  height;
 @property (nonatomic, assign) CGFloat                  width;
 @property (nonatomic, assign) CGFloat                  has_alpha;
+
 @end
 
 
-
 @interface WebPImage : UIImage
+
 @property (nonatomic, copy) NSData                              *imageData;
 @property (nonatomic, strong) WebPFrame                         *curDisplayFrame;
 @property (nonatomic, strong) UIImage                           *curDisplayImage;
@@ -33,11 +34,8 @@
 @property (nonatomic, strong) NSMutableArray<WebPFrame *>       *frames;
 
 - (CGFloat)curDisplayFrameDuration;
-
 - (WebPFrame *)decodeCurFrame;
-
 - (void)incrementCurDisplayIndex;
-
 - (BOOL)isAllFrameDecoded;
 
 @end

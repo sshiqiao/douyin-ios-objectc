@@ -7,7 +7,9 @@
 //
 
 #import "SwipeLeftInteractiveTransition.h"
+#import "AwemeListController.h"
 #import "Constants.h"
+
 @interface SwipeLeftInteractiveTransition()
 @property (nonatomic, strong) UIViewController *presentingVC;
 @property (nonatomic, assign) CGPoint viewControllerCenter;
@@ -39,7 +41,7 @@
             _interacting = YES;
             break;
         case UIGestureRecognizerStateChanged: {
-            CGFloat progress = translation.x / SCREEN_WIDTH;
+            CGFloat progress = translation.x / ScreenWidth;
             progress = fminf(fmaxf(progress, 0.0), 1.0);
             
             CGFloat ratio = 1.0f - progress*0.5f;
@@ -50,14 +52,14 @@
         }
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded:{
-            CGFloat progress = translation.x / SCREEN_WIDTH;
+            CGFloat progress = translation.x / ScreenWidth;
             progress = fminf(fmaxf(progress, 0.0), 1.0);
             if (progress < 0.2){
                 [UIView animateWithDuration:progress
                                       delay:0
                                     options:UIViewAnimationOptionCurveEaseOut
                                  animations:^{
-                                     [self.presentingVC.view setCenter:CGPointMake(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)];
+                                     [self.presentingVC.view setCenter:CGPointMake(ScreenWidth/2, ScreenHeight/2)];
                                      self.presentingVC.view.transform = CGAffineTransformMakeScale(1.0f, 1.0f);
                                  } completion:^(BOOL finished) {
                                      self.interacting = NO;

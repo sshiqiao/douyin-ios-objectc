@@ -7,45 +7,46 @@
 //
 
 #import "SharePopView.h"
+#import "Constants.h"
 #import "Masonry.h"
 
 @implementation SharePopView
+
 - (instancetype)init {
     self = [super init];
     if (self) {
-        
-        NSArray *topIconsName = [[NSArray alloc] initWithObjects:
+        NSArray *topIconsName = @[
                                  @"icon_profile_share_wxTimeline",
                                  @"icon_profile_share_wechat",
                                  @"icon_profile_share_qqZone",
                                  @"icon_profile_share_qq",
                                  @"icon_profile_share_weibo",
-                                 @"iconHomeAllshareXitong",
-                                 nil];
-        NSArray *topTexts = [[NSArray alloc] initWithObjects:
+                                 @"iconHomeAllshareXitong"
+                                 ];
+        NSArray *topTexts = @[
                              @"朋友圈",
                              @"微信好友",
                              @"QQ空间",
                              @"QQ好友",
                              @"微博",
-                             @"更多分享",
-                             nil];
-        NSArray *bottomIconsName = [[NSArray alloc] initWithObjects:
+                             @"更多分享"
+                             ];
+        NSArray *bottomIconsName = @[
                                     @"icon_home_allshare_report",
                                     @"icon_home_allshare_download",
                                     @"icon_home_allshare_copylink",
-                                    @"icon_home_all_share_dislike",
-                                    nil];
-        NSArray *bottomTexts = [[NSArray alloc] initWithObjects:
+                                    @"icon_home_all_share_dislike"
+                                    ];
+        NSArray *bottomTexts = @[
                                 @"举报",
                                 @"保存至相册",
                                 @"复制链接",
-                                @"不感兴趣",
-                                nil];
+                                @"不感兴趣"
+                                ];
         
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, 280 + SafeAreaBottomHeight)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight, ScreenWidth, 280 + SafeAreaBottomHeight)];
         _container.backgroundColor = ColorBlackAlpha60;
         [self addSubview:_container];
         
@@ -61,7 +62,7 @@
         visualEffectView.alpha = 1.0f;
         [_container addSubview:visualEffectView];
         
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 35)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 35)];
         label.textAlignment = NSTextAlignmentCenter;
         label.numberOfLines = 0;
         label.text = @"分享到";
@@ -72,7 +73,7 @@
         
         CGFloat itemWidth = 68;
         
-        UIScrollView *topScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 35, SCREEN_WIDTH, 90)];
+        UIScrollView *topScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 35, ScreenWidth, 90)];
         topScrollView.contentSize = CGSizeMake(itemWidth * topIconsName.count, 80);
         topScrollView.showsHorizontalScrollIndicator = NO;
         topScrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 30);
@@ -88,11 +89,11 @@
             [topScrollView addSubview:item];
         }
         
-        UIView *splitLine = [[UIView alloc] initWithFrame:CGRectMake(0, 130, SCREEN_WIDTH, 0.5f)];
+        UIView *splitLine = [[UIView alloc] initWithFrame:CGRectMake(0, 130, ScreenWidth, 0.5f)];
         splitLine.backgroundColor = ColorWhiteAlpha10;
         [_container addSubview:splitLine];
         
-        UIScrollView *bottomScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 135, SCREEN_WIDTH, 90)];
+        UIScrollView *bottomScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 135, ScreenWidth, 90)];
         bottomScrollView.contentSize = CGSizeMake(itemWidth * bottomIconsName.count, 80);
         bottomScrollView.showsHorizontalScrollIndicator = NO;
         bottomScrollView.contentInset = UIEdgeInsetsMake(0, 0, 0, 30);
@@ -109,7 +110,7 @@
         }
         
         
-        _cancel = [[UIButton alloc] initWithFrame:CGRectMake(0, 230, SCREEN_WIDTH, 50 + SafeAreaBottomHeight)];
+        _cancel = [[UIButton alloc] initWithFrame:CGRectMake(0, 230, ScreenWidth, 50 + SafeAreaBottomHeight)];
         [_cancel setTitleEdgeInsets:UIEdgeInsetsMake(-SafeAreaBottomHeight, 0, 0, 0)];
         
         [_cancel setTitle:@"取消" forState:UIControlStateNormal];
@@ -241,4 +242,5 @@
         make.top.equalTo(self.icon.mas_bottom).offset(10);
     }];
 }
+
 @end

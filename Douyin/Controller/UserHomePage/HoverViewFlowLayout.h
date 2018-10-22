@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+
 @interface HoverViewFlowLayout : UICollectionViewFlowLayout
-@property (nonatomic, assign) CGFloat navHeight;
-- (instancetype)initWithNavHeight:(CGFloat)height;
+
+@property (nonatomic, assign) CGFloat      topHeight;
+
+- (instancetype)initWithTopHeight:(CGFloat)height;
+
 @end

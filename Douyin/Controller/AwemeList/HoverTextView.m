@@ -10,11 +10,13 @@
 #import "Constants.h"
 #import "NSString+Extension.h"
 #import "NSNotification+Extension.h"
-#define LEFT_INSET 40
-#define RIGHT_INSET 100
-#define TOP_BOTTOM_INSET 15
+
+static const CGFloat kHoverTextViewLeftInset      = 40;
+static const CGFloat kHoverTextViewRightInset     = 100;
+static const CGFloat kHoverTextViewTopBottomInset = 15;
 
 @interface HoverTextView ()<UITextViewDelegate>
+
 @property (nonatomic, assign) CGFloat          textHeight;
 @property (nonatomic, assign) CGFloat          keyboardHeight;
 @property (nonatomic, retain) UILabel          *placeholderLabel;
@@ -22,6 +24,7 @@
 @property (nonatomic, strong) UIImageView      *atImageView;
 @property (nonatomic, strong) UIImageView      *sendImageView;
 @property (nonatomic, strong) UIView           *splitLine;
+
 @end
 
 @implementation HoverTextView
@@ -43,7 +46,7 @@
         _textView.returnKeyType = UIReturnKeySend;
         _textView.scrollEnabled = NO;
         _textView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
-        _textView.textContainerInset = UIEdgeInsetsMake(TOP_BOTTOM_INSET, LEFT_INSET, TOP_BOTTOM_INSET, RIGHT_INSET);
+        _textView.textContainerInset = UIEdgeInsetsMake(kHoverTextViewTopBottomInset, kHoverTextViewLeftInset, kHoverTextViewTopBottomInset, kHoverTextViewRightInset);
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
@@ -51,7 +54,7 @@
         _placeholderLabel.text = @"有爱评论，说点儿好听的~";
         _placeholderLabel.textColor = ColorWhiteAlpha40;
         _placeholderLabel.font = BigFont;
-        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET, 50);
+        _placeholderLabel.frame = CGRectMake(kHoverTextViewLeftInset, 0, ScreenWidth - kHoverTextViewLeftInset - kHoverTextViewRightInset, 50);
         [_textView addSubview:_placeholderLabel];
         
         _editImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 50)];
@@ -59,19 +62,19 @@
         _editImageView.image = [UIImage imageNamed:@"ic30Pen1"];
         [_textView addSubview:_editImageView];
         
-        _atImageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 50, 0, 50, 50)];
+        _atImageView = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth - 50, 0, 50, 50)];
         _atImageView.contentMode = UIViewContentModeCenter;
         _atImageView.image = [UIImage imageNamed:@"ic30WhiteAt"];
         [_textView addSubview:_atImageView];
         
-        _sendImageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH, 0, 50, 50)];
+        _sendImageView = [[UIImageView alloc] initWithFrame:CGRectMake(ScreenWidth, 0, 50, 50)];
         _sendImageView.contentMode = UIViewContentModeCenter;
         _sendImageView.image = [UIImage imageNamed:@"ic30WhiteSend"];
         _sendImageView.userInteractionEnabled = YES;
         [_sendImageView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onSend)]];
         [_textView addSubview:_sendImageView];
         
-        _splitLine = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 0.5f)];
+        _splitLine = [[UIView alloc]initWithFrame:CGRectMake(0, 0, ScreenWidth, 0.5f)];
         _splitLine.backgroundColor = ColorWhiteAlpha40;
         [_textView addSubview:_splitLine];
         
@@ -98,12 +101,12 @@
 }
 
 - (void)updateTextViewFrame {
-    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
-    self.textView.frame = CGRectMake(0, SCREEN_HEIGHT - _keyboardHeight - textViewHeight, SCREEN_WIDTH, textViewHeight);
+    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*kHoverTextViewTopBottomInset : ceilf(_textView.font.lineHeight) + 2*kHoverTextViewTopBottomInset;
+    self.textView.frame = CGRectMake(0, ScreenHeight - _keyboardHeight - textViewHeight, ScreenWidth, textViewHeight);
 }
 
 - (void)updateRightViewsFrame {
-    CGFloat originX = SCREEN_WIDTH;
+    CGFloat originX = ScreenWidth;
     originX -= _keyboardHeight > SafeAreaBottomHeight ? 50 : (_textView.text.length > 0 ? 50 : 0);
     [UIView animateWithDuration:0.25 animations:^{
         self.sendImageView.frame = CGRectMake(originX, 0, 50, 50);
@@ -120,6 +123,7 @@
 - (void)onSend {
     if(_delegate) {
         [_delegate onSendText:_textView.text];
+        [_placeholderLabel setHidden:NO];
         _textView.text = @"";
         _textHeight = ceilf(_textView.font.lineHeight);
         [_textView resignFirstResponder];
@@ -156,7 +160,7 @@
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
         [_placeholderLabel setHidden:YES];
-        _textHeight = [attributedText multiLineSize:SCREEN_WIDTH - LEFT_INSET - RIGHT_INSET].height;
+        _textHeight = [attributedText multiLineSize:ScreenWidth - kHoverTextViewLeftInset - kHoverTextViewRightInset].height;
     }
     [self updateViewFrameAndState];
 }

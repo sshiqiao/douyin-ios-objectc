@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 
 @interface CircleTextView:UIView
+
 @property(nonatomic, assign) NSString    *text;
 @property(nonatomic, strong) UIColor     *textColor;
 @property(nonatomic, strong) UIFont      *font;
+
 @end

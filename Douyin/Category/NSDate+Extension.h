@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 @interface NSDate (Extension)
 
 + (NSString *)formatTime:(NSTimeInterval)timeInterval;

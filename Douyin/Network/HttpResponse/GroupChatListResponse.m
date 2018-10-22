@@ -9,4 +9,5 @@
 #import "GroupChatListResponse.h"
 
 @implementation GroupChatListResponse
+
 @end

@@ -7,19 +7,23 @@
 //
 
 #import "PhotoView.h"
+#import "Constants.h"
+#import "CircleProgressView.h"
+
 @implementation PhotoView
+
 - (instancetype)initWithUrl:(NSString *)urlPath {
     self = [super init];
     if (self) {
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
-        _container = [[UIView alloc] initWithFrame:SCREEN_FRAME];
+        _container = [[UIView alloc] initWithFrame:ScreenFrame];
         _container.backgroundColor = ColorBlack;
         self.container.alpha = 0.0f;
         [self addSubview:_container];
         
         
-        _imageView = [[UIImageView alloc] initWithFrame:SCREEN_FRAME];
+        _imageView = [[UIImageView alloc] initWithFrame:ScreenFrame];
         __weak typeof(self) wself = self;
         [_imageView setImageWithURL:[NSURL URLWithString:urlPath] progressBlock:^(CGFloat persent) {
             [wself.progressView setProgress:persent];
@@ -44,14 +48,14 @@
 - (instancetype)initWithImage:(UIImage *)image urlPath:(NSString *)urlPath {
     self = [super init];
     if (self) {
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
-        _container = [[UIView alloc] initWithFrame:SCREEN_FRAME];
+        _container = [[UIView alloc] initWithFrame:ScreenFrame];
         _container.backgroundColor = ColorBlack;
         self.container.alpha = 0.0f;
         [self addSubview:_container];
         
-        _imageView = [[UIImageView alloc] initWithFrame:SCREEN_FRAME];
+        _imageView = [[UIImageView alloc] initWithFrame:ScreenFrame];
         _imageView.image = image;
         __weak typeof(self) wself = self;
         [_imageView setImageWithURL:[NSURL URLWithString:urlPath] progressBlock:^(CGFloat percent) {
@@ -77,14 +81,14 @@
 - (instancetype)initWithImage:(UIImage *)image {
     self = [super init];
     if (self) {
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGuesture:)]];
-        _container = [[UIView alloc] initWithFrame:SCREEN_FRAME];
+        _container = [[UIView alloc] initWithFrame:ScreenFrame];
         _container.backgroundColor = ColorBlack;
         self.container.alpha = 0.0f;
         [self addSubview:_container];
         
-        _imageView = [[UIImageView alloc] initWithFrame:SCREEN_FRAME];
+        _imageView = [[UIImageView alloc] initWithFrame:ScreenFrame];
         _imageView.image = image;
         _imageView.contentMode = UIViewContentModeScaleAspectFit;
         _imageView.alpha = 0.0f;

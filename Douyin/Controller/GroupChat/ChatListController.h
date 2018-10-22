@@ -6,7 +6,6 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "BaseViewController.h"
 
 @interface ChatListController : BaseViewController

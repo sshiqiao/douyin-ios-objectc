@@ -7,6 +7,9 @@
 //
 
 #import "WebCacheHelpler.h"
+#import "Constants.h"
+#import "objc/runtime.h"
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation WebCombineOperation
 //取消查询缓存NSOperation任务和下载资源WebDownloadOperation任务
@@ -59,6 +62,8 @@
         //初始化内存缓存
         _memCache = [NSCache new];
         _memCache.name = @"webCache";
+        _memCache.totalCostLimit = 50*1024*1024;
+        
         //初始化文件管理类
         _fileManager = [NSFileManager defaultManager];
         

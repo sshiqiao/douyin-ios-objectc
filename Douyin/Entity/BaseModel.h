@@ -6,7 +6,8 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "JSONModel.h"
+
 @interface BaseModel:JSONModel
+
 @end

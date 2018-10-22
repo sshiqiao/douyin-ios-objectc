@@ -9,4 +9,5 @@
 #import "AwemeResponse.h"
 
 @implementation AwemeResponse
+
 @end

@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
-#import "Aweme.h"
+
+@class Aweme;
 
 @interface MusicAlbumView : UIView
+
 @property (nonatomic, strong) UIImageView      *album;
+
 - (void)startAnimation:(CGFloat)rate;
 - (void)resetView;
+
 @end

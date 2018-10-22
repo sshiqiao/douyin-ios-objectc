@@ -7,7 +7,9 @@
 //
 
 #import "NSDate+Extension.h"
+
 @implementation NSDate (Extension)
+
 + (NSString *)formatTime:(NSTimeInterval)timeInterval {
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];

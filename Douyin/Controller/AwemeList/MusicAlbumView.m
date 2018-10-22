@@ -7,10 +7,18 @@
 //
 
 #import "MusicAlbumView.h"
+#import "Constants.h"
+#import "Aweme.h"
+
 @interface MusicAlbumView ()
+
 @property (nonatomic, strong) UIView                        *albumContainer;
 @property (nonatomic, strong) NSMutableArray<CALayer *>     *noteLayers;
+
 @end
+
+
+
 @implementation MusicAlbumView
 
 - (instancetype)init {

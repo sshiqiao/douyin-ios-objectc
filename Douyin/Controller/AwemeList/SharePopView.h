@@ -7,16 +7,23 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
+
 @interface SharePopView:UIView
-@property (nonatomic, strong) UIView        *container;
-@property (nonatomic, strong) UIButton       *cancel;
+
+@property (nonatomic, strong) UIView           *container;
+@property (nonatomic, strong) UIButton         *cancel;
+
 - (void)show;
 - (void)dismiss;
+
 @end
 
+
 @interface ShareItem:UIView
-@property (nonatomic, strong) UIImageView   *icon;
-@property (nonatomic, strong) UILabel       *label;
+
+@property (nonatomic, strong) UIImageView      *icon;
+@property (nonatomic, strong) UILabel          *label;
+
 -(void)startAnimation:(NSTimeInterval)delayTime;
+
 @end

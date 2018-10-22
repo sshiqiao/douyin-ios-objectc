@@ -7,16 +7,24 @@
 //
 
 #import "AwemeListCell.h"
+#import "Constants.h"
+#import "Masonry.h"
+#import "Aweme.h"
+#import "AVPlayerView.h"
+#import "HoverTextView.h"
+#import "CircleTextView.h"
+#import "FocusView.h"
+#import "MusicAlbumView.h"
+#import "FavoriteView.h"
 #import "CommentsPopView.h"
 #import "SharePopView.h"
 #import "NetworkHelper.h"
 
-#define LIKE_BEFORE_TAP_ACTION 1000
-#define LIKE_AFTER_TAP_ACTION 2000
-#define COMMENT_TAP_ACTION 3000
-#define SHARE_TAP_ACTION 4000
+static const NSInteger kAwemeListLikeCommentTag = 0x01;
+static const NSInteger kAwemeListLikeShareTag   = 0x02;
 
 @interface AwemeListCell()<SendTextDelegate, HoverTextViewDelegate, AVPlayerUpdateDelegate>
+
 @property (nonatomic, strong) UIView                   *container;
 @property (nonatomic ,strong) CAGradientLayer          *gradientLayer;
 @property (nonatomic ,strong) UIImageView              *pauseIcon;
@@ -25,6 +33,7 @@
 @property (nonatomic, strong) UITapGestureRecognizer   *singleTapGesture;
 @property (nonatomic, assign) NSTimeInterval           lastTapTime;
 @property (nonatomic, assign) CGPoint                  lastTapPoint;
+
 @end
 
 @implementation AwemeListCell
@@ -114,7 +123,7 @@
     _share.contentMode = UIViewContentModeCenter;
     _share.image = [UIImage imageNamed:@"icon_home_share"];
     _share.userInteractionEnabled = YES;
-    _share.tag = SHARE_TAP_ACTION;
+    _share.tag = kAwemeListLikeShareTag;
     [_share addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)]];
     [_container addSubview:_share];
     
@@ -128,7 +137,7 @@
     _comment.contentMode = UIViewContentModeCenter;
     _comment.image = [UIImage imageNamed:@"icon_home_comment"];
     _comment.userInteractionEnabled = YES;
-    _comment.tag = COMMENT_TAP_ACTION;
+    _comment.tag = kAwemeListLikeCommentTag;
     [_comment addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)]];
     [_container addSubview:_comment];
     
@@ -205,18 +214,18 @@
     [_musicName mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.musicIcon.mas_right);
         make.centerY.equalTo(self.musicIcon);
-        make.width.mas_equalTo(SCREEN_WIDTH/2);
+        make.width.mas_equalTo(ScreenWidth/2);
         make.height.mas_equalTo(24);
     }];
     [_desc mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(10);
         make.bottom.equalTo(self.musicIcon.mas_top);
-        make.width.mas_lessThanOrEqualTo(SCREEN_WIDTH/5*3);
+        make.width.mas_lessThanOrEqualTo(ScreenWidth/5*3);
     }];
     [_nickName mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self).offset(10);
         make.bottom.equalTo(self.desc.mas_top).inset(5);
-        make.width.mas_lessThanOrEqualTo(SCREEN_WIDTH/4*3 + 30);
+        make.width.mas_lessThanOrEqualTo(ScreenWidth/4*3 + 30);
     }];
     
     [_musicAlum mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -275,7 +284,7 @@
     request.aweme_id = _aweme.aweme_id;
     request.udid = UDID;
     request.text = text;
-    [NetworkHelper postWithUrlPath:POST_COMMENT_URL request:request success:^(id data) {
+    [NetworkHelper postWithUrlPath:PostComentPath request:request success:^(id data) {
         [UIWindow showTips:@"评论成功"];
     } failure:^(NSError *error) {
         wself.hoverTextView.textView.text = text;
@@ -291,12 +300,12 @@
 //gesture
 - (void)handleGesture:(UITapGestureRecognizer *)sender {
     switch (sender.view.tag) {
-        case COMMENT_TAP_ACTION: {
+        case kAwemeListLikeCommentTag: {
             CommentsPopView *popView = [[CommentsPopView alloc] initWithAwemeId:_aweme.aweme_id];
             [popView show];
             break;
         }
-        case SHARE_TAP_ACTION: {
+        case kAwemeListLikeShareTag: {
             SharePopView *popView = [[SharePopView alloc] init];
             [popView show];
             break;
@@ -403,7 +412,7 @@
         CABasicAnimation * scaleAnimation = [CABasicAnimation animation];
         scaleAnimation.keyPath = @"transform.scale.x";
         scaleAnimation.fromValue = @(1.0f);
-        scaleAnimation.toValue = @(1.0f * SCREEN_WIDTH);
+        scaleAnimation.toValue = @(1.0f * ScreenWidth);
         
         CABasicAnimation * alphaAnimation = [CABasicAnimation animation];
         alphaAnimation.keyPath = @"opacity";

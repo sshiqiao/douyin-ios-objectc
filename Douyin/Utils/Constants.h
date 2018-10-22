@@ -15,128 +15,23 @@
 #import "UIImageView+WebCache.h"
 #import "CADisplayLink+Tool.h"
 
-#define NetworkDomain @"com.start.douyin"
-
-//请求地址
-#define BaseUrl @"http://116.62.9.17:8080/douyin/"
-//#define BaseUrl @"http://192.168.1.2:8080/"
-
-//创建访客用户接口
-#define CREATE_VISITOR_BY_UDID_URL             @"visitor/create"
-
-//根据用户id获取用户信息
-#define FIND_USER_BY_UID_URL                   @"user"
-
-//获取用户发布的短视频列表数据
-#define FIND_AWEME_POST_BY_PAGE_URL            @"aweme/post"
-//获取用户喜欢的短视频列表数据
-#define FIND_AWEME_FAVORITE_BY_PAGE_URL        @"aweme/favorite"
-
-//发送文本类型群聊消息
-#define POST_GROUP_CHAT_TEXT_URL               @"groupchat/text"
-//发送单张图片类型群聊消息
-#define POST_GROUP_CHAT_IMAGE_URL              @"groupchat/image"
-//发送多张图片类型群聊消息
-#define POST_GROUP_CHAT_IMAGES_URL             @"groupchat/images"
-//根据id获取指定图片
-#define FIND_GROUP_CHAT_BY_IMAGE_ID_URL        @"groupchat/image"
-//获取群聊列表数据
-#define FIND_GROUP_CHAT_BY_PAGE_URL            @"groupchat/list"
-//根据id删除指定群聊消息
-#define DELETE_GROUP_CHAT_BY_ID_URL            @"groupchat/delete"
-
-//根据视频id发送评论
-#define POST_COMMENT_URL                       @"comment/post"
-//根据id删除评论
-#define DELETE_COMMENT_BY_ID_URL               @"comment/delete"
-//获取评论列表
-#define FIND_COMMENT_BY_PAGE_URL               @"comment/list"
-
-#define StatusBarTouchBeginNotification        @"StatusBarTouchBeginNotification"
-
-//loading type enum
-typedef NS_ENUM(NSUInteger,LoadingType) {
-    LoadStateIdle                   = 0,
-    LoadStateLoading                = 1,
-    LoadStateAll                    = 2,
-    LoadStateFailed                 = 3
-};
-
-//refreshing type enum
-typedef NS_ENUM(NSUInteger,RefreshingType) {
-    RefreshHeaderStateIdle          = 0,
-    RefreshHeaderStatePulling       = 1,
-    RefreshHeaderStateRefreshing    = 2,
-    RefreshHeaderStateAll           = 3
-};
-
-//chat edit message type enum
-typedef NS_ENUM(NSUInteger,ChatEditMessageType) {
-    EditTextMessage        = 0,
-    EditPhotoMessage       = 1,
-    EditEmotionMessage     = 2,
-    EditNoneMessage        = 3,
-};
-
-typedef NS_ENUM(NSUInteger,MenuActionType) {
-    DeleteAction        = 0,
-    CopyAction          = 1,
-    PasteAction         = 2
-};
-
-//static UIEdgeInsets SafeAreaEdgeInsets;
-
-#define writeVisitor(visitor)\
-({\
-NSDictionary *dic = [visitor toDictionary];\
-NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];\
-[defaults setObject:dic forKey:@"visitor"];\
-[defaults synchronize];\
-})
-
-
-#define readVisitor()\
-({\
-NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];\
-NSDictionary *dic = [defaults objectForKey:@"visitor"];\
-Visitor *visitor = [[Visitor alloc] initWithDictionary:dic error:nil];\
-(visitor);\
-})
-
-
-#define dispatch_main_sync_safe(block)\
-if ([NSThread isMainThread]) {\
-block();\
-} else {\
-dispatch_sync(dispatch_get_main_queue(), block);\
-}
-
-#define dispatch_main_async_safe(block)\
-if ([NSThread isMainThread]) {\
-block();\
-} else {\
-dispatch_async(dispatch_get_main_queue(), block);\
-}
-
 
 //UDID MD5_UDID
 #define UDID [[[UIDevice currentDevice] identifierForVendor] UUIDString]
 #define MD5_UDID [UDID md5]
 
-
 //size
-#define SCREEN_WIDTH [UIScreen mainScreen].bounds.size.width
-#define SCREEN_HEIGHT [UIScreen mainScreen].bounds.size.height
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
 
-#define STATUS_BAR_HEIGHT [UIApplication sharedApplication].statusBarFrame.size.height
-#define SafeAreaTopHeight ((SCREEN_HEIGHT >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"] ? 88 : 64)
-#define SafeAreaBottomHeight ((SCREEN_HEIGHT >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"]  ? 30 : 0)
+#define StatusBarHeight [UIApplication sharedApplication].statusBarFrame.size.height
+#define SafeAreaTopHeight ((ScreenHeight >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"] ? 88 : 64)
+#define SafeAreaBottomHeight ((ScreenHeight >= 812.0) && [[UIDevice currentDevice].model isEqualToString:@"iPhone"]  ? 30 : 0)
 
-#define SCREEN_FRAME [UIScreen mainScreen].bounds
+#define ScreenFrame [UIScreen mainScreen].bounds
 
 #define UIViewX(control) (control.frame.origin.x)
 #define UIViewY(control) (control.frame.origin.y)
-
 
 #define UIViewWidth(view) CGRectGetWidth(view.frame)
 #define UIViewHeight(view) CGRectGetHeight(view.frame)
@@ -179,6 +74,7 @@ alpha:1.0]
 #define ColorThemeYellow RGBA(250.0, 206.0, 21.0, 1.0)
 #define ColorThemeYellowDark RGBA(235.0, 181.0, 37.0, 1.0)
 #define ColorThemeBackground RGBA(14.0, 15.0, 26.0, 1.0)
+#define ColorThemeGrayDarkAlpha95 RGBA(20.0, 21.0, 30.0, 0.95)
 
 #define ColorThemeRed RGBA(241.0, 47.0, 84.0, 1.0)
 
@@ -190,6 +86,7 @@ alpha:1.0]
 #define ColorBlue RGBA(40.0, 120.0, 255.0, 1.0)
 #define ColorGrayLight RGBA(40.0, 40.0, 40.0, 1.0)
 #define ColorGrayDark RGBA(25.0, 25.0, 35.0, 1.0)
+#define ColorGrayDarkAlpha95 RGBA(25.0, 25.0, 35.0, 0.95)
 #define ColorSmoke RGBA(230.0, 230.0, 230.0, 1.0)
 
 
@@ -211,3 +108,37 @@ alpha:1.0]
 
 #define SuperBigFont [UIFont systemFontOfSize:26.0]
 #define SuperBigBoldFont [UIFont boldSystemFontOfSize:26.0]
+
+
+//safe thread
+#define dispatch_main_sync_safe(block)\
+if ([NSThread isMainThread]) {\
+block();\
+} else {\
+dispatch_sync(dispatch_get_main_queue(), block);\
+}
+
+#define dispatch_main_async_safe(block)\
+if ([NSThread isMainThread]) {\
+block();\
+} else {\
+dispatch_async(dispatch_get_main_queue(), block);\
+}
+
+//visitor
+#define writeVisitor(visitor)\
+({\
+NSDictionary *dic = [visitor toDictionary];\
+NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];\
+[defaults setObject:dic forKey:@"visitor"];\
+[defaults synchronize];\
+})
+
+
+#define readVisitor()\
+({\
+NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];\
+NSDictionary *dic = [defaults objectForKey:@"visitor"];\
+Visitor *visitor = [[Visitor alloc] initWithDictionary:dic error:nil];\
+(visitor);\
+})

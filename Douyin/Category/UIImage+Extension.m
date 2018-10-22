@@ -7,7 +7,9 @@
 //
 
 #import "UIImage+Extension.h"
+
 @implementation UIImage (Extension)
+
 - (UIImage *)drawRoundedRectImage:(CGFloat)cornerRadius width:(CGFloat)width height:(CGFloat)height {
     UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), false, 1.0f);
     CGContextAddPath(UIGraphicsGetCurrentContext(),

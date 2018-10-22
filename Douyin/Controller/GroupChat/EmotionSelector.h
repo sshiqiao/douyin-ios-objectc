@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define EmotionSelectorHeight         220 + SafeAreaBottomHeight
+#define EmotionSelectorHeight   220 + SafeAreaBottomHeight
 
 @protocol EmotionSelectorDelegate
 @required
@@ -18,13 +18,12 @@
 @end
 
 @interface EmotionSelector : UIView
-@property (nonatomic, strong) UIView                 *container;
-@property (nonatomic, strong) UICollectionView       *collectionView;
-@property (nonatomic, weak) id<EmotionSelectorDelegate> delegate;
+@property (nonatomic, strong) UIView                     *container;
+@property (nonatomic, strong) UICollectionView           *collectionView;
+@property (nonatomic, weak) id<EmotionSelectorDelegate>  delegate;
 -(void)addTextViewObserver:(UITextView *)textView;
 - (void)removeTextViewObserver:(UITextView *)textView;
 @end
-
 
 @interface EmotionCell:UICollectionViewCell
 @property (nonatomic, strong) UIImageView     *emotion;

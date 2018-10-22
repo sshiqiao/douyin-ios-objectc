@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "objc/runtime.h"
 
 static char tipsKey;
 static char tapKey;
 
 @interface UIWindow (Extension)
+
 +(void)showTips:(NSString *)text;
+
 @end

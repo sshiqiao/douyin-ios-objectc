@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "objc/runtime.h"
 
 typedef void(^ExecuteMethodBlock) (CADisplayLink *displayLink);
 

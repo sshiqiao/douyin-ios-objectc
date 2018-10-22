@@ -7,6 +7,7 @@
 //
 
 #import "GroupChat.h"
+
 @implementation GroupChat
 
 -(instancetype)initImageChat:(UIImage *)image {

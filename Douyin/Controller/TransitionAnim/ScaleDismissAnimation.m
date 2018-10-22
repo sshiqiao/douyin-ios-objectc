@@ -7,12 +7,16 @@
 //
 
 #import "ScaleDismissAnimation.h"
+#import "UserHomePageController.h"
+#import "AwemeListController.h"
+#import "AwemeCollectionCell.h"
+
 @implementation ScaleDismissAnimation
 
 - (instancetype)init {
     self = [super init];
     if (self) {
-        _centerFrame = CGRectMake((SCREEN_WIDTH - 5)/2, (SCREEN_HEIGHT - 5)/2, 5, 5);
+        _centerFrame = CGRectMake((ScreenWidth - 5)/2, (ScreenHeight - 5)/2, 5, 5);
     }
     return self;
 }
@@ -38,7 +42,7 @@
         finalFrame = [userHomePageController.collectionView convertRect:selectCell.frame toView:[userHomePageController.collectionView superview]];
     }else {
         snapshotView = [fromVC.view snapshotViewAfterScreenUpdates:NO];
-        scaleRatio = fromVC.view.frame.size.width/SCREEN_WIDTH;
+        scaleRatio = fromVC.view.frame.size.width/ScreenWidth;
         finalFrame = _centerFrame;
     }
     

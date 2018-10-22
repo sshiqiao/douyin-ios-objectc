@@ -9,9 +9,9 @@
 #import "TimeCell.h"
 #import "EmotionHelper.h"
 
-#define SYS_MSG_CORNER_RADIUS      10
-#define MAX_SYS_MSG_WIDTH          SCREEN_WIDTH - 110
-#define COMMON_MSG_PADDING         8
+static const CGFloat kTimeMsgCornerRadius    = 10;
+static const CGFloat kTimeMsgMaxWidth        = 150;
+static const CGFloat kTimeMsgPadding         = 8;
 
 @implementation TimeCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -25,7 +25,7 @@
         _textView.scrollEnabled = NO;
         _textView.editable = NO;
         _textView.backgroundColor = ColorClear;
-        _textView.textContainerInset = UIEdgeInsetsMake(SYS_MSG_CORNER_RADIUS*2, SYS_MSG_CORNER_RADIUS, 0, SYS_MSG_CORNER_RADIUS);
+        _textView.textContainerInset = UIEdgeInsetsMake(kTimeMsgCornerRadius*2, kTimeMsgCornerRadius, 0, kTimeMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
         [self addSubview:_textView];
     }
@@ -40,21 +40,20 @@
 }
 
 -(void)initData:(GroupChat *)chat {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[TimeCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    _textView.attributedText = attributedString;
+    _chat = chat;
+    _textView.attributedText = chat.cellAttributedString;
 }
 
-+(NSDictionary* ) attributes {
++(NSDictionary* )attributes {
     return @{NSFontAttributeName:SmallFont,NSForegroundColorAttributeName:ColorGray};
 }
 
 +(CGFloat)cellHeight:(GroupChat *)chat {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[TimeCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    CGSize size = [attributedString multiLineSize:MAX_SYS_MSG_WIDTH];
-    return size.height + COMMON_MSG_PADDING * 2;
+    return chat.contentSize.height + kTimeMsgPadding * 2;
 }
+
++ (CGSize)contentSize:(GroupChat *)chat {
+    return [chat.cellAttributedString multiLineSize:kTimeMsgMaxWidth];
+}
+
 @end

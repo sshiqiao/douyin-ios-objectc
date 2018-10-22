@@ -7,14 +7,15 @@
 //
 
 #import <AVKit/AVKit.h>
-#import <AVFoundation/AVFoundation.h>
+#import "Aweme.h"
 #import "AwemeListController.h"
 #import "AwemeListCell.h"
+#import "AVPlayerView.h"
 #import "NetworkHelper.h"
 #import "LoadMoreControl.h"
 #import "AVPlayerManager.h"
 
-#define AWEME_CELL @"AwemeListCell"
+NSString * const kAwemeListCell   = @"AwemeListCell";
 
 @interface AwemeListController () <UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate>
 
@@ -29,6 +30,7 @@
 @property (nonatomic, strong) LoadMoreControl                      *loadMore;
 
 @end
+
 @implementation AwemeListController
 
 -(instancetype)initWithVideoData:(NSMutableArray<Aweme *> *)data currentIndex:(NSInteger)currentIndex pageIndex:(NSInteger)pageIndex pageSize:(NSInteger)pageSize awemeType:(AwemeType)type uid:(NSString *)uid {
@@ -44,7 +46,7 @@
         _awemes = [data mutableCopy];
         _data = [[NSMutableArray alloc] initWithObjects:[_awemes objectAtIndex:_currentIndex], nil];
         
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarTouchBegin) name:StatusBarTouchBeginNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarTouchBegin) name:@"StatusBarTouchBeginNotification" object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationBecomeActive) name:UIApplicationWillEnterForegroundNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationEnterBackground) name: UIApplicationDidEnterBackgroundNotification object:nil];
     }
@@ -59,8 +61,8 @@
 }
 
 - (void)setUpView {
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT * 5)];
-    _tableView.contentInset = UIEdgeInsetsMake(SCREEN_HEIGHT, 0, SCREEN_HEIGHT * 3, 0);
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -ScreenHeight, ScreenWidth, ScreenHeight * 5)];
+    _tableView.contentInset = UIEdgeInsetsMake(ScreenHeight, 0, ScreenHeight * 3, 0);
     
     _tableView.backgroundColor = ColorClear;
     _tableView.delegate = self;
@@ -72,9 +74,9 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-    [self.tableView registerClass:AwemeListCell.class forCellReuseIdentifier:AWEME_CELL];
+    [self.tableView registerClass:AwemeListCell.class forCellReuseIdentifier:kAwemeListCell];
     
-    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, SCREEN_WIDTH, 50) surplusCount:10];
+    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, ScreenWidth, 50) surplusCount:10];
     __weak __typeof(self) wself = self;
     [_loadMore setOnLoad:^{
         [wself loadData:wself.pageIndex pageSize:wself.pageSize];
@@ -100,6 +102,8 @@
     for(AwemeListCell *cell in cells) {
         [cell.playerView cancelLoading];
     }
+    [[AVPlayerManager shareManager] removeAllPlayers];
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self removeObserver:self forKeyPath:@"currentIndex"];
     
@@ -120,7 +124,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //填充视频数据
-    AwemeListCell *cell = [tableView dequeueReusableCellWithIdentifier:AWEME_CELL];
+    AwemeListCell *cell = [tableView dequeueReusableCellWithIdentifier:kAwemeListCell];
     [cell initData:[_data objectAtIndex:indexPath.row]];
     return cell;
 }
@@ -205,7 +209,7 @@
     request.size = pageSize;
     request.uid = _uid;
     if(_awemeType == AwemeWork) {
-        [NetworkHelper getWithUrlPath:FIND_AWEME_POST_BY_PAGE_URL request:request success:^(id data) {
+        [NetworkHelper getWithUrlPath:FindAwemePostByPagePath request:request success:^(id data) {
             AwemeListResponse *response = [[AwemeListResponse alloc] initWithDictionary:data error:nil];
             NSArray<Aweme *> *array = response.data;
             if(array.count > 0) {
@@ -228,7 +232,7 @@
             [wself.loadMore loadingFailed];
         }];
     }else {
-        [NetworkHelper getWithUrlPath:FIND_AWEME_FAVORITE_BY_PAGE_URL request:request success:^(id data) {
+        [NetworkHelper getWithUrlPath:FindAwemeFavoriteByPagePath request:request success:^(id data) {
             AwemeListResponse *response = [[AwemeListResponse alloc] initWithDictionary:data error:nil];
             NSArray<Aweme *> *array = response.data;
             if(array.count > 0) {

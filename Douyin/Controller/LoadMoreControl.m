@@ -8,14 +8,21 @@
 
 #import "LoadMoreControl.h"
 #import "Masonry.h"
+#import "Constants.h"
+#import <objc/message.h>
+
 @interface LoadMoreControl ()
+
 @property (nonatomic, assign) NSInteger  surplusCount;
 @property (nonatomic, assign) CGRect     originalFrame;
+
 @end
 
+
 @implementation LoadMoreControl
+
 - (instancetype)init {
-    return [self initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 50)];
+    return [self initWithFrame:CGRectMake(0, 0, ScreenWidth, 50)];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -52,6 +59,7 @@
     }
     return cellNum;
 }
+
 -(NSInteger)cellNumInCollectionView:(UICollectionView *)collectionView {
     NSInteger sectionNum = collectionView.numberOfSections;
     NSInteger cellNum = 0;
@@ -61,6 +69,7 @@
     }
     return cellNum;
 }
+
 //kvo
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     __weak __typeof(self) wself = self;
@@ -83,7 +92,7 @@
                                 }
                             }
                             if(indexPath.section == lastSection && indexPath.row == lastRow) {
-                                self.frame = CGRectMake(0, CGRectGetMaxY(tableView.visibleCells.lastObject.frame), SCREEN_WIDTH, 50);
+                                self.frame = CGRectMake(0, CGRectGetMaxY(tableView.visibleCells.lastObject.frame), ScreenWidth, 50);
                             }
                         }
                     }
@@ -110,7 +119,7 @@
                             }
                             if(indexPath.section == lastSection && indexPath.row == lastRow) {
                                 UICollectionViewCell *cell = [collectionView cellForItemAtIndexPath:indexPath];
-                                self.frame = CGRectMake(0, CGRectGetMaxY(cell.frame), SCREEN_WIDTH, 50);
+                                self.frame = CGRectMake(0, CGRectGetMaxY(cell.frame), ScreenWidth, 50);
                             }
                         }
                     }
@@ -121,7 +130,6 @@
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
 }
-
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -211,8 +219,6 @@
             [self stopAnim];
             break;
         }
-        default:
-            break;
     }
 }
 
@@ -220,12 +226,12 @@
     if([self.superView isKindOfClass:[UITableView class]]) {
         UITableView *tableView = (UITableView *)self.superView;
         CGFloat y = tableView.contentSize.height > _originalFrame.origin.y ? tableView.contentSize.height : _originalFrame.origin.y;
-        self.frame = CGRectMake(0, y, SCREEN_WIDTH, 50);
+        self.frame = CGRectMake(0, y, ScreenWidth, 50);
     }
     if([self.superView isKindOfClass:[UICollectionView class]]) {
         UICollectionView *collectionView = (UICollectionView *)self.superView;
         CGFloat y = collectionView.contentSize.height > _originalFrame.origin.y ? collectionView.contentSize.height : _originalFrame.origin.y;
-        self.frame = CGRectMake(0, y, SCREEN_WIDTH, 50);
+        self.frame = CGRectMake(0, y, ScreenWidth, 50);
     }
 }
 
@@ -237,6 +243,7 @@
     rotationAnimation.repeatCount = MAXFLOAT;
     [self.indicatorView.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 }
+
 - (void)stopAnim {
     [self.indicatorView.layer removeAllAnimations];
 }
@@ -244,4 +251,5 @@
 - (void)dealloc {
     [_superView removeObserver:self forKeyPath:@"contentOffset"];
 }
+
 @end

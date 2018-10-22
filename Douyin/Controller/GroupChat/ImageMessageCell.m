@@ -8,17 +8,19 @@
 
 #import "ImageMessageCell.h"
 #import "PhotoView.h"
+#import "CircleProgressView.h"
 
-#define COMMON_MSG_PADDING         8
-#define MAX_MSG_IMAGE_WIDTH        200
-#define MAX_MSG_IMAGE_HEIGHT       200
-#define MSG_IMAGE_CORNOR_RADIUS    10
+static const CGFloat kImageMsgCornerRadius    = 10;
+static const CGFloat kImageMsgMaxWidth        = 200;
+static const CGFloat kImageMsgMaxHeight       = 200;
+static const CGFloat kImageMsgPadding         = 8;
 
 @interface ImageMessageCell ()
 @property (nonatomic, assign) CGFloat imageWidth;
 @property (nonatomic, assign) CGFloat imageHeight;
 @property (nonatomic, strong) UIImage *rectImage;
 @end
+
 @implementation ImageMessageCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -33,7 +35,7 @@
         _imageMsg = [[UIImageView alloc] init];
         _imageMsg.backgroundColor = ColorGray;
         _imageMsg.contentMode = UIViewContentModeScaleAspectFit;
-        _imageMsg.layer.cornerRadius = MSG_IMAGE_CORNOR_RADIUS;
+        _imageMsg.layer.cornerRadius = kImageMsgCornerRadius;
         _imageMsg.userInteractionEnabled = YES;
         
         [_imageMsg addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu)]];
@@ -55,9 +57,9 @@
 -(void)layoutSubviews {
     [super layoutSubviews];
     if([MD5_UDID isEqualToString:_chat.visitor.udid]){
-        _avatar.frame = CGRectMake(SCREEN_WIDTH - COMMON_MSG_PADDING - 30, COMMON_MSG_PADDING, 30, 30);
+        _avatar.frame = CGRectMake(ScreenWidth - kImageMsgPadding - 30, kImageMsgPadding, 30, 30);
     }else {
-        _avatar.frame = CGRectMake(COMMON_MSG_PADDING, COMMON_MSG_PADDING, 30, 30);
+        _avatar.frame = CGRectMake(kImageMsgPadding, kImageMsgPadding, 30, 30);
     }
     [self updateImageFrame];
     [_progressView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -69,9 +71,9 @@
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     if([MD5_UDID isEqualToString:_chat.visitor.udid]){
-        _imageMsg.frame = CGRectMake(CGRectGetMinX(self.avatar.frame) - COMMON_MSG_PADDING - _imageWidth, COMMON_MSG_PADDING, _imageWidth, _imageHeight);
+        _imageMsg.frame = CGRectMake(CGRectGetMinX(self.avatar.frame) - kImageMsgPadding - _imageWidth, kImageMsgPadding, _imageWidth, _imageHeight);
     }else {
-        _imageMsg.frame = CGRectMake(CGRectGetMaxX(self.avatar.frame) + COMMON_MSG_PADDING, COMMON_MSG_PADDING, _imageWidth, _imageHeight);
+        _imageMsg.frame = CGRectMake(CGRectGetMaxX(self.avatar.frame) + kImageMsgPadding, kImageMsgPadding, _imageWidth, _imageHeight);
     }
     [CATransaction commit];
 }
@@ -89,7 +91,7 @@
     if(chat.picImage) {
         [_progressView setHidden:YES];
         _rectImage = chat.picImage;
-        UIImage *image = [chat.picImage drawRoundedRectImage:MSG_IMAGE_CORNOR_RADIUS width:_imageWidth height:_imageHeight];
+        UIImage *image = [chat.picImage drawRoundedRectImage:kImageMsgCornerRadius width:_imageWidth height:_imageHeight];
         [_imageMsg setImage:image];
         [self updateImageFrame];
     
@@ -101,7 +103,7 @@
             if(!error) {
                 wself.chat.picImage = image;
                 wself.rectImage = image;
-                wself.imageMsg.image = [image drawRoundedRectImage:MSG_IMAGE_CORNOR_RADIUS width:wself.imageWidth height:wself.imageHeight];
+                wself.imageMsg.image = [image drawRoundedRectImage:kImageMsgCornerRadius width:wself.imageWidth height:wself.imageHeight];
                 [wself updateImageFrame];
                 [wself.progressView setHidden:YES];
             }else {
@@ -136,12 +138,12 @@
     NSInteger height = chat.pic_large.height;
     CGFloat ratio = (CGFloat)width/(CGFloat)height;
     if(width > height) {
-        if(width > MAX_MSG_IMAGE_WIDTH) {
-            width = MAX_MSG_IMAGE_WIDTH;
+        if(width > kImageMsgMaxWidth) {
+            width = kImageMsgMaxWidth;
         }
     }else {
-        if(height > MAX_MSG_IMAGE_HEIGHT) {
-            width = MAX_MSG_IMAGE_WIDTH*ratio;
+        if(height > kImageMsgMaxHeight) {
+            width = kImageMsgMaxWidth*ratio;
         }
     }
     return width;
@@ -152,12 +154,12 @@
     NSInteger height = chat.pic_large.height;
     CGFloat ratio = (CGFloat)width/(CGFloat)height;
     if(width > height) {
-        if(width > MAX_MSG_IMAGE_WIDTH) {
-            height = MAX_MSG_IMAGE_WIDTH/ratio;
+        if(width > kImageMsgMaxWidth) {
+            height = kImageMsgMaxWidth/ratio;
         }
     }else {
-        if(height > MAX_MSG_IMAGE_HEIGHT) {
-            height = MAX_MSG_IMAGE_HEIGHT;
+        if(height > kImageMsgMaxHeight) {
+            height = kImageMsgMaxHeight;
         }
     }
     return height;
@@ -202,7 +204,10 @@
 }
 
 +(CGFloat)cellHeight:(GroupChat *)chat {
-    return [self imageHeight:chat] + COMMON_MSG_PADDING*2;
+    return chat.contentSize.height + kImageMsgPadding*2;
 }
 
++ (CGSize)contentSize:(GroupChat *)chat {
+    return CGSizeMake([self imageWidth:chat], [self imageHeight:chat]);
+}
 @end

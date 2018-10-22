@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+
 static char emotionKey;
 
 @interface NSTextAttachment (Emotion)

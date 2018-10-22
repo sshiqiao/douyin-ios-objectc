@@ -7,8 +7,12 @@
 //
 
 #import "NSString+Extension.h"
-@implementation NSString (Extension)
+#import <CommonCrypto/CommonDigest.h>
+#import <CoreText/CTFramesetter.h>
+#import <CoreText/CTFont.h>
+#import <CoreText/CTStringAttributes.h>
 
+@implementation NSString (Extension)
 
 //计算单行文本行高、支持包含emoji表情符的计算。开头空格、自定义插入的文本图片不纳入计算范围
 - (CGSize)singleLineSizeWithAttributeText:(UIFont *)font {
@@ -72,7 +76,6 @@
     return [self sizeWithAttributes:@{NSFontAttributeName:font}];
 }
 
-
 - (NSString *) md5 {
     const char *str = [self UTF8String];
     unsigned char digest[CC_MD5_DIGEST_LENGTH];
@@ -103,7 +106,6 @@
     NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
     return dic;
 }
-
 
 + (NSString *)currentTime {
     NSDate* date = [NSDate dateWithTimeIntervalSinceNow:0];

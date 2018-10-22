@@ -9,7 +9,11 @@
 #import "AwemeCollectionCell.h"
 #import "Constants.h"
 #import "Masonry.h"
+#import "WebPImageView.h"
+#import "Aweme.h"
+
 @implementation AwemeCollectionCell
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self){

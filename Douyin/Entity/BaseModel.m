@@ -7,8 +7,11 @@
 //
 
 #import "BaseModel.h"
+
 @implementation BaseModel
+
 +(BOOL)propertyIsOptional:(NSString *)propertyName {
     return YES;
 }
+
 @end

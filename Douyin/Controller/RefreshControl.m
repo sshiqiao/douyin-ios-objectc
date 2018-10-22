@@ -7,11 +7,17 @@
 //
 
 #import "RefreshControl.h"
+#import "Constants.h"
 #import "Masonry.h"
+
 @implementation RefreshControl
 
+- (instancetype)init {
+    return [self initWithFrame:CGRectMake(0, -50, ScreenWidth, 50)];
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:CGRectMake(0, -50, SCREEN_WIDTH, 50)];
+    self = [super initWithFrame:frame];
     if(self) {
         _refreshingType = RefreshHeaderStateIdle;
         _indicatorView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon60LoadingMiddle"]];
@@ -19,6 +25,7 @@
     }
     return self;
 }
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     [_indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -30,6 +37,7 @@
         [_superView addObserver:self forKeyPath:@"contentOffset" options:NSKeyValueObservingOptionNew context:nil];
     }
 }
+
 - (void)setOnRefresh:(OnRefresh)onRefresh {
     _onRefresh = onRefresh;
 }
@@ -97,4 +105,5 @@
 - (void)dealloc {
     [_superView removeObserver:self forKeyPath:@"contentOffset"];
 }
+
 @end

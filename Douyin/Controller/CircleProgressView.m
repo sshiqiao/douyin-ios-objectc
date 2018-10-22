@@ -8,12 +8,16 @@
 
 #import "CircleProgressView.h"
 #import "Constants.h"
+
 @interface CircleProgressView ()
-@property (nonatomic, strong) CAShapeLayer *progressLayer;
-@property (nonatomic, strong) UIImageView *tipIcon;
+
+@property (nonatomic, strong) CAShapeLayer   *progressLayer;
+@property (nonatomic, strong) UIImageView    *tipIcon;
+
 @end
 
 @implementation CircleProgressView
+
 - (instancetype)init {
     return [self initWithFrame:CGRectMake(0, 0, 50, 50)];
 }

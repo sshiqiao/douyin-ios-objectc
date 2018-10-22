@@ -7,12 +7,15 @@
 //
 
 #import "WebPQueueManager.h"
+
 @interface WebPQueueManager()
+
 @property (nonatomic, assign) NSInteger                            maxQueueCount;       //最大执行中的NSOperationQueue数量
 @property (nonatomic, strong) NSMutableArray<NSOperationQueue *>   *requestQueueArray;  //用于存储NSOperationQueue的数组
 @end
 
 @implementation WebPQueueManager
+
 //WebPQueueManager单例
 +(WebPQueueManager *)shareWebPQueueManager {
     static dispatch_once_t once;
@@ -22,6 +25,7 @@
     });
     return manager;
 }
+
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -66,13 +70,15 @@
 
 //对当前并发的所有队列进行处理，保证正在执行的队列数量不超过最大执行的队列数
 -(void)processQueues {
-    [_requestQueueArray enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSOperationQueue *queue, NSUInteger idx, BOOL *stop) {
-        if(idx < self.maxQueueCount) {
-            [self suspendQueue:queue suspended:NO];
-        }else {
-            [self suspendQueue:queue suspended:YES];
-        }
-    }];
+    @synchronized(_requestQueueArray) {
+        [_requestQueueArray enumerateObjectsUsingBlock:^(NSOperationQueue * _Nonnull queue, NSUInteger idx, BOOL * _Nonnull stop) {
+            if(idx < self.maxQueueCount) {
+                [self suspendQueue:queue suspended:NO];
+            }else {
+                [self suspendQueue:queue suspended:YES];
+            }
+        }];
+    }
 }
 
 //移除任务已经完成的队列，并更新当前正在执行的队列
@@ -95,4 +101,5 @@
         [queue removeObserver:self forKeyPath:@"operations"];
     }
 }
+
 @end

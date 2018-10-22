@@ -165,7 +165,7 @@
         [self.playerItem removeObserver:self forKeyPath:@"status"];
         [self.player removeTimeObserver:self.timeObserver];
     } @catch (NSException *exception) {
-        NSLog(@"%@", exception.description);
+//        NSLog(@"%@", exception.description);
     }
 }
 

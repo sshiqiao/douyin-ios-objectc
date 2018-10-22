@@ -10,8 +10,7 @@
 #import "Constants.h"
 #import "Masonry.h"
 
-
-#define EMOTION_CELL @"EmotionCell"
+NSString * const kEmotionCell = @"EmotionCell";
 
 @interface EmotionSelector () <UICollectionViewDelegate,UICollectionViewDataSource, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 @property (nonatomic, assign) CGFloat            itemWidth;
@@ -24,15 +23,14 @@
 @property (nonatomic, strong) UIButton           *send;
 @end
 
-
 @implementation EmotionSelector
 
 -(instancetype)init {
-    return [self initWithFrame:CGRectZero];
+    return [self initWithFrame:CGRectMake(0, 0, ScreenWidth, EmotionSelectorHeight)];
 }
 
 -(instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, EmotionSelectorHeight)];
+    self = [super initWithFrame:frame];
     if(self) {
         self.backgroundColor = ColorSmoke;
         self.clipsToBounds = NO;
@@ -40,7 +38,7 @@
         _emotionDic = [data objectForKey:@"dict"];
         _data = [data objectForKey:@"array"];
         
-        _itemWidth = SCREEN_WIDTH/ 7.0f;
+        _itemWidth = ScreenWidth/ 7.0f;
         _itemHeight = 50;
         UICollectionViewFlowLayout *layout=[[UICollectionViewFlowLayout alloc] init];
         layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
@@ -48,14 +46,14 @@
         layout.itemSize = CGSizeMake(_itemWidth, _itemHeight);
         layout.minimumLineSpacing = 0;
         layout.minimumInteritemSpacing = 0;
-        _collectionView = [[UICollectionView  alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, _itemHeight * 3) collectionViewLayout:layout];
+        _collectionView = [[UICollectionView  alloc]initWithFrame:CGRectMake(0, 0, ScreenWidth, _itemHeight * 3) collectionViewLayout:layout];
         _collectionView.clipsToBounds = NO;
         _collectionView.backgroundColor = ColorClear;
         _collectionView.alwaysBounceHorizontal = NO;
         _collectionView.showsHorizontalScrollIndicator = NO;
         _collectionView.delegate = self;
         _collectionView.dataSource = self;
-        [_collectionView registerClass:[EmotionCell class] forCellWithReuseIdentifier:EMOTION_CELL];
+        [_collectionView registerClass:[EmotionCell class] forCellWithReuseIdentifier:kEmotionCell];
         [self addSubview:_collectionView];
         
         _pointViews = [[NSMutableArray alloc] init];
@@ -64,7 +62,7 @@
         CGFloat indicatorHeight = 5;
         CGFloat indicatorSpacing = 8;
         for(int i=0;i<_data.count;i++) {
-            UIView *pointView = [[UIView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2-(indicatorWith*_data.count + indicatorSpacing*(_data.count-1))/2 + (indicatorWith + indicatorSpacing)*i, _collectionView.frame.size.height + 5, indicatorWith, indicatorHeight)];
+            UIView *pointView = [[UIView alloc] initWithFrame:CGRectMake(ScreenWidth/2-(indicatorWith*_data.count + indicatorSpacing*(_data.count-1))/2 + (indicatorWith + indicatorSpacing)*i, _collectionView.frame.size.height + 5, indicatorWith, indicatorHeight)];
             if(_currentIndex == i) {
                 pointView.backgroundColor = ColorThemeRed;
             }else {
@@ -76,7 +74,7 @@
         }
         
         
-        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, _collectionView.frame.size.height + 25, SCREEN_WIDTH, 45 + SafeAreaBottomHeight)];
+        _bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, _collectionView.frame.size.height + 25, ScreenWidth, 45 + SafeAreaBottomHeight)];
         _bottomView.backgroundColor = ColorWhite;
         [self addSubview:_bottomView];
         
@@ -89,7 +87,7 @@
         defaultEmotion.image = [UIImage imageNamed:@"default_emoticon_cover"];
         [leftView addSubview:defaultEmotion];
         
-        _send = [[UIButton alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 60 - 15, 10, 60, 25)];
+        _send = [[UIButton alloc] initWithFrame:CGRectMake(ScreenWidth - 60 - 15, 10, 60, 25)];
         _send.enabled = NO;
         _send.backgroundColor = ColorSmoke;
         _send.layer.cornerRadius = 2;
@@ -154,7 +152,7 @@
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    EmotionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:EMOTION_CELL forIndexPath:indexPath];
+    EmotionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kEmotionCell forIndexPath:indexPath];
     NSArray *array = _data[indexPath.section];
     if(indexPath.section < _data.count - 1) {
         if(indexPath.row < array.count) {

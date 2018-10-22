@@ -7,5 +7,7 @@
 //
 
 #import "PostGroupChatImageRequest.h"
+
 @implementation PostGroupChatImageRequest
+
 @end

@@ -7,6 +7,9 @@
 //
 
 #import "ScalePresentAnimation.h"
+#import "UserHomePageController.h"
+#import "AwemeListController.h"
+#import "AwemeCollectionCell.h"
 
 @implementation ScalePresentAnimation
 

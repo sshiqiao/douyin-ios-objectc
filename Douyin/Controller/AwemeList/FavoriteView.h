@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface FavoriteView : UIView
+
 @property (nonatomic, strong) UIImageView      *favoriteBefore;
 @property (nonatomic, strong) UIImageView      *favoriteAfter;
 

@@ -19,23 +19,21 @@
 #import "ImageMessageCell.h"
 #import "TextMessageCell.h"
 
-#define TIME_CELL                  @"TIME_CELL"
-#define SYSTEM_MESSAGE_CELL        @"SYSTEM_MESSAGE_CELL"
-#define IMAGE_MESSAGE_CELL         @"IMAGE_MESSAGE_CELL"
-#define TEXT_MESSAGE_CELL          @"TEXT_MESSAGE_CELL"
-
+NSString * const kTimeCell = @"TimeCell";
+NSString * const kSystemMessageCell = @"SystemMessageCell";
+NSString * const kImageMessageCell = @"ImageMessageCell";
+NSString * const kTextMessageCell = @"TextMessageCell";
 
 @interface ChatListController () <UITableViewDelegate, UITableViewDataSource, ChatTextViewDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) RefreshControl                      *refreshControl;
 @property (nonatomic, strong) UITableView                         *tableView;
 @property (nonatomic, strong) NSMutableArray<GroupChat *>         *data;
 @property (nonatomic, strong) ChatTextView                        *textView;
-
 @property (nonatomic, assign) NSInteger                           pageIndex;
 @property (nonatomic, assign) NSInteger                           pageSize;
-
 @property (nonatomic, strong) Visitor                             *visitor;
 @end
+
 
 @implementation ChatListController
 
@@ -49,7 +47,7 @@
     _pageIndex = 0;
     _pageSize = 20;
     
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, SafeAreaTopHeight, SCREEN_WIDTH, SCREEN_HEIGHT - SafeAreaTopHeight - 10)];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, SafeAreaTopHeight, ScreenWidth, ScreenHeight - SafeAreaTopHeight - 10)];
     _tableView.backgroundColor = ColorClear;
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -60,10 +58,10 @@
     } else {
         self.automaticallyAdjustsScrollViewInsets = YES;
     }
-    [_tableView registerClass:TimeCell.class forCellReuseIdentifier:TIME_CELL];
-    [_tableView registerClass:SystemMessageCell.class forCellReuseIdentifier:SYSTEM_MESSAGE_CELL];
-    [_tableView registerClass:ImageMessageCell.class forCellReuseIdentifier:IMAGE_MESSAGE_CELL];
-    [_tableView registerClass:TextMessageCell.class forCellReuseIdentifier:TEXT_MESSAGE_CELL];
+    [_tableView registerClass:TimeCell.class forCellReuseIdentifier:kTimeCell];
+    [_tableView registerClass:SystemMessageCell.class forCellReuseIdentifier:kSystemMessageCell];
+    [_tableView registerClass:ImageMessageCell.class forCellReuseIdentifier:kImageMessageCell];
+    [_tableView registerClass:TextMessageCell.class forCellReuseIdentifier:kTextMessageCell];
     [self.view addSubview:_tableView];
     
     _refreshControl = [RefreshControl new];
@@ -102,6 +100,8 @@
     if(error) {
         return;
     }
+    chat.cellAttributedString = [self cellAttributedString:chat];
+    chat.contentSize = [self cellContentSize:chat];
     chat.cellHeight = [self cellHeight:chat];
     
     BOOL shouldScrollToBottom = NO;
@@ -128,7 +128,7 @@
     GroupChatListRequest *request = [GroupChatListRequest new];
     request.page = pageIndex;
     request.size = pageSize;
-    [NetworkHelper getWithUrlPath:FIND_GROUP_CHAT_BY_PAGE_URL request:request success:^(id data) {
+    [NetworkHelper getWithUrlPath:FindGroupChatByPagePath request:request success:^(id data) {
         GroupChatListResponse *response = [[GroupChatListResponse alloc] initWithDictionary:data error:nil];
         NSArray<GroupChat *> *array = response.data;
         
@@ -136,10 +136,10 @@
         
         [UIView setAnimationsEnabled:NO];
         [wself processData:array];
-        
+
         NSInteger curCount = wself.data.count;
         
-        if(wself.pageIndex++ == 0 || preCount == 0 || (curCount - preCount)<=0) {
+        if(wself.pageIndex++ == 0 || preCount == 0 || (curCount - preCount) <= 0) {
             [wself scrollToBottom];
         }else {
             [wself.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:curCount - preCount inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:NO];
@@ -167,9 +167,13 @@
             timeChat.msg_type = @"time";
             timeChat.msg_content = [NSDate formatTime:chat.create_time];
             timeChat.create_time = chat.create_time;
+            timeChat.cellAttributedString = [self cellAttributedString:timeChat];
+            timeChat.contentSize = [self cellContentSize:timeChat];
             timeChat.cellHeight = [self cellHeight:timeChat];
             [tempArray addObject:timeChat];
         }
+        chat.cellAttributedString = [self cellAttributedString:chat];
+        chat.contentSize = [self cellContentSize:chat];
         chat.cellHeight = [self cellHeight:chat];
         [tempArray addObject:chat];
     }
@@ -205,7 +209,7 @@
     DeleteGroupChatRequest *request = [DeleteGroupChatRequest new];
     request.udid = UDID;
     request.id = chat.id;
-    [NetworkHelper deleteWithUrlPath:DELETE_GROUP_CHAT_BY_ID_URL request:request success:^(id data) {
+    [NetworkHelper deleteWithUrlPath:DeleteGroupChatByIdPath request:request success:^(id data) {
         [wself.tableView beginUpdates];
         [wself.data removeObjectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(indexPaths.firstObject.row, indexPaths.count)]];
         [wself.tableView deleteRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationRight];
@@ -226,6 +230,8 @@
     @synchronized(_data) {
         GroupChat *chat = [[GroupChat alloc] initTextChat:text];
         chat.visitor = _visitor;
+        chat.cellAttributedString = [self cellAttributedString:chat];
+        chat.contentSize = [self cellContentSize:chat];
         chat.cellHeight = [self cellHeight:chat];
         
         [UIView setAnimationsEnabled:NO];
@@ -243,7 +249,7 @@
         PostGroupChatTextRequest *request = [PostGroupChatTextRequest new];
         request.udid = UDID;
         request.text = text;
-        [NetworkHelper postWithUrlPath:POST_GROUP_CHAT_TEXT_URL request:request success:^(id data) {
+        [NetworkHelper postWithUrlPath:PostGroupChatTextPath request:request success:^(id data) {
             GroupChatResponse *response = [[GroupChatResponse alloc] initWithDictionary:data error:nil];
             [chat updateTempTextChat:response.data];
             [wself.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:index inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
@@ -262,6 +268,8 @@
             NSData *data = UIImageJPEGRepresentation(image, 1.0);
             GroupChat *chat = [[GroupChat alloc] initImageChat:image];
             chat.visitor = _visitor;
+            chat.cellAttributedString = [self cellAttributedString:chat];
+            chat.contentSize = [self cellContentSize:chat];
             chat.cellHeight = [self cellHeight:chat];
             
             [UIView setAnimationsEnabled:NO];
@@ -275,7 +283,7 @@
             
             PostGroupChatImageRequest *request = [PostGroupChatImageRequest new];
             request.udid = UDID;
-            [NetworkHelper uploadWithUrlPath:POST_GROUP_CHAT_IMAGE_URL data:data request:request progress:^(CGFloat percent) {
+            [NetworkHelper uploadWithUrlPath:PostGroupChatImagePath data:data request:request progress:^(CGFloat percent) {
                 chat.percent = percent;
                 chat.isCompleted = NO;
                 chat.isFailed = NO;
@@ -325,11 +333,11 @@
     GroupChat *chat = _data[indexPath.row];
     __weak __typeof(self) wself = self;
     if([chat.msg_type isEqualToString:@"system"]){
-        SystemMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:SYSTEM_MESSAGE_CELL];
+        SystemMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kSystemMessageCell];
         [cell initData:chat];
         return cell;
     }else if([chat.msg_type isEqualToString:@"text"]){
-        TextMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:TEXT_MESSAGE_CELL];
+        TextMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextMessageCell];
         __weak __typeof(cell) wcell = cell;
         cell.onMenuAction = ^(MenuActionType actionType) {
             if(actionType == DeleteAction) {
@@ -342,7 +350,7 @@
         [cell initData:chat];
         return cell;
     }else  if([chat.msg_type isEqualToString:@"image"]){
-        ImageMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:IMAGE_MESSAGE_CELL];
+        ImageMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kImageMessageCell];
         __weak __typeof(cell) wcell = cell;
         cell.onMenuAction = ^(MenuActionType actionType) {
             if(actionType == DeleteAction) {
@@ -352,10 +360,7 @@
         [cell initData:chat];
         return cell;
     }else {
-        TimeCell *cell = [tableView dequeueReusableCellWithIdentifier:TIME_CELL];
-        if(!cell) {
-            cell = [[TimeCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:TIME_CELL];
-        }
+        TimeCell *cell = [tableView dequeueReusableCellWithIdentifier:kTimeCell];
         [cell initData:_data[indexPath.row]];
         return cell;
     }
@@ -364,6 +369,18 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     UIMenuController *menu = [UIMenuController sharedMenuController];
     [menu setMenuVisible:NO animated:YES];
+}
+
+- (NSMutableAttributedString *)cellAttributedString:(GroupChat *)chat {
+    if([chat.msg_type isEqualToString:@"system"]){
+        return [SystemMessageCell cellAttributedString:chat];
+    }else if([chat.msg_type isEqualToString:@"text"]){
+        return [TextMessageCell cellAttributedString:chat];
+    }else  if([chat.msg_type isEqualToString:@"image"]){
+        return nil;
+    }else {
+        return [TimeCell cellAttributedString:chat];
+    }
 }
 
 - (CGFloat)cellHeight:(GroupChat *)chat {
@@ -375,6 +392,18 @@
         return [ImageMessageCell cellHeight:chat];
     }else {
         return [TimeCell cellHeight:chat];
+    }
+}
+
+- (CGSize)cellContentSize:(GroupChat *)chat {
+    if([chat.msg_type isEqualToString:@"system"]){
+        return [SystemMessageCell contentSize:chat];
+    }else if([chat.msg_type isEqualToString:@"text"]){
+        return [TextMessageCell contentSize:chat];
+    }else  if([chat.msg_type isEqualToString:@"image"]){
+        return [ImageMessageCell contentSize:chat];
+    }else {
+        return [TimeCell contentSize:chat];
     }
 }
 

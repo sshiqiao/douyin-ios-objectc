@@ -6,11 +6,7 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CoreText/CTFramesetter.h>
-#import <CoreText/CTFont.h>
-#import <CoreText/CTStringAttributes.h>
 
 @interface NSAttributedString (Extension)
 

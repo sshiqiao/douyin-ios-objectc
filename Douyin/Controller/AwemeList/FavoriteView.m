@@ -9,10 +9,11 @@
 #import "FavoriteView.h"
 #import "Constants.h"
 
-#define LIKE_BEFORE_TAP_ACTION 1000
-#define LIKE_AFTER_TAP_ACTION 2000
+static const NSInteger kFavoriteViewLikeBeforeTag  = 0x01;
+static const NSInteger kFavoriteViewLikeAfterTag   = 0x02;
 
 @implementation FavoriteView
+
 - (instancetype)init {
     return [self initWithFrame:CGRectMake(0, 0, 50, 45)];
 }
@@ -24,7 +25,7 @@
         _favoriteBefore.contentMode = UIViewContentModeCenter;
         _favoriteBefore.image = [UIImage imageNamed:@"icon_home_like_before"];
         _favoriteBefore.userInteractionEnabled = YES;
-        _favoriteBefore.tag = LIKE_BEFORE_TAP_ACTION;
+        _favoriteBefore.tag = kFavoriteViewLikeBeforeTag;
         [_favoriteBefore addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)]];
         [self addSubview:_favoriteBefore];
         
@@ -32,7 +33,7 @@
         _favoriteAfter.contentMode = UIViewContentModeCenter;
         _favoriteAfter.image = [UIImage imageNamed:@"icon_home_like_after"];
         _favoriteAfter.userInteractionEnabled = YES;
-        _favoriteAfter.tag = LIKE_AFTER_TAP_ACTION;
+        _favoriteAfter.tag = kFavoriteViewLikeAfterTag;
         [_favoriteAfter setHidden:YES];
         [_favoriteAfter addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleGesture:)]];
         [self addSubview:_favoriteAfter];
@@ -42,11 +43,11 @@
 
 - (void)handleGesture:(UITapGestureRecognizer *)sender {
     switch (sender.view.tag) {
-        case LIKE_BEFORE_TAP_ACTION: {
+        case kFavoriteViewLikeBeforeTag: {
             [self startLikeAnim:YES];
             break;
         }
-        case LIKE_AFTER_TAP_ACTION: {
+        case kFavoriteViewLikeAfterTag: {
             [self startLikeAnim:NO];
             break;
         }

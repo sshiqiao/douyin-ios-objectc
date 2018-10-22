@@ -9,4 +9,5 @@
 #import "VisitorResponse.h"
 
 @implementation VisitorResponse
+
 @end

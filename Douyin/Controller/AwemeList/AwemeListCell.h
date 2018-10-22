@@ -7,17 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
-#import "Masonry.h"
-#import "FocusView.h"
-#import "FavoriteView.h"
-#import "HoverTextView.h"
-#import "MusicAlbumView.h"
-#import "AVPlayerView.h"
-#import "CircleTextView.h"
-#import "Aweme.h"
 
 typedef void (^OnPlayerReady)(void);
+
+@class Aweme;
+@class AVPlayerView;
+@class HoverTextView;
+@class CircleTextView;
+@class FocusView;
+@class MusicAlbumView;
+@class FavoriteView;
 
 @interface AwemeListCell : UITableViewCell
 
@@ -47,11 +46,8 @@ typedef void (^OnPlayerReady)(void);
 @property (nonatomic, assign) BOOL             isPlayerReady;
 
 - (void)initData:(Aweme *)aweme;
-
--(void)play;
-
--(void)pause;
-
--(void)replay;
+- (void)play;
+- (void)pause;
+- (void)replay;
 
 @end

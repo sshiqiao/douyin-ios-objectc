@@ -6,9 +6,11 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "BaseResponse.h"
 #import "Comment.h"
+
 @interface CommentListResponse:BaseResponse
+
 @property (nonatomic, copy) NSArray<Comment>   *data;
+
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "CommentListResponse.h"
+#import "Comment.h"
 
 @implementation CommentListResponse
 @end

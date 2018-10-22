@@ -7,13 +7,16 @@
 //
 
 #import "UserInfoHeader.h"
+#import "Constants.h"
+#import "Masonry.h"
+#import "User.h"
 
-#define DEFAULT_ANIMATION_TIME 0.25
+static const NSTimeInterval kAnimationDefaultDuration = 0.25;
 
 @interface UserInfoHeader ()
 
-@property (nonatomic, strong) UIView       *containerView;
-@property (nonatomic, strong) NSMutableArray<NSString *>       *constellations;
+@property (nonatomic, strong) UIView                  *containerView;
+@property (nonatomic, copy) NSArray<NSString *>       *constellations;
 
 @end
 
@@ -21,7 +24,6 @@
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self){
-        _constellations = [[NSMutableArray alloc]initWithObjects:@"射手座",@"摩羯座",@"双鱼座",@"白羊座",@"水瓶座",@"金牛座",@"双子座",@"巨蟹座",@"狮子座",@"处女座",@"天秤座",@"天蝎座",nil];
         _isFollowed = NO;
         [self initSubViews];
     }
@@ -40,39 +42,51 @@
 }
 
 - (void) initAvatarBackground {
-    _avatarBackground = [[UIImageView alloc] initWithFrame:self.bounds];
-    _avatarBackground.clipsToBounds = YES;
-    _avatarBackground.image = [UIImage imageNamed:@"img_find_default"];
-    _avatarBackground.backgroundColor = ColorThemeGray;
-    _avatarBackground.contentMode = UIViewContentModeScaleAspectFill;
-    [self addSubview:_avatarBackground];
+    _topBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, ScreenWidth, 50 + SafeAreaTopHeight)];
+    _topBackground.contentMode = UIViewContentModeScaleAspectFill;
+    [self addSubview:_topBackground];
+    
+    _bottomBackground = [[UIImageView alloc] initWithFrame:CGRectMake(0, 35 + SafeAreaTopHeight, ScreenWidth, self.bounds.size.height - (35 + SafeAreaTopHeight))];
+    _bottomBackground.contentMode = UIViewContentModeScaleAspectFill;
+    [self addSubview:_bottomBackground];
     
     UIBlurEffect *blurEffect =[UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
     UIVisualEffectView *visualEffectView = [[UIVisualEffectView alloc]initWithEffect:blurEffect];
-    visualEffectView.frame = self.bounds;
+    visualEffectView.frame = _bottomBackground.bounds;
     visualEffectView.alpha = 1;
-    [_avatarBackground addSubview:visualEffectView];
+    [_bottomBackground addSubview:visualEffectView];
+    
+    CAShapeLayer *maskLayer = [CAShapeLayer layer];
+    maskLayer.path = [self createBezierPath].CGPath;
+    _bottomBackground.layer.mask = maskLayer;
+}
+
+-(UIBezierPath *)createBezierPath {
+    int avatarRadius = 54;
+    int topOffset = 16;
+    UIBezierPath *bezierPath = [UIBezierPath bezierPath];
+    [bezierPath moveToPoint:CGPointMake(0, topOffset)];
+    [bezierPath addLineToPoint:CGPointMake(25, topOffset)];
+    [bezierPath addArcWithCenter:CGPointMake(25 + avatarRadius * cos(M_PI/4), avatarRadius * sin(M_PI/4) + topOffset) radius:avatarRadius startAngle:(M_PI * 5)/4 endAngle:(M_PI * 7)/4 clockwise:YES];
+    [bezierPath addLineToPoint:CGPointMake(25 + avatarRadius * cos(M_PI/4), topOffset)];
+    [bezierPath addLineToPoint:CGPointMake(ScreenWidth, topOffset)];
+    [bezierPath addLineToPoint:CGPointMake(ScreenWidth, self.bounds.size.height - (50 + SafeAreaTopHeight) + topOffset - 1)];
+    [bezierPath addLineToPoint:CGPointMake(0, self.bounds.size.height - (50 + SafeAreaTopHeight) + topOffset - 1)];
+    [bezierPath closePath];
+    return bezierPath;
 }
 
 - (void) initAvatar {
-    
-    int avatarRadius = 45;
+    int avatarRadius = 48;
     _avatar = [[UIImageView alloc] init];
     _avatar.image = [UIImage imageNamed:@"img_find_default"];
     _avatar.userInteractionEnabled = YES;
-    _avatar.tag = AVATAE_TAG;
+    _avatar.tag = UserInfoHeaderAvatarTag;
     [_avatar addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_avatar];
     
-    CALayer *paddingLayer = [CALayer layer];
-    paddingLayer.frame = CGRectMake(0, 0, avatarRadius*2, avatarRadius*2);
-    paddingLayer.borderColor = ColorWhiteAlpha20.CGColor;
-    paddingLayer.borderWidth = 2;
-    paddingLayer.cornerRadius = avatarRadius;
-    [_avatar.layer addSublayer:paddingLayer];
-    
     [_avatar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(25 + 44 + STATUS_BAR_HEIGHT);
+        make.top.equalTo(self).offset(40 + SafeAreaTopHeight);
         make.left.equalTo(self).offset(15);
         make.width.height.mas_equalTo(avatarRadius*2);
     }];
@@ -84,7 +98,7 @@
     _settingIcon.contentMode = UIViewContentModeCenter;
     _settingIcon.layer.backgroundColor = ColorWhiteAlpha20.CGColor;
     _settingIcon.layer.cornerRadius = 2;
-    _settingIcon.tag = SETTING_TAG;
+    _settingIcon.tag = UserInfoHeaderSettingTag;
     _settingIcon.userInteractionEnabled = YES;
     [_settingIcon addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_settingIcon];
@@ -102,7 +116,7 @@
     _focusIcon.hidden = !_isFollowed;
     _focusIcon.layer.backgroundColor = ColorWhiteAlpha20.CGColor;
     _focusIcon.layer.cornerRadius = 2;
-    _focusIcon.tag = FOCUS_CANCEL_TAG;
+    _focusIcon.tag = UserInfoHeaderFocusCancelTag;
     [_focusIcon addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_focusIcon];
     [_focusIcon mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -119,7 +133,7 @@
     _sendMessage.hidden = !_isFollowed;
     _sendMessage.layer.backgroundColor = ColorWhiteAlpha20.CGColor;
     _sendMessage.layer.cornerRadius = 2;
-    _sendMessage.tag = SEND_MESSAGE_TAG;
+    _sendMessage.tag = UserInfoHeaderSendTag;
     _sendMessage.userInteractionEnabled = YES;
     [_sendMessage addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_sendMessage];
@@ -141,7 +155,7 @@
     [_focusButton setImageEdgeInsets:UIEdgeInsetsMake(0, -2, 0, 0)];
     _focusButton.layer.backgroundColor = ColorThemeRed.CGColor;
     _focusButton.layer.cornerRadius = 2;
-    _focusButton.tag = FOCUS_TAG;
+    _focusButton.tag = UserInfoHeaderFocusTag;
     [_focusButton addGestureRecognizer:[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_focusButton];
     [_focusButton mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -189,7 +203,7 @@
     _github.titleLabel.font = SmallFont;
     [_github setImage:[UIImage imageNamed:@"icon_github"] forState:UIControlStateNormal];
     [_github setImageEdgeInsets:UIEdgeInsetsMake(0, -3, 0, 0)];
-    _github.tag = GITHUB_TAG;
+    _github.tag = UserInfoHeaderGithubTag;
     [_github addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapAction:)]];
     [_containerView addSubview:_github];
     [_github mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -231,20 +245,20 @@
         make.width.mas_equalTo(22);
     }];
     
-    _constellation = [[UITextView alloc] init];
-    _constellation.text = @"座";
-    _constellation.textColor = ColorWhite;
-    _constellation.font = SuperSmallFont;
-    _constellation.scrollEnabled = NO;
-    _constellation.editable = NO;
-    _constellation.textContainerInset = UIEdgeInsetsMake(3, 6, 3, 6);
-    _constellation.textContainer.lineFragmentPadding = 0;
+    _city = [[UITextView alloc] init];
+    _city.text = @"上海";
+    _city.textColor = ColorWhite;
+    _city.font = SuperSmallFont;
+    _city.scrollEnabled = NO;
+    _city.editable = NO;
+    _city.textContainerInset = UIEdgeInsetsMake(3, 8, 3, 8);
+    _city.textContainer.lineFragmentPadding = 0;
     
-    _constellation.layer.backgroundColor = ColorWhiteAlpha20.CGColor;
-    _constellation.layer.cornerRadius = 9;
-    [_constellation sizeToFit];
-    [_containerView addSubview:_constellation];
-    [_constellation mas_makeConstraints:^(MASConstraintMaker *make) {
+    _city.layer.backgroundColor = ColorWhiteAlpha20.CGColor;
+    _city.layer.cornerRadius = 9;
+    [_city sizeToFit];
+    [_containerView addSubview:_city];
+    [_city mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.genderIcon.mas_right).offset(5);
         make.top.height.equalTo(self.genderIcon);
     }];
@@ -278,24 +292,35 @@
         make.top.equalTo(self.likeNum);
         make.left.equalTo(self.followNum.mas_right).offset(30);
     }];
+    
+    _slideTabBar = [SlideTabBar new];
+    [self addSubview:_slideTabBar];
+    [_slideTabBar mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.height.mas_equalTo(40);
+        make.left.right.bottom.equalTo(self);
+    }];
+    [_slideTabBar setLabels:@[@"作品0",@"喜欢0"] tabIndex:0];
 }
 
 - (void)initData:(User *)user {
     __weak __typeof(self) wself = self;
     [_avatar setImageWithURL:[NSURL URLWithString:user.avatar_medium.url_list.firstObject] completedBlock:^(UIImage *image, NSError *error) {
-        [wself.avatarBackground setImage:image];
+        [wself.bottomBackground setImage:image];
         [wself.avatar setImage:[image drawCircleImage]];
     }];
+    //新增的背景数据写为指定路径
+    [_topBackground setImageWithURL:[NSURL URLWithString:@"http://pb3.pstatp.com/obj/dbc1001cd29ccc479f7f"]];
     [_nickName setText:user.nickname];
     [_douyinNum setText:[NSString stringWithFormat:@"抖音号:%@", user.short_id]];
     if(![user.signature isEqual: @""]) {
         [_brief setText:user.signature];
     }
     [_genderIcon setImage:[UIImage imageNamed:user.gender == 0 ? @"iconUserProfileBoy" : @"iconUserProfileGirl"]];
-    [_constellation setText:[_constellations objectAtIndex:user.constellation]];
     [_likeNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.total_favorited,@"获赞"]];
     [_followNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.following_count,@"关注"]];
     [_followedNum setText:[NSString stringWithFormat:@"%ld%@",(long)user.follower_count,@"粉丝"]];
+    
+    [_slideTabBar setLabels:@[[@"作品" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)user.aweme_count]],[@"喜欢" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)user.favoriting_count]]] tabIndex:0];
 }
 
 - (void)onTapAction:(UITapGestureRecognizer *)sender {
@@ -309,11 +334,11 @@
 - (void)overScrollAction:(CGFloat) offsetY {
     CGFloat scaleRatio = fabs(offsetY)/370.0f;
     CGFloat overScaleHeight = (370.0f * scaleRatio)/2;
-    _avatarBackground.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(scaleRatio + 1.0f, scaleRatio + 1.0f), CGAffineTransformMakeTranslation(0, -overScaleHeight));
+    _topBackground.transform = CGAffineTransformConcat(CGAffineTransformMakeScale(scaleRatio + 1.0f, scaleRatio + 1.0f), CGAffineTransformMakeTranslation(0, -overScaleHeight));
 }
 
 - (void)scrollToTopAction:(CGFloat) offsetY {
-    CGFloat alphaRatio = offsetY/(370.0f - 44 - STATUS_BAR_HEIGHT);
+    CGFloat alphaRatio = offsetY/(370.0f - 44 - StatusBarHeight);
     _containerView.alpha = 1.0f - alphaRatio;
 }
 
@@ -338,7 +363,7 @@
     _focusButton.userInteractionEnabled = NO;
     _focusIcon.userInteractionEnabled = NO;
     if(_isFollowed) {
-        [UIView animateWithDuration:DEFAULT_ANIMATION_TIME animations:^{
+        [UIView animateWithDuration:kAnimationDefaultDuration animations:^{
             self.sendMessage.alpha = 0;
             CGRect frame = self.sendMessage.frame;
             frame.origin.x = frame.origin.x - 35;
@@ -359,7 +384,7 @@
         CGRect frame = _sendMessage.frame;
         frame.origin.x = frame.origin.x - 35;
         [_sendMessage setFrame:frame];
-        [UIView animateWithDuration:DEFAULT_ANIMATION_TIME animations:^{
+        [UIView animateWithDuration:kAnimationDefaultDuration animations:^{
             self.sendMessage.alpha = 1;
             CGRect frame = self.sendMessage.frame;
             frame.origin.x = frame.origin.x + 35;
@@ -376,7 +401,7 @@
 }
 - (void)showFollowedAnimation {
     CAAnimationGroup *animationGroup = [[CAAnimationGroup alloc] init];
-    animationGroup.duration = DEFAULT_ANIMATION_TIME;
+    animationGroup.duration = kAnimationDefaultDuration;
     animationGroup.removedOnCompletion = NO;
     animationGroup.fillMode = kCAFillModeForwards;
     
@@ -411,7 +436,7 @@
 
 - (void)showUnFollowedAnimation {
     CAAnimationGroup *animationGroup = [[CAAnimationGroup alloc] init];
-    animationGroup.duration = DEFAULT_ANIMATION_TIME;
+    animationGroup.duration = kAnimationDefaultDuration;
     animationGroup.removedOnCompletion = NO;
     animationGroup.fillMode = kCAFillModeForwards;
     

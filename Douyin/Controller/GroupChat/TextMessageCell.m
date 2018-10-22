@@ -9,9 +9,9 @@
 #import "TextMessageCell.h"
 #import "EmotionHelper.h"
 
-#define COMMON_MSG_PADDING         8
-#define USER_MSG_CORNER_RADIUS     10
-#define MAX_USER_MSG_WIDTH         SCREEN_WIDTH - 160
+static const CGFloat kTextMsgCornerRadius    = 10;
+static const CGFloat kTextMsgMaxWidth        = 220;
+static const CGFloat kTextMsgPadding         = 8;
 
 @implementation TextMessageCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -31,7 +31,7 @@
         _textView.editable = NO;
         _textView.selectable = NO;
         _textView.backgroundColor = ColorClear;
-        _textView.textContainerInset = UIEdgeInsetsMake(USER_MSG_CORNER_RADIUS, USER_MSG_CORNER_RADIUS, USER_MSG_CORNER_RADIUS, USER_MSG_CORNER_RADIUS);
+        _textView.textContainerInset = UIEdgeInsetsMake(kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
         [_textView addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu)]];
         [self addSubview:_textView];
@@ -59,25 +59,22 @@
 
 -(void)layoutSubviews {
     [super layoutSubviews];
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString: _textView.attributedText];
-    [attributedString addAttributes:[TextMessageCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    CGSize size = [attributedString multiLineSize:MAX_USER_MSG_WIDTH];
+    CGSize size = _chat.contentSize;
     
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    self.backgroundlayer.path = [self createBezierPath:USER_MSG_CORNER_RADIUS width:size.width height:size.height].CGPath;
-    self.backgroundlayer.frame = CGRectMake(0, 0, size.width + USER_MSG_CORNER_RADIUS * 2, size.height + USER_MSG_CORNER_RADIUS * 2);
+    self.backgroundlayer.path = [self createBezierPath:kTextMsgCornerRadius width:size.width height:size.height].CGPath;
+    self.backgroundlayer.frame = CGRectMake(0, 0, size.width + kTextMsgCornerRadius * 2, size.height + kTextMsgCornerRadius * 2);
     self.backgroundlayer.transform = CATransform3DIdentity;
     if([MD5_UDID isEqualToString:_chat.visitor.udid]){
-        _avatar.frame = CGRectMake(SCREEN_WIDTH - COMMON_MSG_PADDING - 30, COMMON_MSG_PADDING, 30, 30);
-        _textView.frame = CGRectMake(CGRectGetMinX(self.avatar.frame) - COMMON_MSG_PADDING - (size.width + USER_MSG_CORNER_RADIUS * 2), COMMON_MSG_PADDING, size.width + USER_MSG_CORNER_RADIUS * 2, size.height + USER_MSG_CORNER_RADIUS * 2);
+        _avatar.frame = CGRectMake(ScreenWidth - kTextMsgPadding - 30, kTextMsgPadding, 30, 30);
+        _textView.frame = CGRectMake(CGRectGetMinX(self.avatar.frame) - kTextMsgPadding - (size.width + kTextMsgCornerRadius * 2), kTextMsgPadding, size.width + kTextMsgCornerRadius * 2, size.height + kTextMsgCornerRadius * 2);
         _backgroundlayer.transform = CATransform3DMakeRotation(M_PI, 0, 1, 0);
         _backgroundlayer.fillColor = ColorThemeYellow.CGColor;
         
     }else {
-        _avatar.frame = CGRectMake(COMMON_MSG_PADDING, COMMON_MSG_PADDING, 30, 30);
-        _textView.frame = CGRectMake(CGRectGetMaxX(self.avatar.frame) + COMMON_MSG_PADDING, COMMON_MSG_PADDING, size.width + USER_MSG_CORNER_RADIUS * 2, size.height + USER_MSG_CORNER_RADIUS * 2);
+        _avatar.frame = CGRectMake(kTextMsgPadding, kTextMsgPadding, 30, 30);
+        _textView.frame = CGRectMake(CGRectGetMaxX(self.avatar.frame) + kTextMsgPadding, kTextMsgPadding, size.width + kTextMsgCornerRadius * 2, size.height + kTextMsgCornerRadius * 2);
         _backgroundlayer.fillColor = ColorWhite.CGColor;
     }
     [CATransaction commit];
@@ -95,12 +92,10 @@
 
 -(void)initData:(GroupChat *)chat {
     _chat = chat;
-    
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[TextMessageCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    _textView.attributedText = attributedString;
-    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _textView.attributedText = chat.cellAttributedString;
+    });
+//    _textView.attributedText = chat.cellAttributedString;
     if(chat.isTemp) {
         [self startAnim];
         if(chat.isFailed) {
@@ -192,16 +187,15 @@
     return CGRectMake(CGRectGetMidX(_textView.bounds) - 60, 10, 120, 50);
 }
 
-+(NSDictionary* ) attributes {
++ (NSDictionary* ) attributes {
     return @{NSFontAttributeName:BigFont,NSForegroundColorAttributeName:ColorBlack};
 }
 
-+(CGFloat)cellHeight:(GroupChat *)chat {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[TextMessageCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    CGSize size = [attributedString multiLineSize:MAX_USER_MSG_WIDTH];
-    CGFloat height = size.height + USER_MSG_CORNER_RADIUS * 2 + COMMON_MSG_PADDING * 2;
-    return height;
++ (CGFloat)cellHeight:(GroupChat *)chat {
+    return chat.contentSize.height + kTextMsgCornerRadius * 2 + kTextMsgPadding * 2;
+}
+
++ (CGSize)contentSize:(GroupChat *)chat {
+    return [chat.cellAttributedString multiLineSize:kTextMsgMaxWidth];
 }
 @end

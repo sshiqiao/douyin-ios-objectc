@@ -6,12 +6,8 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CommonCrypto/CommonDigest.h>
-#import "objc/runtime.h"
-#import "Constants.h"
-#import "WebPImage.h"
+
 //缓存清除完毕后的回调block
 typedef void(^WebCacheClearCompletedBlock)(NSString *cacheSize);
 //缓存查询完毕后的回调block，data返回类型包括NSString缓存文件路径、NSData格式缓存数据

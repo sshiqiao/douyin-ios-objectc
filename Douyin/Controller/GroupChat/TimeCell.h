@@ -6,12 +6,13 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-#import "Constants.h"
-#import "Masonry.h"
-#import "GroupChat.h"
-@interface TimeCell : UITableViewCell
+#import "BaseMessageCell.h"
+
+@interface TimeCell : BaseMessageCell
+
 @property (nonatomic, strong) UITextView      *textView;
+@property (nonatomic, strong) GroupChat       *chat;
+
 -(void)initData:(GroupChat *)chat;
-+(CGFloat)cellHeight:(GroupChat *)chat;
+
 @end

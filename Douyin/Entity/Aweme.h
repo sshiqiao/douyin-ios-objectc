@@ -6,7 +6,6 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "BaseModel.h"
 #import "Video.h"
 #import "User.h"

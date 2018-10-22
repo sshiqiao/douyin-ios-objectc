@@ -24,13 +24,16 @@
 @property (nonatomic , strong) PictureInfo         *pic_thumbnail;
 @property (nonatomic , assign) NSInteger           create_time;
 
-@property (nonatomic , assign) NSInteger           taskId;
-@property (nonatomic , assign) BOOL                isTemp;
-@property (nonatomic , assign) BOOL                isFailed;
-@property (nonatomic , assign) BOOL                isCompleted;
-@property (nonatomic , assign) CGFloat             percent;
-@property (nonatomic , strong) UIImage             *picImage;
-@property (nonatomic , assign) CGFloat             cellHeight;
+//处理聊天所需数据
+@property (nonatomic , assign) NSInteger                    taskId;
+@property (nonatomic , assign) BOOL                         isTemp;
+@property (nonatomic , assign) BOOL                         isFailed;
+@property (nonatomic , assign) BOOL                         isCompleted;
+@property (nonatomic , assign) CGFloat                      percent;
+@property (nonatomic , strong) UIImage                      *picImage;
+@property (nonatomic , assign) CGSize                       contentSize;
+@property (nonatomic , assign) CGFloat                      cellHeight;
+@property (nonatomic , strong) NSMutableAttributedString    *cellAttributedString;
 
 -(instancetype)initImageChat:(UIImage *)image;
 

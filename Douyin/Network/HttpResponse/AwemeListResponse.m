@@ -7,6 +7,8 @@
 //
 
 #import "AwemeListResponse.h"
+#import "Aweme.h"
 
 @implementation AwemeListResponse
+
 @end

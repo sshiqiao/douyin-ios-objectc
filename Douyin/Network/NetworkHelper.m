@@ -7,7 +7,49 @@
 //
 
 #import "NetworkHelper.h"
+
 NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotification";
+
+NSString *const NetworkDomain = @"com.start.douyin";
+
+//请求地址
+NSString *const BaseUrl = @"http://116.62.9.17:8080/douyin/";
+
+//创建访客用户接口
+NSString *const CreateVisitorPath = @"visitor/create";
+
+
+//根据用户id获取用户信息
+NSString *const FindUserByUidPath = @"user";
+
+
+//获取用户发布的短视频列表数据
+NSString *const FindAwemePostByPagePath = @"aweme/post";
+//获取用户喜欢的短视频列表数据
+NSString *const FindAwemeFavoriteByPagePath = @"aweme/favorite";
+
+
+//发送文本类型群聊消息
+NSString *const PostGroupChatTextPath = @"groupchat/text";
+//发送单张图片类型群聊消息
+NSString *const PostGroupChatImagePath = @"groupchat/image";
+//发送多张图片类型群聊消息
+NSString *const PostGroupChatImagesPath = @"groupchat/images";
+//根据id获取指定图片
+NSString *const FindImageByIdPath = @"groupchat/image";
+//获取群聊列表数据
+NSString *const FindGroupChatByPagePath = @"groupchat/list";
+//根据id删除指定群聊消息
+NSString *const DeleteGroupChatByIdPath = @"groupchat/delete";
+
+
+//根据视频id发送评论
+NSString *const PostComentPath = @"comment/post";
+//根据id删除评论
+NSString *const DeleteComentByIdPath = @"comment/delete";
+//获取评论列表
+NSString *const FindComentByPagePath = @"comment/list";
+
 
 @implementation NetworkHelper
 
@@ -19,10 +61,8 @@ NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotificat
         manager.requestSerializer.timeoutInterval = 15.0f;
         
     });
-    
     return manager;
 }
-
 
 //porcess response data
 +(void)processResponseData:(id)responseObject success:(HttpSuccess)success failure:(HttpFailure)failure {
@@ -57,22 +97,21 @@ NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotificat
         }
         //当服务器无法响应时，使用本地json数据
         NSString *path = task.originalRequest.URL.path;
-        if ([path containsString:FIND_USER_BY_UID_URL]) {
+        if ([path containsString:FindUserByUidPath]) {
             success([NSString readJson2DicWithFileName:@"user"]);
-        }else if ([path containsString:FIND_AWEME_POST_BY_PAGE_URL]) {
+        }else if ([path containsString:FindAwemePostByPagePath]) {
             success([NSString readJson2DicWithFileName:@"awemes"]);
-        }else if ([path containsString:FIND_AWEME_FAVORITE_BY_PAGE_URL]) {
+        }else if ([path containsString:FindAwemeFavoriteByPagePath]) {
             success([NSString readJson2DicWithFileName:@"favorites"]);
-        }else if ([path containsString:FIND_COMMENT_BY_PAGE_URL]) {
+        }else if ([path containsString:FindComentByPagePath]) {
             success([NSString readJson2DicWithFileName:@"comments"]);
-        }else if ([path containsString:FIND_GROUP_CHAT_BY_PAGE_URL]) {
+        }else if ([path containsString:FindGroupChatByPagePath]) {
             success([NSString readJson2DicWithFileName:@"groupchats"]);
         }else {
             failure(error);
         }
     }];
 }
-
 
 +(NSURLSessionDataTask *)deleteWithUrlPath:(NSString *)urlPath request:(BaseRequest *)request success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
@@ -107,7 +146,6 @@ NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotificat
         failure(error);
     }];
 }
-
 
 +(NSURLSessionDataTask *)uploadWithUrlPath:(NSString *)urlPath dataArray:(NSArray<NSData *> *)dataArray request:(BaseRequest *)request progress:(UploadProgress)progress success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
@@ -157,11 +195,12 @@ NSString *const NetworkStatesChangeNotification = @"NetworkStatesChangeNotificat
 + (void)registerUserInfo {
     VisitorRequest *request = [VisitorRequest new];
     request.udid = UDID;
-    [NetworkHelper postWithUrlPath:CREATE_VISITOR_BY_UDID_URL request:request success:^(id data) {
+    [NetworkHelper postWithUrlPath:CreateVisitorPath request:request success:^(id data) {
         VisitorResponse *response = [[VisitorResponse alloc] initWithDictionary:data error:nil];
         writeVisitor(response.data);
     } failure:^(NSError *error) {
         NSLog(@"Register visitor failed.");
     }];
 }
+
 @end

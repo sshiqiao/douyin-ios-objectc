@@ -9,10 +9,9 @@
 #import "SystemMessageCell.h"
 #import "EmotionHelper.h"
 
-#define SYS_MSG_CORNER_RADIUS      10
-#define MAX_SYS_MSG_WIDTH          SCREEN_WIDTH - 110
-#define COMMON_MSG_PADDING         8
-
+static const CGFloat kSystemMsgCornerRadius    = 10;
+static const CGFloat kSystemMsgMaxWidth        = 180;
+static const CGFloat kSystemMsgPadding         = 8;
 
 @implementation SystemMessageCell
 
@@ -29,9 +28,9 @@
         _textView.editable = NO;
         _textView.selectable = NO;
         _textView.backgroundColor = ColorGrayDark;
-        _textView.textContainerInset = UIEdgeInsetsMake(SYS_MSG_CORNER_RADIUS, SYS_MSG_CORNER_RADIUS, SYS_MSG_CORNER_RADIUS, SYS_MSG_CORNER_RADIUS);
+        _textView.textContainerInset = UIEdgeInsetsMake(kSystemMsgCornerRadius, kSystemMsgCornerRadius, kSystemMsgCornerRadius, kSystemMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
-        _textView.layer.cornerRadius = SYS_MSG_CORNER_RADIUS;
+        _textView.layer.cornerRadius = kSystemMsgCornerRadius;
         [self addSubview:_textView];
         
     }
@@ -41,8 +40,8 @@
 -(void)layoutSubviews {
     [super layoutSubviews];
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString: _textView.attributedText];
-    CGSize size = [attributedString multiLineSize:MAX_SYS_MSG_WIDTH];
-    _textView.frame = CGRectMake(SCREEN_WIDTH/2 - size.width/2 - SYS_MSG_CORNER_RADIUS, COMMON_MSG_PADDING*2, size.width + SYS_MSG_CORNER_RADIUS * 2, size.height + SYS_MSG_CORNER_RADIUS * 2);
+    CGSize size = [attributedString multiLineSize:kSystemMsgMaxWidth];
+    _textView.frame = CGRectMake(ScreenWidth/2 - size.width/2 - kSystemMsgCornerRadius, kSystemMsgPadding*2, size.width + kSystemMsgCornerRadius * 2, size.height + kSystemMsgCornerRadius * 2);
 }
 
 -(BOOL)canBecomeFirstResponder{
@@ -50,10 +49,8 @@
 }
 
 -(void)initData:(GroupChat *)chat {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[SystemMessageCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    _textView.attributedText = attributedString;
+    _chat = chat;
+    _textView.attributedText = chat.cellAttributedString;
 }
 
 +(NSDictionary* ) attributes {
@@ -61,12 +58,11 @@
 }
 
 +(CGFloat)cellHeight:(GroupChat *)chat {
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:chat.msg_content];
-    [attributedString addAttributes:[SystemMessageCell attributes] range:NSMakeRange(0, attributedString.length)];
-    attributedString = [EmotionHelper stringToEmotion:attributedString];
-    CGSize size = [attributedString multiLineSize:MAX_SYS_MSG_WIDTH];
-    CGFloat height = size.height + COMMON_MSG_PADDING * 2 + SYS_MSG_CORNER_RADIUS * 2;
-    return height;
+    return chat.contentSize.height + kSystemMsgPadding * 2 + kSystemMsgCornerRadius * 2;
+}
+
++ (CGSize)contentSize:(GroupChat *)chat {
+    return [chat.cellAttributedString multiLineSize:kSystemMsgMaxWidth];
 }
 
 @end

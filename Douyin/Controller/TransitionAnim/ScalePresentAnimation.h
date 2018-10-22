@@ -7,7 +7,5 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "UserHomePageController.h"
-#import "AwemeListController.h"
 @interface ScalePresentAnimation : NSObject<UIViewControllerAnimatedTransitioning>
 @end

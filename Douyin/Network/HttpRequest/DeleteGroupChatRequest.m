@@ -7,5 +7,7 @@
 //
 
 #import "DeleteGroupChatRequest.h"
+
 @implementation DeleteGroupChatRequest
+
 @end

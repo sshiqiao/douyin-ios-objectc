@@ -6,11 +6,13 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "JSONModel.h"
+
 @interface BaseResponse:JSONModel
+
 @property (nonatomic , assign) NSInteger        code;
 @property (nonatomic , copy) NSString           *message;
 @property (nonatomic , assign) NSInteger        has_more;
 @property (nonatomic, assign) NSInteger         total_count;
+
 @end

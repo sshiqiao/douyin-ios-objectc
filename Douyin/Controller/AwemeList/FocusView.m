@@ -10,6 +10,7 @@
 #import "Constants.h"
 
 @interface FocusView ()<CAAnimationDelegate>
+
 @end
 
 @implementation FocusView

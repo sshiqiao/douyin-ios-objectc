@@ -7,5 +7,7 @@
 //
 
 #import "PictureInfo.h"
+
 @implementation PictureInfo
+
 @end

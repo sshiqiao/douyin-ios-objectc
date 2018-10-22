@@ -6,12 +6,8 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import <CommonCrypto/CommonDigest.h>
-#import <CoreText/CTFramesetter.h>
-#import <CoreText/CTFont.h>
-#import <CoreText/CTStringAttributes.h>
+
 @interface NSString (Extension)
 
 - (CGSize)singleLineSizeWithAttributeText:(UIFont *)font;

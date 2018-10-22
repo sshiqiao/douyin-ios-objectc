@@ -7,7 +7,9 @@
 //
 
 #import "Comment.h"
+
 @implementation Comment
+
 -(instancetype)init:(NSString *)awemeId text:(NSString *)text taskId:(NSInteger)taskId {
     self = [super init];
     if(self) {
@@ -22,4 +24,5 @@
     }
     return self;
 }
+
 @end

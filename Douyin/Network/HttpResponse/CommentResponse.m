@@ -9,4 +9,5 @@
 #import "CommentResponse.h"
 
 @implementation CommentResponse
+
 @end

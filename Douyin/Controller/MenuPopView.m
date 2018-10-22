@@ -7,9 +7,12 @@
 //
 
 #import "MenuPopView.h"
+#import "Constants.h"
 
 @interface MenuPopView ()
+
 @property (nonatomic, copy) NSArray *titles;
+
 @end
 
 
@@ -19,13 +22,13 @@
     self = [super init];
     if(self) {
         _titles = [[titles reverseObjectEnumerator] allObjects];
-        self.frame = SCREEN_FRAME;
+        self.frame = ScreenFrame;
         [self addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cancel:)]];
-        _container = [[UIView alloc] initWithFrame:CGRectMake(0, SCREEN_HEIGHT, SCREEN_WIDTH, (titles.count + 1) * 70)];
+        _container = [[UIView alloc] initWithFrame:CGRectMake(0, ScreenHeight, ScreenWidth, (titles.count + 1) * 70)];
         _container.backgroundColor = ColorClear;
         [self addSubview:_container];
         
-        _cancel = [[UIButton alloc] initWithFrame:CGRectMake(8, _container.frame.size.height - 63, SCREEN_WIDTH - 16, 55)];
+        _cancel = [[UIButton alloc] initWithFrame:CGRectMake(8, _container.frame.size.height - 63, ScreenWidth - 16, 55)];
         [_cancel setTitle:@"取消" forState:UIControlStateNormal];
         [_cancel setTitleColor:ColorBlue forState:UIControlStateNormal];
         _cancel.titleLabel.font = LargeBoldFont;
@@ -36,7 +39,7 @@
         
         __weak __typeof(self) wself = self;
         [_titles enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(8, wself.container.frame.size.height - 63 * (idx+2), SCREEN_WIDTH - 16, 55)];
+            UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(8, wself.container.frame.size.height - 63 * (idx+2), ScreenWidth - 16, 55)];
             [button setTitle:wself.titles[idx] forState:UIControlStateNormal];
             [button setTitleColor:ColorBlue forState:UIControlStateNormal];
             button.titleLabel.font = LargeFont;
@@ -98,4 +101,5 @@
                          [self removeFromSuperview];
                      }];
 }
+
 @end

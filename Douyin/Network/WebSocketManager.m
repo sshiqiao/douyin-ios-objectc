@@ -7,12 +7,15 @@
 //
 
 #import "WebSocketManager.h"
+#import "SocketRocket.h"
 #import "NetworkHelper.h"
 #import "Constants.h"
+
 //赋值消息通知常量名称
 NSString *const WebSocketDidReceiveMessageNotification = @"WebSocketDidReceiveMessageNotification";
 //最大连接次数
 NSInteger const MaxReConnectTime = 5;
+
 @interface WebSocketManager ()<SRWebSocketDelegate>
 @property (nonatomic, strong) SRWebSocket            *webSocket;  //Websocket对象
 @property (nonatomic, strong) NSMutableURLRequest    *request;    //Websocket请求
@@ -136,4 +139,5 @@ NSInteger const MaxReConnectTime = 5;
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
 @end

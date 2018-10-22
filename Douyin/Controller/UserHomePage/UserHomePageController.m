@@ -11,7 +11,7 @@
 #import "ChatListController.h"
 #import "HoverViewFlowLayout.h"
 #import "UserInfoHeader.h"
-#import "SlideTabBarFooter.h"
+#import "AwemeCollectionCell.h"
 #import "ScalePresentAnimation.h"
 #import "SwipeLeftInteractiveTransition.h"
 #import "ScaleDismissAnimation.h"
@@ -22,12 +22,11 @@
 #import "NetworkHelper.h"
 #import "LoadMoreControl.h"
 
-#define USER_INFO_HEADER_HEIGHT         340 + STATUS_BAR_HEIGHT
-#define SLIDE_TABBAR_FOOTER_HEIGHT      40
+#define kUserInfoHeaderHeight          350 + SafeAreaTopHeight
+#define kSlideTabBarHeight             40
 
-#define USER_INFO_CELL                  @"UserInfoCell"
-#define SLIDE_TABBAR_CELL               @"SlideTabBarCell"
-#define AWEME_COLLECTION_CELL           @"AwemeCollectionCell"
+NSString * const kUserInfoCell         = @"UserInfoCell";
+NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
 
 @interface UserHomePageController ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UIViewControllerTransitioningDelegate,UIScrollViewDelegate,OnTabTapActionDelegate,UserInfoDelegate>
 
@@ -76,7 +75,6 @@
     [self setNavigationBarBackgroundColor:ColorClear];
     [self setStatusBarBackgroundColor:ColorClear];
     [self setStatusBarHidden:NO];
-
 }
 
 - (void)viewDidLoad {
@@ -87,12 +85,12 @@
 
 
 - (void)initCollectionView {
-    _itemWidth = (SCREEN_WIDTH - (CGFloat)(((NSInteger)(SCREEN_WIDTH)) % 3) ) / 3.0f - 1.0f;
-    _itemHeight = _itemWidth * 1.3f;
-    HoverViewFlowLayout  *layout = [[HoverViewFlowLayout alloc] initWithNavHeight:SafeAreaTopHeight];
+    _itemWidth = (ScreenWidth - (CGFloat)(((NSInteger)(ScreenWidth)) % 3) ) / 3.0f - 1.0f;
+    _itemHeight = _itemWidth * 1.35f;
+    HoverViewFlowLayout *layout = [[HoverViewFlowLayout alloc] initWithTopHeight:SafeAreaTopHeight + kSlideTabBarHeight];
     layout.minimumLineSpacing = 1;
     layout.minimumInteritemSpacing = 0;
-    _collectionView = [[UICollectionView  alloc]initWithFrame:SCREEN_FRAME collectionViewLayout:layout];
+    _collectionView = [[UICollectionView  alloc]initWithFrame:ScreenFrame collectionViewLayout:layout];
     _collectionView.backgroundColor = ColorClear;
     if (@available(iOS 11.0, *)) {
         _collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
@@ -105,12 +103,11 @@
     
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
-    [_collectionView registerClass:[UserInfoHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:USER_INFO_CELL];
-    [_collectionView registerClass:[SlideTabBarFooter class] forSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:SLIDE_TABBAR_CELL];
-    [_collectionView registerClass:[AwemeCollectionCell class] forCellWithReuseIdentifier:AWEME_COLLECTION_CELL];
+    [_collectionView registerClass:[UserInfoHeader class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kUserInfoCell];
+    [_collectionView registerClass:[AwemeCollectionCell class] forCellWithReuseIdentifier:kAwemeCollectionCell];
     [self.view addSubview:_collectionView];
     
-    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, USER_INFO_HEADER_HEIGHT + SLIDE_TABBAR_FOOTER_HEIGHT, SCREEN_WIDTH, 50) surplusCount:15];
+    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, kUserInfoHeaderHeight, ScreenWidth, 50) surplusCount:15];
     [_loadMore startLoading];
     __weak __typeof(self) wself = self;
     [_loadMore setOnLoad:^{
@@ -120,14 +117,14 @@
 }
 
 - (void)updateNavigationTitle:(CGFloat)offsetY {
-    if (USER_INFO_HEADER_HEIGHT - [self navagationBarHeight]*2 > offsetY) {
+    if (kUserInfoHeaderHeight - [self navagationBarHeight]*2 > offsetY) {
         [self setNavigationBarTitleColor:ColorClear];
     }
-    if (USER_INFO_HEADER_HEIGHT - [self navagationBarHeight]*2 < offsetY && offsetY < USER_INFO_HEADER_HEIGHT - [self navagationBarHeight]) {
-        CGFloat alphaRatio =  1.0f - (USER_INFO_HEADER_HEIGHT - [self navagationBarHeight] - offsetY)/[self navagationBarHeight];
+    if (kUserInfoHeaderHeight - [self navagationBarHeight]*2 < offsetY && offsetY < kUserInfoHeaderHeight - [self navagationBarHeight]) {
+        CGFloat alphaRatio =  1.0f - (kUserInfoHeaderHeight - [self navagationBarHeight] - offsetY)/[self navagationBarHeight];
         [self setNavigationBarTitleColor:[UIColor colorWithRed:1.0f green:1.0f blue:1.0f alpha:alphaRatio]];
     }
-    if (offsetY > USER_INFO_HEADER_HEIGHT - [self navagationBarHeight]) {
+    if (offsetY > kUserInfoHeaderHeight - [self navagationBarHeight]) {
         [self setNavigationBarTitleColor:ColorWhite];
     }
 }
@@ -138,24 +135,17 @@
 }
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
-    if(indexPath.section == 0) {
-        if(kind == UICollectionElementKindSectionHeader) {
-            UserInfoHeader *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:USER_INFO_CELL forIndexPath:indexPath];
-            _userInfoHeader = header;
-            if(_user) {
-                [header initData:_user];
-                header.delegate = self;
-            }
-            return header;
-        }else {
-            SlideTabBarFooter *footer = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionFooter withReuseIdentifier:SLIDE_TABBAR_CELL forIndexPath:indexPath];
-            footer.delegate = self;
-            [footer setLabels:@[[@"作品" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)(_user == nil ? 0 : _user.aweme_count)]],
-                                [@"喜欢" stringByAppendingString:[NSString stringWithFormat:@"%ld", (long)(_user == nil ? 0 : _user.favoriting_count)]]] tabIndex:_tabIndex];
-            return footer;
+    if(indexPath.section == 0 && kind == UICollectionElementKindSectionHeader) {
+        UserInfoHeader *header = [collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:kUserInfoCell forIndexPath:indexPath];
+        _userInfoHeader = header;
+        if(_user) {
+            [header initData:_user];
+            header.delegate = self;
+            header.slideTabBar.delegate = self;
         }
+        return header;
     }
-    return nil;
+    return [UICollectionReusableView new];
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
@@ -166,7 +156,7 @@
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    AwemeCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:AWEME_COLLECTION_CELL forIndexPath:indexPath];
+    AwemeCollectionCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kAwemeCollectionCell forIndexPath:indexPath];
     Aweme *aweme;
     if(_tabIndex == 0) {
         aweme = [_workAwemes objectAtIndex:indexPath.row];
@@ -198,15 +188,12 @@
 //UICollectionFlowLayout Delegate
 -(CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
     if(section == 0) {
-        return CGSizeMake(SCREEN_WIDTH, USER_INFO_HEADER_HEIGHT);
+        return CGSizeMake(ScreenWidth, kUserInfoHeaderHeight);
     }
     return CGSizeZero;
 }
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section {
-    if(section == 0) {
-        return CGSizeMake(SCREEN_WIDTH, SLIDE_TABBAR_FOOTER_HEIGHT);
-    }
     return CGSizeZero;
 }
 
@@ -269,22 +256,22 @@
 //UserActionTap
 - (void)onUserActionTap:(NSInteger)tag {
     switch (tag) {
-        case AVATAE_TAG: {
+        case UserInfoHeaderAvatarTag: {
             PhotoView *photoView = [[PhotoView alloc] initWithUrl:_user.avatar_medium.url_list.firstObject];
             [photoView show];
             break;
         }
-        case SEND_MESSAGE_TAG:
+        case UserInfoHeaderSendTag:
             [self.navigationController pushViewController:[[ChatListController alloc] init] animated:YES];
             break;
-        case FOCUS_CANCEL_TAG:
-        case FOCUS_TAG:{
+        case UserInfoHeaderFocusCancelTag:
+        case UserInfoHeaderFocusTag:{
             if(_userInfoHeader) {
                 [_userInfoHeader startFocusAnimation];
             }
             break;
         }
-        case SETTING_TAG:{
+        case UserInfoHeaderSettingTag:{
             MenuPopView *menu = [[MenuPopView alloc] initWithTitles:@[@"清除缓存"]];
             [menu setOnAction:^(NSInteger index) {
                 [[WebCacheHelpler sharedWebCache] clearCache:^(NSString *cacheSize) {
@@ -295,7 +282,7 @@
             break;
         }
             break;
-        case GITHUB_TAG:
+        case UserInfoHeaderGithubTag:
             [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/sshiqiao/douyin-ios-objectc"]];
             break;
         default:
@@ -320,7 +307,7 @@
     __weak typeof (self) wself = self;
     UserRequest *request = [UserRequest new];
     request.uid = _uid;
-    [NetworkHelper getWithUrlPath:FIND_USER_BY_UID_URL request:request success:^(id data) {
+    [NetworkHelper getWithUrlPath:FindUserByUidPath request:request success:^(id data) {
         UserResponse *response = [[UserResponse alloc] initWithDictionary:data error:nil];
         wself.user = response.data;
         [wself setTitle:self.user.nickname];
@@ -337,7 +324,7 @@
     request.uid = _uid;
     __weak typeof (self) wself = self;
     if(_tabIndex == 0) {
-        [NetworkHelper getWithUrlPath:FIND_AWEME_POST_BY_PAGE_URL request:request success:^(id data) {
+        [NetworkHelper getWithUrlPath:FindAwemePostByPagePath request:request success:^(id data) {
             if(wself.tabIndex != 0) {
                 return;
             }
@@ -366,7 +353,7 @@
             [wself.loadMore loadingFailed];
         }];
     }else {
-        [NetworkHelper getWithUrlPath:FIND_AWEME_FAVORITE_BY_PAGE_URL request:request success:^(id data) {
+        [NetworkHelper getWithUrlPath:FindAwemeFavoriteByPagePath request:request success:^(id data) {
             if(wself.tabIndex != 1) {
                 return;
             }

@@ -7,6 +7,7 @@
 //
 
 #import "CADisplayLink+Tool.h"
+#import "objc/runtime.h"
 
 @implementation CADisplayLink (Tool)
 

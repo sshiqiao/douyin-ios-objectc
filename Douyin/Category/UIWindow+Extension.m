@@ -7,7 +7,10 @@
 //
 
 #import "UIWindow+Extension.h"
+#import "objc/runtime.h"
+
 @implementation UIWindow (Extension)
+
 +(void)showTips:(NSString *)text {
     UITextView *tips = objc_getAssociatedObject(self, &tipsKey);
     if(tips) {
@@ -68,4 +71,5 @@
         [tips removeFromSuperview];
     }];
 }
+
 @end

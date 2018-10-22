@@ -7,20 +7,21 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
-#import "Masonry.h"
-#import "User.h"
-
-#define AVATAE_TAG          1000
-#define SEND_MESSAGE_TAG    2000
-#define FOCUS_TAG           3000
-#define FOCUS_CANCEL_TAG    4000
-#define SETTING_TAG         5000
-#define GITHUB_TAG          6000
+#import "SlideTabBar.h"
+static const NSInteger UserInfoHeaderAvatarTag = 0x01;
+static const NSInteger UserInfoHeaderSendTag = 0x02;
+static const NSInteger UserInfoHeaderFocusTag = 0x03;
+static const NSInteger UserInfoHeaderFocusCancelTag = 0x04;
+static const NSInteger UserInfoHeaderSettingTag = 0x05;
+static const NSInteger UserInfoHeaderGithubTag = 0x06;
 
 @protocol UserInfoDelegate
+
 - (void)onUserActionTap:(NSInteger)tag;
+
 @end
+
+@class User;
 
 @interface UserInfoHeader : UICollectionReusableView
 
@@ -28,7 +29,8 @@
 @property (nonatomic, assign) BOOL                         isFollowed;
 
 @property (nonatomic, strong) UIImageView                  *avatar;
-@property (nonatomic, strong) UIImageView                  *avatarBackground;
+@property (nonatomic, strong) UIImageView                  *topBackground;
+@property (nonatomic, strong) UIImageView                  *bottomBackground;
 
 @property (nonatomic, strong) UILabel                      *sendMessage;
 @property (nonatomic, strong) UIImageView                  *focusIcon;
@@ -40,13 +42,16 @@
 @property (nonatomic, strong) UIButton                     *github;
 @property (nonatomic, strong) UILabel                      *brief;
 @property (nonatomic, strong) UIImageView                  *genderIcon;
-@property (nonatomic, strong) UITextView                   *constellation;
+@property (nonatomic, strong) UITextView                   *city;
 @property (nonatomic, strong) UILabel                      *likeNum;
 @property (nonatomic, strong) UILabel                      *followNum;
 @property (nonatomic, strong) UILabel                      *followedNum;
+
+@property (nonatomic, strong) SlideTabBar                  *slideTabBar;
 
 - (void)initData:(User *)user;
 - (void)overScrollAction:(CGFloat) offsetY;
 - (void)scrollToTopAction:(CGFloat) offsetY;
 - (void)startFocusAnimation;
+
 @end

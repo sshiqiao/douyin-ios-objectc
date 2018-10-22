@@ -6,9 +6,7 @@
 //  Copyright © 2018年 Qiao Shi. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-#import "AwemeCollectionCell.h"
 
 @interface UserHomePageController : BaseViewController
 @property (nonatomic, strong) UICollectionView                 *collectionView;
