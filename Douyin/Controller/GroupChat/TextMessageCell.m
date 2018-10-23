@@ -92,10 +92,7 @@ static const CGFloat kTextMsgPadding         = 8;
 
 -(void)initData:(GroupChat *)chat {
     _chat = chat;
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _textView.attributedText = chat.cellAttributedString;
-    });
-//    _textView.attributedText = chat.cellAttributedString;
+    _textView.attributedText = chat.cellAttributedString;
     if(chat.isTemp) {
         [self startAnim];
         if(chat.isFailed) {

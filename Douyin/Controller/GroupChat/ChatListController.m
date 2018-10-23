@@ -19,10 +19,10 @@
 #import "ImageMessageCell.h"
 #import "TextMessageCell.h"
 
-NSString * const kTimeCell = @"TimeCell";
+NSString * const kTimeCell          = @"TimeCell";
 NSString * const kSystemMessageCell = @"SystemMessageCell";
-NSString * const kImageMessageCell = @"ImageMessageCell";
-NSString * const kTextMessageCell = @"TextMessageCell";
+NSString * const kImageMessageCell  = @"ImageMessageCell";
+NSString * const kTextMessageCell   = @"TextMessageCell";
 
 @interface ChatListController () <UITableViewDelegate, UITableViewDataSource, ChatTextViewDelegate, UIScrollViewDelegate>
 @property (nonatomic, strong) RefreshControl                      *refreshControl;
