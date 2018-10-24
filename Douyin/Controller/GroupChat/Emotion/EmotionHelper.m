@@ -45,8 +45,7 @@
         }
         NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
         NSString *emotionPath = [EmotionHelper emotionIconPath:emotionKey];
-        
-        attachment.image = [UIImage imageWithContentsOfFile:emotionPath];
+        attachment.image = [UIImage imageWithData:UIImageJPEGRepresentation([UIImage imageWithContentsOfFile:emotionPath],0.01) scale:0.01];
         attachment.bounds = CGRectMake(0, EmotionFont.descender, EmotionFont.lineHeight, EmotionFont.lineHeight/(attachment.image.size.width/attachment.image.size.height));
         NSAttributedString *matchStr = [NSAttributedString attributedStringWithAttachment:attachment];
         NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:matchStr];

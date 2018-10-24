@@ -132,38 +132,6 @@ static const CGFloat kImageMsgPadding         = 8;
     }
 }
 
-
-+(CGFloat)imageWidth:(GroupChat *)chat {
-    NSInteger width = chat.pic_large.width;
-    NSInteger height = chat.pic_large.height;
-    CGFloat ratio = (CGFloat)width/(CGFloat)height;
-    if(width > height) {
-        if(width > kImageMsgMaxWidth) {
-            width = kImageMsgMaxWidth;
-        }
-    }else {
-        if(height > kImageMsgMaxHeight) {
-            width = kImageMsgMaxWidth*ratio;
-        }
-    }
-    return width;
-}
-
-+(CGFloat)imageHeight:(GroupChat *)chat {
-    NSInteger width = chat.pic_large.width;
-    NSInteger height = chat.pic_large.height;
-    CGFloat ratio = (CGFloat)width/(CGFloat)height;
-    if(width > height) {
-        if(width > kImageMsgMaxWidth) {
-            height = kImageMsgMaxWidth/ratio;
-        }
-    }else {
-        if(height > kImageMsgMaxHeight) {
-            height = kImageMsgMaxHeight;
-        }
-    }
-    return height;
-}
 -(void)showMenu {
     if([MD5_UDID isEqualToString:_chat.visitor.udid]) {
         UIMenuController *menu = [UIMenuController sharedMenuController];
@@ -201,6 +169,38 @@ static const CGFloat kImageMsgPadding         = 8;
 }
 - (CGRect)menuFrame {
     return CGRectMake(CGRectGetMidX(_imageMsg.bounds) - 60, 10, 120, 50);
+}
+
++(CGFloat)imageWidth:(GroupChat *)chat {
+    NSInteger width = chat.pic_large.width;
+    NSInteger height = chat.pic_large.height;
+    CGFloat ratio = (CGFloat)width/(CGFloat)height;
+    if(width > height) {
+        if(width > kImageMsgMaxWidth) {
+            width = kImageMsgMaxWidth;
+        }
+    }else {
+        if(height > kImageMsgMaxHeight) {
+            width = kImageMsgMaxWidth*ratio;
+        }
+    }
+    return width;
+}
+
++(CGFloat)imageHeight:(GroupChat *)chat {
+    NSInteger width = chat.pic_large.width;
+    NSInteger height = chat.pic_large.height;
+    CGFloat ratio = (CGFloat)width/(CGFloat)height;
+    if(width > height) {
+        if(width > kImageMsgMaxWidth) {
+            height = kImageMsgMaxWidth/ratio;
+        }
+    }else {
+        if(height > kImageMsgMaxHeight) {
+            height = kImageMsgMaxHeight;
+        }
+    }
+    return height;
 }
 
 +(CGFloat)cellHeight:(GroupChat *)chat {

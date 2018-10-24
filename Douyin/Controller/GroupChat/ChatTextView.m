@@ -244,7 +244,6 @@ static const CGFloat kChatTextViewTopBottomInset = 15;
 
 -(void)textViewDidChange:(UITextView *)textView {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithAttributedString:textView.attributedText];
-    
     if(!textView.hasText) {
         [_placeholderLabel setHidden:NO];
         _textHeight = ceilf(_textView.font.lineHeight);

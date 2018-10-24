@@ -268,7 +268,6 @@ NSString * const kTextMessageCell   = @"TextMessageCell";
             NSData *data = UIImageJPEGRepresentation(image, 1.0);
             GroupChat *chat = [[GroupChat alloc] initImageChat:image];
             chat.visitor = _visitor;
-            chat.cellAttributedString = [self cellAttributedString:chat];
             chat.contentSize = [self cellContentSize:chat];
             chat.cellHeight = [self cellHeight:chat];
             
