@@ -100,23 +100,6 @@
 		E33BFBBB8F3FAC5885446FD1 /* libPods-Douyin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 788D7E6A99957B05CD68E556 /* libPods-Douyin.a */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		3B2A3476210EC775005738DD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B2A3455210EC773005738DD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B2A345C210EC773005738DD;
-			remoteInfo = Douyin;
-		};
-		3B2A3481210EC775005738DD /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B2A3455210EC773005738DD /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 3B2A345C210EC773005738DD;
-			remoteInfo = Douyin;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		3B00F206210ED68C00E99DE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3B00F209210ED73800E99DE5 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
@@ -282,8 +265,6 @@
 		3B2A3469210EC775005738DD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3B2A346E210EC775005738DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3B2A346F210EC775005738DD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3B2A3475210EC775005738DD /* DouyinTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DouyinTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3B2A3480210EC775005738DD /* DouyinUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DouyinUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B2A3493210EC9A7005738DD /* awemes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = awemes.json; sourceTree = "<group>"; };
 		3B2A3494210EC9A8005738DD /* comments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = comments.json; sourceTree = "<group>"; };
 		3B2A3495210EC9A8005738DD /* groupchats.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = groupchats.json; sourceTree = "<group>"; };
@@ -304,20 +285,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E33BFBBB8F3FAC5885446FD1 /* libPods-Douyin.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B2A3472210EC775005738DD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B2A347D210EC775005738DD /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -601,8 +568,6 @@
 			isa = PBXGroup;
 			children = (
 				3B2A345D210EC773005738DD /* Douyin.app */,
-				3B2A3475210EC775005738DD /* DouyinTests.xctest */,
-				3B2A3480210EC775005738DD /* DouyinUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -681,42 +646,6 @@
 			productReference = 3B2A345D210EC773005738DD /* Douyin.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3B2A3474210EC775005738DD /* DouyinTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3B2A348C210EC775005738DD /* Build configuration list for PBXNativeTarget "DouyinTests" */;
-			buildPhases = (
-				3B2A3471210EC775005738DD /* Sources */,
-				3B2A3472210EC775005738DD /* Frameworks */,
-				3B2A3473210EC775005738DD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3B2A3477210EC775005738DD /* PBXTargetDependency */,
-			);
-			name = DouyinTests;
-			productName = DouyinTests;
-			productReference = 3B2A3475210EC775005738DD /* DouyinTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		3B2A347F210EC775005738DD /* DouyinUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3B2A348F210EC775005738DD /* Build configuration list for PBXNativeTarget "DouyinUITests" */;
-			buildPhases = (
-				3B2A347C210EC775005738DD /* Sources */,
-				3B2A347D210EC775005738DD /* Frameworks */,
-				3B2A347E210EC775005738DD /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				3B2A3482210EC775005738DD /* PBXTargetDependency */,
-			);
-			name = DouyinUITests;
-			productName = DouyinUITests;
-			productReference = 3B2A3480210EC775005738DD /* DouyinUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -728,14 +657,6 @@
 				TargetAttributes = {
 					3B2A345C210EC773005738DD = {
 						CreatedOnToolsVersion = 9.4.1;
-					};
-					3B2A3474210EC775005738DD = {
-						CreatedOnToolsVersion = 9.4.1;
-						TestTargetID = 3B2A345C210EC773005738DD;
-					};
-					3B2A347F210EC775005738DD = {
-						CreatedOnToolsVersion = 9.4.1;
-						TestTargetID = 3B2A345C210EC773005738DD;
 					};
 				};
 			};
@@ -753,8 +674,6 @@
 			projectRoot = "";
 			targets = (
 				3B2A345C210EC773005738DD /* Douyin */,
-				3B2A3474210EC775005738DD /* DouyinTests */,
-				3B2A347F210EC775005738DD /* DouyinUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -773,20 +692,6 @@
 				3BF54F93210F4D5C008899F0 /* user.json in Resources */,
 				3B2A349D210EC9A8005738DD /* emotion.json in Resources */,
 				3BF54F8C210F44B9008899F0 /* favorites.json in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B2A3473210EC775005738DD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B2A347E210EC775005738DD /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -902,34 +807,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3B2A3471210EC775005738DD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		3B2A347C210EC775005738DD /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		3B2A3477210EC775005738DD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3B2A345C210EC773005738DD /* Douyin */;
-			targetProxy = 3B2A3476210EC775005738DD /* PBXContainerItemProxy */;
-		};
-		3B2A3482210EC775005738DD /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 3B2A345C210EC773005738DD /* Douyin */;
-			targetProxy = 3B2A3481210EC775005738DD /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		3B00F205210ED68C00E99DE5 /* LaunchScreen.storyboard */ = {
@@ -1096,76 +974,6 @@
 			};
 			name = Release;
 		};
-		3B2A348D210EC775005738DD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = DouyinTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.start.DouyinTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Douyin.app/Douyin";
-			};
-			name = Debug;
-		};
-		3B2A348E210EC775005738DD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = DouyinTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.start.DouyinTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Douyin.app/Douyin";
-			};
-			name = Release;
-		};
-		3B2A3490210EC775005738DD /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = DouyinUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.start.DouyinUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Douyin;
-			};
-			name = Debug;
-		};
-		3B2A3491210EC775005738DD /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = DouyinUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.start.DouyinUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Douyin;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1183,24 +991,6 @@
 			buildConfigurations = (
 				3B2A348A210EC775005738DD /* Debug */,
 				3B2A348B210EC775005738DD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3B2A348C210EC775005738DD /* Build configuration list for PBXNativeTarget "DouyinTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3B2A348D210EC775005738DD /* Debug */,
-				3B2A348E210EC775005738DD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		3B2A348F210EC775005738DD /* Build configuration list for PBXNativeTarget "DouyinUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3B2A3490210EC775005738DD /* Debug */,
-				3B2A3491210EC775005738DD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
