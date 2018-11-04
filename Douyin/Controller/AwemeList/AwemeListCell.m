@@ -168,35 +168,19 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
     //init focus action
     _focus = [FocusView new];
     [_container addSubview:_focus];
-}
+    
+    [_playerView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self);
+    }];
+    [_container mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.equalTo(self);
+    }];
+    [_pauseIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self);
+        make.width.height.mas_equalTo(100);
+    }];
 
--(void)prepareForReuse {
-    [super prepareForReuse];
-    
-    _isPlayerReady = NO;
-    [_playerView cancelLoading];
-    [_pauseIcon setHidden:YES];
-    
-    [_hoverTextView.textView setText:@""];
-    [_avatar setImage:[UIImage imageNamed:@"img_find_default"]];
-    
-    [_musicAlum resetView];
-    [_favorite resetView];
-    [_focus resetView];
-}
-
--(void)layoutSubviews {
-    [super layoutSubviews];
-    _playerView.frame = self.bounds;
-    _container.frame = self.bounds;
-    
-    _pauseIcon.frame = CGRectMake(CGRectGetMidX(self.bounds) - 50, CGRectGetMidY(self.bounds) - 50, 100, 100);
-    
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    _gradientLayer.frame = CGRectMake(0, self.frame.size.height - 500, self.frame.size.width, 500);
-    [CATransaction commit];
-    
+    //make constraintes
     [_playerStatusBar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self);
         make.bottom.equalTo(self).inset(49.5f + SafeAreaBottomHeight);
@@ -264,7 +248,6 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
         make.top.equalTo(self.favorite.mas_bottom);
         make.centerX.equalTo(self.favorite);
     }];
-    CGFloat avatarRadius = 25;
     [_avatar mas_makeConstraints:^(MASConstraintMaker *make) {
         make.bottom.equalTo(self.favorite.mas_top).inset(35);
         make.right.equalTo(self).inset(10);
@@ -275,6 +258,29 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
         make.centerY.equalTo(self.avatar.mas_bottom);
         make.width.height.mas_equalTo(24);
     }];
+}
+
+-(void)prepareForReuse {
+    [super prepareForReuse];
+    
+    _isPlayerReady = NO;
+    [_playerView cancelLoading];
+    [_pauseIcon setHidden:YES];
+    
+    [_hoverTextView.textView setText:@""];
+    [_avatar setImage:[UIImage imageNamed:@"img_find_default"]];
+    
+    [_musicAlum resetView];
+    [_favorite resetView];
+    [_focus resetView];
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    _gradientLayer.frame = CGRectMake(0, self.frame.size.height - 500, self.frame.size.width, 500);
+    [CATransaction commit];
 }
 
 //SendTextDelegate delegate

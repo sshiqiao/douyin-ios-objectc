@@ -7,7 +7,6 @@
 //
 
 #import "EmotionHelper.h"
-#import <ImageIO/ImageIO.h>
 @implementation EmotionHelper
 //获取emotion.json中的以表情图片文件名作为key值、表情对应的文本作为value值的字典dic
 + (NSDictionary *)shareEmotionDictionary {
@@ -45,7 +44,13 @@
         }
         NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
         NSString *emotionPath = [EmotionHelper emotionIconPath:emotionKey];
-        attachment.image = [UIImage imageWithData:UIImagePNGRepresentation([UIImage imageWithContentsOfFile:emotionPath]) scale:0.01];
+        
+        UIGraphicsBeginImageContext(CGSizeMake(30, 30));
+        [[UIImage imageWithContentsOfFile:emotionPath] drawInRect:CGRectMake(0.0, 0.0, 30, 30)];
+        UIImage *emotionImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        attachment.image = emotionImage;
         attachment.bounds = CGRectMake(0, EmotionFont.descender, EmotionFont.lineHeight, EmotionFont.lineHeight/(attachment.image.size.width/attachment.image.size.height));
         NSAttributedString *matchStr = [NSAttributedString attributedStringWithAttachment:attachment];
         NSMutableAttributedString *emotionStr = [[NSMutableAttributedString alloc] initWithAttributedString:matchStr];

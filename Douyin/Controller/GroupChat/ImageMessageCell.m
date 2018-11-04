@@ -30,7 +30,7 @@ static const CGFloat kImageMsgPadding         = 8;
         _avatar = [[UIImageView alloc] init];
         _avatar.image = [UIImage imageNamed:@"img_find_default"];
         _avatar.contentMode = UIViewContentModeScaleAspectFit;
-        [self addSubview:_avatar];
+        [self.contentView addSubview:_avatar];
         
         _imageMsg = [[UIImageView alloc] init];
         _imageMsg.backgroundColor = ColorGray;
@@ -40,10 +40,15 @@ static const CGFloat kImageMsgPadding         = 8;
         
         [_imageMsg addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu)]];
         [_imageMsg addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showPhotoView)]];
-        [self addSubview:_imageMsg];
+        [self.contentView addSubview:_imageMsg];
         
         _progressView = [CircleProgressView new];
-        [self addSubview:_progressView];
+        [self.contentView addSubview:_progressView];
+        
+        [_progressView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.center.equalTo(self.imageMsg);
+            make.width.height.mas_equalTo(50);
+        }];
     }
     return self;
 }
@@ -62,10 +67,7 @@ static const CGFloat kImageMsgPadding         = 8;
         _avatar.frame = CGRectMake(kImageMsgPadding, kImageMsgPadding, 30, 30);
     }
     [self updateImageFrame];
-    [_progressView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.equalTo(self.imageMsg);
-        make.width.height.mas_equalTo(50);
-    }];
+    
 }
 -(void)updateImageFrame {
     [CATransaction begin];

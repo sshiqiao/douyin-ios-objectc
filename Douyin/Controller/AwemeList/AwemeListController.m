@@ -124,7 +124,7 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //填充视频数据
-    AwemeListCell *cell = [tableView dequeueReusableCellWithIdentifier:kAwemeListCell];
+    AwemeListCell *cell = [tableView dequeueReusableCellWithIdentifier:kAwemeListCell forIndexPath:indexPath];
     [cell initData:[_data objectAtIndex:indexPath.row]];
     return cell;
 }

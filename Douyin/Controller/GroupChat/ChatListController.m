@@ -332,11 +332,11 @@ NSString * const kTextMessageCell   = @"TextMessageCell";
     GroupChat *chat = _data[indexPath.row];
     __weak __typeof(self) wself = self;
     if([chat.msg_type isEqualToString:@"system"]){
-        SystemMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kSystemMessageCell];
+        SystemMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kSystemMessageCell forIndexPath:indexPath];
         [cell initData:chat];
         return cell;
     }else if([chat.msg_type isEqualToString:@"text"]){
-        TextMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextMessageCell];
+        TextMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kTextMessageCell forIndexPath:indexPath];
         __weak __typeof(cell) wcell = cell;
         cell.onMenuAction = ^(MenuActionType actionType) {
             if(actionType == DeleteAction) {
@@ -349,7 +349,7 @@ NSString * const kTextMessageCell   = @"TextMessageCell";
         [cell initData:chat];
         return cell;
     }else  if([chat.msg_type isEqualToString:@"image"]){
-        ImageMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kImageMessageCell];
+        ImageMessageCell *cell = [tableView dequeueReusableCellWithIdentifier:kImageMessageCell forIndexPath:indexPath];
         __weak __typeof(cell) wcell = cell;
         cell.onMenuAction = ^(MenuActionType actionType) {
             if(actionType == DeleteAction) {
@@ -359,7 +359,7 @@ NSString * const kTextMessageCell   = @"TextMessageCell";
         [cell initData:chat];
         return cell;
     }else {
-        TimeCell *cell = [tableView dequeueReusableCellWithIdentifier:kTimeCell];
+        TimeCell *cell = [tableView dequeueReusableCellWithIdentifier:kTimeCell forIndexPath:indexPath];
         [cell initData:_data[indexPath.row]];
         return cell;
     }

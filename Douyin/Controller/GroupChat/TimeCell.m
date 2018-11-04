@@ -27,16 +27,13 @@ static const CGFloat kTimeMsgPadding         = 8;
         _textView.backgroundColor = ColorClear;
         _textView.textContainerInset = UIEdgeInsetsMake(kTimeMsgCornerRadius*2, kTimeMsgCornerRadius, 0, kTimeMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
-        [self addSubview:_textView];
+        [self.contentView addSubview:_textView];
+        
+        [_textView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.bottom.equalTo(self.contentView);
+        }];
     }
     return self;
-}
-
--(void)layoutSubviews {
-    [super layoutSubviews];
-    [_textView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.bottom.equalTo(self);
-    }];
 }
 
 -(void)initData:(GroupChat *)chat {

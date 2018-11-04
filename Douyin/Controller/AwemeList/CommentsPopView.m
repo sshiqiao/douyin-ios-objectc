@@ -163,7 +163,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
     return _data.count;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [CommentListCell cellHeight:_data[indexPath.row]];
 }
 
@@ -306,7 +306,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
 
 #pragma comment tableview cell
 
-#define MAX_CONTENT_WIDTH ScreenWidth - 55 - 35
+#define MaxContentWidth     ScreenWidth - 55 - 35
 //cell
 @implementation CommentListCell
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
@@ -354,44 +354,42 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
         _splitLine.backgroundColor = ColorWhiteAlpha10;
         [self addSubview:_splitLine];
         
+        [_avatar mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.left.equalTo(self).inset(15);
+            make.width.height.mas_equalTo(28);
+        }];
+        [_likeIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.right.equalTo(self).inset(15);
+            make.width.height.mas_equalTo(20);
+        }];
+        [_nickName mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self).offset(10);
+            make.left.equalTo(self.avatar.mas_right).offset(10);
+            make.right.equalTo(self.likeIcon.mas_left).inset(25);
+        }];
+        [_content mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.nickName.mas_bottom).offset(5);
+            make.left.equalTo(self.nickName);
+            make.width.mas_lessThanOrEqualTo(MaxContentWidth);
+        }];
+        [_date mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.content.mas_bottom).offset(5);
+            make.left.right.equalTo(self.nickName);
+        }];
+        [_likeNum mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.equalTo(self.likeIcon);
+            make.top.equalTo(self.likeIcon.mas_bottom).offset(5);
+        }];
+        [_splitLine mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.date);
+            make.right.equalTo(self.likeIcon);
+            make.top.equalTo(self.date.mas_bottom).offset(9.5);
+            make.bottom.equalTo(self);
+            make.height.mas_equalTo(0.5);
+        }];
     }
+    
     return self;
-}
-
--(void)layoutSubviews {
-    [super layoutSubviews];
-    [_avatar mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.equalTo(self).inset(15);
-        make.width.height.mas_equalTo(28);
-    }];
-    [_likeIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.right.equalTo(self).inset(15);
-        make.width.height.mas_equalTo(20);
-    }];
-    [_nickName mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self).offset(10);
-        make.left.equalTo(self.avatar.mas_right).offset(10);
-        make.right.equalTo(self.likeIcon.mas_left).inset(25);
-    }];
-    [_content mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.nickName.mas_bottom).offset(5);
-        make.left.equalTo(self.nickName);
-        make.width.mas_lessThanOrEqualTo(MAX_CONTENT_WIDTH);
-    }];
-    [_date mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.content.mas_bottom).offset(5);
-        make.left.right.equalTo(self.nickName);
-    }];
-    [_likeNum mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.likeIcon);
-        make.top.equalTo(self.likeIcon.mas_bottom).offset(5);
-    }];
-    [_splitLine mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.date);
-        make.right.equalTo(self.likeIcon);
-        make.bottom.equalTo(self);
-        make.height.mas_equalTo(0.5);
-    }];
 }
 
 -(void)initData:(Comment *)comment {
@@ -405,8 +403,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
     }
     
     __weak __typeof(self) wself = self;
-    [_avatar setImageWithURL:avatarUrl progressBlock:^(CGFloat persent) {
-    } completedBlock:^(UIImage *image, NSError *error) {
+    [_avatar setImageWithURL:avatarUrl completedBlock:^(UIImage *image, NSError *error) {
         image = [image drawCircleImage];
         wself.avatar.image = image;
     }];
@@ -419,8 +416,8 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
 +(CGFloat)cellHeight:(Comment *)comment {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:comment.text];
     [attributedString addAttribute:NSFontAttributeName value:MediumFont range:NSMakeRange(0, attributedString.length)];
-    CGSize size = [attributedString multiLineSize:MAX_CONTENT_WIDTH];
-    return size.height + 30 + 30;
+    CGSize size = [attributedString multiLineSize:MaxContentWidth];
+    return size.height + 30 + SmallFont.lineHeight * 2;
 }
 @end
 
@@ -432,13 +429,10 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
 
 #pragma TextView
 
-#define LEFT_INSET                 15
-#define RIGHT_INSET                60
-#define TOP_BOTTOM_INSET           15
+static const CGFloat kCommentTextViewLeftInset               = 15;
+static const CGFloat kCommentTextViewRightInset              = 60;
+static const CGFloat kCommentTextViewTopBottomInset          = 15;
 
-//#define LEFT_INSET 16
-//#define RIGHT_INSET 50
-//#define TOP_BOTTOM_INSET 15
 @interface CommentTextView ()<UITextViewDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, assign) CGFloat            textHeight;
 @property (nonatomic, assign) CGFloat            keyboardHeight;
@@ -471,7 +465,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
         _textView.returnKeyType = UIReturnKeySend;
         _textView.scrollEnabled = NO;
         _textView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
-        _textView.textContainerInset = UIEdgeInsetsMake(TOP_BOTTOM_INSET, LEFT_INSET, TOP_BOTTOM_INSET, RIGHT_INSET);
+        _textView.textContainerInset = UIEdgeInsetsMake(kCommentTextViewTopBottomInset, kCommentTextViewLeftInset, kCommentTextViewTopBottomInset, kCommentTextViewRightInset);
         _textView.textContainer.lineFragmentPadding = 0;
         _textHeight = ceilf(_textView.font.lineHeight);
         
@@ -479,7 +473,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
         _placeholderLabel.text = @"有爱评论，说点儿好听的~";
         _placeholderLabel.textColor = ColorGray;
         _placeholderLabel.font = BigFont;
-        _placeholderLabel.frame = CGRectMake(LEFT_INSET, 0, ScreenWidth - LEFT_INSET - RIGHT_INSET, 50);
+        _placeholderLabel.frame = CGRectMake(kCommentTextViewLeftInset, 0, ScreenWidth - kCommentTextViewLeftInset - kCommentTextViewRightInset, 50);
         [_textView addSubview:_placeholderLabel];
         
         _atImageView = [[UIImageView alloc] init];
@@ -510,7 +504,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
 
 
 - (void)updateTextViewFrame {
-    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*TOP_BOTTOM_INSET : ceilf(_textView.font.lineHeight) + 2*TOP_BOTTOM_INSET;
+    CGFloat textViewHeight = _keyboardHeight > SafeAreaBottomHeight ? _textHeight + 2*kCommentTextViewTopBottomInset : ceilf(_textView.font.lineHeight) + 2*kCommentTextViewTopBottomInset;
     _textView.frame = CGRectMake(0, 0, ScreenWidth, textViewHeight);
     _container.frame = CGRectMake(0, ScreenHeight - _keyboardHeight - textViewHeight, ScreenWidth, textViewHeight + _keyboardHeight);
 }
@@ -543,7 +537,7 @@ NSString * const kCommentFooterCell   = @"CommentFooterCell";
         _textHeight = ceilf(_textView.font.lineHeight);
     }else {
         [_placeholderLabel setHidden:YES];
-        _textHeight = [attributedText multiLineSize:ScreenWidth - LEFT_INSET - RIGHT_INSET].height;
+        _textHeight = [attributedText multiLineSize:ScreenWidth - kCommentTextViewLeftInset - kCommentTextViewRightInset].height;
     }
     [self updateTextViewFrame];
 }

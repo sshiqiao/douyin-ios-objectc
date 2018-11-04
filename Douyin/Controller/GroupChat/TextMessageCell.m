@@ -22,7 +22,7 @@ static const CGFloat kTextMsgPadding         = 8;
         _avatar = [[UIImageView alloc] init];
         _avatar.image = [UIImage imageNamed:@"img_find_default"];
         _avatar.contentMode = UIViewContentModeScaleAspectFit;
-        [self addSubview:_avatar];
+        [self.contentView addSubview:_avatar];
         
         _textView = [[UITextView alloc] init];
         _textView.textColor = [[TextMessageCell attributes] valueForKey:NSForegroundColorAttributeName];
@@ -34,7 +34,7 @@ static const CGFloat kTextMsgPadding         = 8;
         _textView.textContainerInset = UIEdgeInsetsMake(kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
         [_textView addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu)]];
-        [self addSubview:_textView];
+        [self.contentView addSubview:_textView];
         
         _backgroundlayer = [[CAShapeLayer alloc]init];
         _backgroundlayer.zPosition = -1;
@@ -42,11 +42,22 @@ static const CGFloat kTextMsgPadding         = 8;
         
         _indicatorView = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icon30WhiteSmall"]];
         [_indicatorView setHidden:YES];
-        [self addSubview:_indicatorView];
+        [self.contentView addSubview:_indicatorView];
         
         _tipIcon = [[UIImageView alloc]initWithImage:[UIImage imageNamed:@"icWarning"]];
         [_tipIcon setHidden:YES];
-        [self addSubview:_tipIcon];
+        [self.contentView addSubview:_tipIcon];
+        
+        [_indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.textView);
+            make.right.equalTo(self.textView.mas_left).inset(10);
+            make.width.height.mas_equalTo(15);
+        }];
+        [_tipIcon mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.top.equalTo(self.textView);
+            make.right.equalTo(self.textView.mas_left).inset(10);
+            make.width.height.mas_equalTo(15);
+        }];
     }
     return self;
 }
@@ -78,16 +89,7 @@ static const CGFloat kTextMsgPadding         = 8;
         _backgroundlayer.fillColor = ColorWhite.CGColor;
     }
     [CATransaction commit];
-    [_indicatorView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.textView);
-        make.right.equalTo(self.textView.mas_left).inset(10);
-        make.width.height.mas_equalTo(15);
-    }];
-    [_tipIcon mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.textView);
-        make.right.equalTo(self.textView.mas_left).inset(10);
-        make.width.height.mas_equalTo(15);
-    }];
+    
 }
 
 -(void)initData:(GroupChat *)chat {

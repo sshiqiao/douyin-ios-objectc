@@ -21,7 +21,7 @@
         _imageView = [[WebPImageView alloc] init];
         _imageView.backgroundColor = ColorThemeGray;
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
-        [self addSubview:_imageView];
+        [self.contentView addSubview:_imageView];
         
         CAGradientLayer *gradientLayer = [CAGradientLayer layer];
         gradientLayer.colors = @[(__bridge id)ColorClear.CGColor, (__bridge id)ColorBlackAlpha20.CGColor, (__bridge id)ColorBlackAlpha60.CGColor];
@@ -39,19 +39,21 @@
         _favoriteNum.titleLabel.font = SmallFont;
         [_favoriteNum setImage:[UIImage imageNamed:@"icon_home_likenum"] forState:UIControlStateNormal];
         [_favoriteNum setImageEdgeInsets:UIEdgeInsetsMake(0, -2, 0, 0)];
-        [self addSubview:_favoriteNum];
+        [self.contentView addSubview:_favoriteNum];
+        
+        [_imageView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.edges.equalTo(self.contentView);
+        }];
+        [_favoriteNum mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.equalTo(self.contentView).offset(10);
+            make.bottom.right.equalTo(self.contentView).inset(10);
+        }];
     }
     return self;
 }
 
 -(void)setHighlighted:(BOOL)highlighted {
     [super setHighlighted:NO];
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    _imageView.frame = self.bounds;
-    _favoriteNum.frame = CGRectMake(10, self.bounds.size.height - 20, self.bounds.size.width - 20, 12);
 }
 
 - (void)prepareForReuse {

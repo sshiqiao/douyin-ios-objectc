@@ -31,8 +31,10 @@ static const CGFloat kSystemMsgPadding         = 8;
         _textView.textContainerInset = UIEdgeInsetsMake(kSystemMsgCornerRadius, kSystemMsgCornerRadius, kSystemMsgCornerRadius, kSystemMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
         _textView.layer.cornerRadius = kSystemMsgCornerRadius;
-        [self addSubview:_textView];
-        
+        [self.contentView addSubview:_textView];
+        [_textView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.centerX.bottom.equalTo(self.contentView);
+        }];
     }
     return self;
 }

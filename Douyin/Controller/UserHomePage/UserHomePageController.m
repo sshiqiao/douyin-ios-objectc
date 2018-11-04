@@ -21,6 +21,7 @@
 #import "PhotoView.h"
 #import "NetworkHelper.h"
 #import "LoadMoreControl.h"
+#import "objc/runtime.h"
 
 #define kUserInfoHeaderHeight          350 + SafeAreaTopHeight
 #define kSlideTabBarHeight             40
