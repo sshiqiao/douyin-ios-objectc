@@ -102,7 +102,6 @@
 
 /* Begin PBXFileReference section */
 		3B00F206210ED68C00E99DE5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		3B00F209210ED73800E99DE5 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		3B00F20B210ED79000E99DE5 /* WebPImageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPImageView.h; sourceTree = "<group>"; };
 		3B00F20C210ED79D00E99DE5 /* WebPImageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebPImageView.m; sourceTree = "<group>"; };
 		3B00F20E210ED7AC00E99DE5 /* WebPImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPImage.h; sourceTree = "<group>"; };
@@ -272,6 +271,7 @@
 		3B2A3498210EC9A8005738DD /* Emoticons.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Emoticons.bundle; sourceTree = "<group>"; };
 		3B9637FE215CA87700B2D6B8 /* CADisplayLink+Tool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CADisplayLink+Tool.h"; sourceTree = "<group>"; };
 		3B9637FF215CA88300B2D6B8 /* CADisplayLink+Tool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "CADisplayLink+Tool.m"; sourceTree = "<group>"; };
+		3B98136321A9AC1000F976A0 /* Douyin+prefix+Header.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Douyin+prefix+Header.pch"; sourceTree = "<group>"; };
 		3BF54F8B210F44B9008899F0 /* favorites.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = favorites.json; sourceTree = "<group>"; };
 		3BF54F92210F4D5C008899F0 /* user.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = user.json; sourceTree = "<group>"; };
 		70671669E659B6CCC077AFBD /* Pods-Douyin.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Douyin.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Douyin/Pods-Douyin.debug.xcconfig"; sourceTree = "<group>"; };
@@ -298,14 +298,6 @@
 				7CEEF714730F86EBDB840A5B /* Pods-Douyin.release.xcconfig */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		3B00F208210ED70200E99DE5 /* Utils */ = {
-			isa = PBXGroup;
-			children = (
-				3B00F209210ED73800E99DE5 /* Constants.h */,
-			);
-			path = Utils;
 			sourceTree = "<group>";
 		};
 		3B00F20A210ED76100E99DE5 /* WebP */ = {
@@ -576,7 +568,6 @@
 			isa = PBXGroup;
 			children = (
 				3B2A3492210EC8C6005738DD /* Resource */,
-				3B00F208210ED70200E99DE5 /* Utils */,
 				3B00F20A210ED76100E99DE5 /* WebP */,
 				3B00F214210ED82700E99DE5 /* Category */,
 				3B00F22D210EDA0D00E99DE5 /* Network */,
@@ -587,6 +578,7 @@
 				3B00F205210ED68C00E99DE5 /* LaunchScreen.storyboard */,
 				3B2A346E210EC775005738DD /* Info.plist */,
 				3B2A346F210EC775005738DD /* main.m */,
+				3B98136321A9AC1000F976A0 /* Douyin+prefix+Header.pch */,
 			);
 			path = Douyin;
 			sourceTree = "<group>";
@@ -939,6 +931,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
+				GCC_PREFIX_HEADER = "$SRCROOT/Douyin/Douyin+prefix+Header.pch";
 				INFOPLIST_FILE = Douyin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -961,6 +954,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
+				GCC_PREFIX_HEADER = "$SRCROOT/Douyin/Douyin+prefix+Header.pch";
 				INFOPLIST_FILE = Douyin/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (

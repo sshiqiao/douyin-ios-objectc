@@ -7,8 +7,6 @@
 //
 
 #import "AwemeListCell.h"
-#import "Constants.h"
-#import "Masonry.h"
 #import "Aweme.h"
 #import "AVPlayerView.h"
 #import "HoverTextView.h"
@@ -43,8 +41,8 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
     if(self) {
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         self.backgroundColor = ColorBlackAlpha1;
-        self.lastTapTime = 0;
-        self.lastTapPoint = CGPointZero;
+        _lastTapTime = 0;
+        _lastTapPoint = CGPointZero;
         [self initSubViews];
     }
     return self;
@@ -318,23 +316,23 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
         }
         default: {
             //获取点击坐标，用于设置爱心显示位置
-            CGPoint point = [sender locationInView:self.container];
+            CGPoint point = [sender locationInView:_container];
             //获取当前时间
             NSTimeInterval time = [[NSDate dateWithTimeIntervalSinceNow:0] timeIntervalSince1970];
             //判断当前点击时间与上次点击时间的时间间隔
-            if(time - self.lastTapTime > 0.25f) {
+            if(time - _lastTapTime > 0.25f) {
                 //推迟0.25秒执行单击方法
                 [self performSelector:@selector(singleTapAction) withObject:nil afterDelay:0.25f];
             }else {
                 //取消执行单击方法
                 [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(singleTapAction) object: nil];
                 //执行连击显示爱心的方法
-                [self showLikeViewAnim:point oldPoint:self.lastTapPoint];
+                [self showLikeViewAnim:point oldPoint:_lastTapPoint];
             }
             //更新上一次点击位置
-            self.lastTapPoint = point;
+            _lastTapPoint = point;
             //更新上一次点击时间
-            self.lastTapTime =  time;
+            _lastTapTime =  time;
             break;
         }
     }
@@ -342,11 +340,11 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
 }
 
 - (void)singleTapAction {
-    if([self.hoverTextView isFirstResponder]) {
-        [self.hoverTextView resignFirstResponder];
+    if([_hoverTextView isFirstResponder]) {
+        [_hoverTextView resignFirstResponder];
     }else {
-        [self showPauseViewAnim:[self.playerView rate]];
-        [self.playerView updatePlayerState];
+        [self showPauseViewAnim:[_playerView rate]];
+        [_playerView updatePlayerState];
     }
 }
 
@@ -379,7 +377,7 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
     CGFloat angle = M_PI_4 * -k;
     likeImageView.frame = CGRectMake(newPoint.x, newPoint.y, 80, 80);
     likeImageView.transform = CGAffineTransformScale(CGAffineTransformMakeRotation(angle), 0.8f, 1.8f);
-    [self.container addSubview:likeImageView];
+    [_container addSubview:likeImageView];
     [UIView animateWithDuration:0.2f
                           delay:0.0f
          usingSpringWithDamping:0.5f
@@ -405,9 +403,9 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
 //加载动画
 -(void)startLoadingPlayItemAnim:(BOOL)isStart {
     if (isStart) {
-        self.playerStatusBar.backgroundColor = ColorWhite;
-        [self.playerStatusBar setHidden:NO];
-        [self.playerStatusBar.layer removeAllAnimations];
+        _playerStatusBar.backgroundColor = ColorWhite;
+        [_playerStatusBar setHidden:NO];
+        [_playerStatusBar.layer removeAllAnimations];
         
         CAAnimationGroup *animationGroup = [[CAAnimationGroup alloc]init];
         animationGroup.duration = 0.5;
@@ -446,8 +444,8 @@ static const NSInteger kAwemeListLikeShareTag   = 0x02;
         case AVPlayerItemStatusReadyToPlay:
             [self startLoadingPlayItemAnim:NO];
             
-            self.isPlayerReady = YES;
-            [self.musicAlum startAnimation:_aweme.rate];
+            _isPlayerReady = YES;
+            [_musicAlum startAnimation:_aweme.rate];
             
             if(_onPlayerReady) {
                 _onPlayerReady();

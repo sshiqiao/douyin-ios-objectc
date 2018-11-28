@@ -7,11 +7,9 @@
 //
 
 #import "UIImage+Extension.h"
-
 @implementation UIImage (Extension)
-
 - (UIImage *)drawRoundedRectImage:(CGFloat)cornerRadius width:(CGFloat)width height:(CGFloat)height {
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), false, 1.0f);
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(width, height), NO, 1.0f);
     CGContextAddPath(UIGraphicsGetCurrentContext(),
                      [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, width, height) cornerRadius:cornerRadius].CGPath);
     CGContextClip(UIGraphicsGetCurrentContext());
@@ -24,7 +22,7 @@
 
 - (UIImage *)drawCircleImage {
     CGFloat side = MIN(self.size.width, self.size.height);
-    UIGraphicsBeginImageContextWithOptions(CGSizeMake(side, side), false, 1.0f);
+    UIGraphicsBeginImageContextWithOptions(CGSizeMake(side, side), NO, 1.0f);
     CGContextSetShouldAntialias(UIGraphicsGetCurrentContext(), YES);
     CGContextAddPath(UIGraphicsGetCurrentContext(), [UIBezierPath bezierPathWithOvalInRect:CGRectMake(0, 0, side, side)].CGPath);
     CGContextClip(UIGraphicsGetCurrentContext());
@@ -37,3 +35,4 @@
     return output;
 }
 @end
+

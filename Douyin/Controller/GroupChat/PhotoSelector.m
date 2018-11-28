@@ -7,8 +7,6 @@
 //
 
 #import "PhotoSelector.h"
-#import "Constants.h"
-#import "Masonry.h"
 
 NSString * const kPhotoCell = @"PhotoCell";
 

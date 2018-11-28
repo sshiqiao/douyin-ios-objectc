@@ -33,6 +33,7 @@ static const CGFloat kTextMsgPadding         = 8;
         _textView.backgroundColor = ColorClear;
         _textView.textContainerInset = UIEdgeInsetsMake(kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius, kTextMsgCornerRadius);
         _textView.textContainer.lineFragmentPadding = 0;
+        _textView.dataDetectorTypes = UIDataDetectorTypeLink;
         [_textView addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showMenu)]];
         [self.contentView addSubview:_textView];
         

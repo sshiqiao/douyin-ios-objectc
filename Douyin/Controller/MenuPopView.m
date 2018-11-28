@@ -7,7 +7,6 @@
 //
 
 #import "MenuPopView.h"
-#import "Constants.h"
 
 @interface MenuPopView ()
 

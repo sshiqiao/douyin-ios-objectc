@@ -7,7 +7,6 @@
 //
 
 #import "ChatTextView.h"
-#import "Masonry.h"
 #import "EmotionSelector.h"
 #import "PhotoSelector.h"
 #import "EmotionHelper.h"

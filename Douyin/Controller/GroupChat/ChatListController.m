@@ -7,7 +7,6 @@
 //
 
 #import "ChatListController.h"
-#import "Masonry.h"
 #import "EmotionHelper.h"
 #import "RefreshControl.h"
 #import "PhotoView.h"

@@ -7,7 +7,6 @@
 //
 
 #import "UIImageView+WebCache.h"
-#import "Constants.h"
 #import "objc/runtime.h"
 #import "WebPImage.h"
 

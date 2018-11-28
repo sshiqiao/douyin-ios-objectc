@@ -7,8 +7,6 @@
 //
 
 #import "UserInfoHeader.h"
-#import "Constants.h"
-#import "Masonry.h"
 #import "User.h"
 
 static const NSTimeInterval kAnimationDefaultDuration = 0.25;

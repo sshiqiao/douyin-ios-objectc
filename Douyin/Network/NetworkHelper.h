@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "AFHTTPSessionManager.h"
-#import "Constants.h"
 
 #import "BaseResponse.h"
 #import "VisitorResponse.h"

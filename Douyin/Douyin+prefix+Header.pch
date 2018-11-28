@@ -1,10 +1,11 @@
 //
-//  Constants.h
+//  Douyin+prefix+Header.pch
 //  Douyin
 //
-//  Created by Qiao Shi on 2018/7/30.
-//  Copyright © 2018年 Qiao Shi. All rights reserved.
+//  Created by Qiao Shi on 2018/11/24.
+//  Copyright © 2018 Qiao Shi. All rights reserved.
 //
+
 
 #import "UIWindow+Extension.h"
 #import "NSString+Extension.h"
@@ -14,7 +15,7 @@
 #import "NSAttributedString+Extension.h"
 #import "UIImageView+WebCache.h"
 #import "CADisplayLink+Tool.h"
-
+#import "Masonry.h"
 
 //UDID MD5_UDID
 #define UDID [[[UIDevice currentDevice] identifierForVendor] UUIDString]

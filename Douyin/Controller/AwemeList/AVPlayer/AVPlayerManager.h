@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface AVPlayerManager:NSObject
+@property (nonatomic, strong) NSMutableArray<AVPlayer *>   *playerArray;  //用于存储AVPlayer的数组
 
 + (AVPlayerManager *)shareManager;
 + (void)setAudioMode;

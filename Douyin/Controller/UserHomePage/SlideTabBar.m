@@ -7,7 +7,6 @@
 //
 
 #import "SlideTabBar.h"
-#import "Constants.h"
 
 @interface SlideTabBar ()
 

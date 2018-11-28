@@ -9,7 +9,6 @@
 #import "WebSocketManager.h"
 #import "SocketRocket.h"
 #import "NetworkHelper.h"
-#import "Constants.h"
 
 //赋值消息通知常量名称
 NSString *const WebSocketDidReceiveMessageNotification = @"WebSocketDidReceiveMessageNotification";

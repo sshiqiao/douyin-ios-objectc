@@ -7,7 +7,6 @@
 //
 
 #import "PhotoView.h"
-#import "Constants.h"
 #import "CircleProgressView.h"
 
 @implementation PhotoView

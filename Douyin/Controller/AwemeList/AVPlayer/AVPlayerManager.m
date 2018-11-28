@@ -10,8 +10,6 @@
 
 @interface AVPlayerManager()
 
-@property (nonatomic, strong) NSMutableArray<AVPlayer *>   *playerArray;  //用于存储AVPlayer的数组
-
 @end
 
 @implementation AVPlayerManager
@@ -74,6 +72,11 @@
 
 - (void)removeAllPlayers {
     [_playerArray removeAllObjects];
+//    [_playerArray enumerateObjectsUsingBlock:^(AVPlayer * obj, NSUInteger idx, BOOL *stop) {
+//        [obj pause];
+//        [self.playerArray removeObject:obj];
+//        obj = nil;
+//    }];
 }
 
 @end

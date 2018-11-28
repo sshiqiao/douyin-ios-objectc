@@ -7,8 +7,6 @@
 //
 
 #import "EmotionSelector.h"
-#import "Constants.h"
-#import "Masonry.h"
 
 NSString * const kEmotionCell = @"EmotionCell";
 

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Constants.h"
 
 //chat edit message type enum
 typedef NS_ENUM(NSUInteger,ChatEditMessageType) {

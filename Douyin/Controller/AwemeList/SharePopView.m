@@ -7,8 +7,6 @@
 //
 
 #import "SharePopView.h"
-#import "Constants.h"
-#import "Masonry.h"
 
 @implementation SharePopView
 

@@ -7,7 +7,6 @@
 //
 
 #import "CircleProgressView.h"
-#import "Constants.h"
 
 @interface CircleProgressView ()
 

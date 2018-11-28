@@ -7,7 +7,6 @@
 //
 
 #import "HoverTextView.h"
-#import "Constants.h"
 #import "NSString+Extension.h"
 #import "NSNotification+Extension.h"
 

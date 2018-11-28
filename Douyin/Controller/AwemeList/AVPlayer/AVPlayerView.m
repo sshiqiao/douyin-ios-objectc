@@ -7,7 +7,6 @@
 //
 
 #import "AVPlayerView.h"
-#import "Constants.h"
 #import "NetworkHelper.h"
 #import "AVPlayerManager.h"
 
@@ -31,6 +30,8 @@
 @property (nonatomic, copy) NSString               *cacheFileKey;     //缓存文件key值
 @property (nonatomic, strong) NSOperation          *queryCacheOperation;  //查找本地视频缓存数据的NSOperation
 @property (nonatomic, strong) dispatch_queue_t     cancelLoadingQueue;
+
+@property (nonatomic, assign) BOOL                 retried;
 @end
 
 @implementation AVPlayerView
@@ -39,19 +40,20 @@
     self = [super initWithFrame:frame];
     if(self) {
         //初始化NSURLSession
-        self.session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
+        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
         //初始化存储AVAssetResourceLoadingRequest的数组
-        self.pendingRequests = [NSMutableArray array];
+        _pendingRequests = [NSMutableArray array];
         
         //初始化播放器
-        self.player = [AVPlayer new];
+        _player = [AVPlayer new];
         //添加视频播放器图形化载体AVPlayerLayer
-        self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-        self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-        [self.layer addSublayer:self.playerLayer];
+        _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
+        [self.layer addSublayer:_playerLayer];
         
         //初始化取消视频加载的队列
-        self.cancelLoadingQueue = dispatch_queue_create("com.start.cancelloadingqueue", DISPATCH_QUEUE_CONCURRENT);
+        _cancelLoadingQueue = dispatch_queue_create("com.start.cancelloadingqueue", DISPATCH_QUEUE_CONCURRENT);
+        
     }
     return self;
 }
@@ -112,7 +114,7 @@
     //隐藏playerLayer
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    [self.playerLayer setHidden:YES];
+    [_playerLayer setHidden:YES];
     [CATransaction commit];
     
     
@@ -124,9 +126,9 @@
     
     //暂停视频播放
     [self pause];
-    self.player = nil;
-    self.playerItem = nil;
-    self.playerLayer.player = nil;
+    _player = nil;
+    _playerItem = nil;
+    _playerLayer.player = nil;
     
     
     __weak __typeof(self) wself = self;
@@ -148,6 +150,15 @@
         [wself.pendingRequests removeAllObjects];
     });
     
+    _retried = NO;
+    
+}
+
+-(void)retry {
+    [self cancelLoading];
+    _sourceURL = [_sourceURL.absoluteString urlScheme:_sourceScheme];
+    [self setPlayerWithUrl:_sourceURL.absoluteString];
+    _retried = YES;
 }
 
 //更新AVPlayer状态，当前播放则暂停，当前暂停则播放
@@ -162,8 +173,8 @@
 //移除KVO
 - (void)removeObserver {
     @try {
-        [self.playerItem removeObserver:self forKeyPath:@"status"];
-        [self.player removeTimeObserver:self.timeObserver];
+        [_playerItem removeObserver:self forKeyPath:@"status"];
+        [_player removeTimeObserver:_timeObserver];
     } @catch (NSException *exception) {
 //        NSLog(@"%@", exception.description);
     }
@@ -194,16 +205,16 @@
     //继续加载网络数据
     completionHandler(NSURLSessionResponseAllow);
     //初始化缓存数据
-    self.data = [NSMutableData data];
+    _data = [NSMutableData data];
     //初始化网络请求响应体
-    self.response = (NSHTTPURLResponse *)response;
+    _response = (NSHTTPURLResponse *)response;
     //处理视频数据加载请求
     [self processPendingRequests];
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
     //填充下载的部分缓存数据
-    [self.data appendData:data];
+    [_data appendData:data];
     //处理视频数据加载请求
     [self processPendingRequests];
 }
@@ -221,7 +232,7 @@
 -(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable))completionHandler {
     NSCachedURLResponse *cachedResponse = proposedResponse;
     if (dataTask.currentRequest.cachePolicy == NSURLRequestReloadIgnoringLocalCacheData
-        || [dataTask.currentRequest.URL.absoluteString isEqualToString:self.task.currentRequest.URL.absoluteString]) {
+        || [dataTask.currentRequest.URL.absoluteString isEqualToString:_task.currentRequest.URL.absoluteString]) {
         cachedResponse = nil;
     }
     if (completionHandler) {
@@ -232,27 +243,27 @@
 //AVAssetResourceLoaderDelegate
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
     //创建用于下载视频源的NSURLSessionDataTask，当前方法会多次调用，所以需判断self.task == nil
-    if(self.task == nil) {
+    if(_task == nil) {
         //将当前的请求路径的scheme换成https，进行普通的网球请求
-        NSURL *URL = [[loadingRequest.request URL].absoluteString urlScheme:self.sourceScheme];
+        NSURL *URL = [[loadingRequest.request URL].absoluteString urlScheme:_sourceScheme];
         NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
-        self.task = [self.session dataTaskWithRequest:request];
-        [self.task resume];
+        _task = [_session dataTaskWithRequest:request];
+        [_task resume];
     }
     //将视频加载请求依此存储到pendingRequests中，因为当前方法会多次调用，所以需用数组缓存
-    [self.pendingRequests addObject:loadingRequest];
+    [_pendingRequests addObject:loadingRequest];
     return YES;
 }
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     //AVAssetResourceLoadingRequest请求被取消，移除视频加载请求
-    [self.pendingRequests removeObject:loadingRequest];
+    [_pendingRequests removeObject:loadingRequest];
 }
 //AVURLAsset resource loading
 - (void)processPendingRequests {
     NSMutableArray *requestsCompleted = [NSMutableArray array];
     //获取所有已完成AVAssetResourceLoadingRequest
-    for (AVAssetResourceLoadingRequest *loadingRequest in self.pendingRequests) {
+    for (AVAssetResourceLoadingRequest *loadingRequest in _pendingRequests) {
         //判断AVAssetResourceLoadingRequest是否完成
         BOOL didRespondCompletely = [self respondWithDataForRequest:loadingRequest];
         //结束AVAssetResourceLoadingRequest
@@ -267,11 +278,11 @@
 
 - (BOOL)respondWithDataForRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     //设置AVAssetResourceLoadingRequest的类型、支持断点下载、内容大小
-    NSString *mimeType = [self.response MIMEType];
+    NSString *mimeType = [_response MIMEType];
     CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
     loadingRequest.contentInformationRequest.byteRangeAccessSupported = YES;
     loadingRequest.contentInformationRequest.contentType = CFBridgingRelease(contentType);
-    loadingRequest.contentInformationRequest.contentLength = [self.response expectedContentLength];
+    loadingRequest.contentInformationRequest.contentLength = [_response expectedContentLength];
     
     //AVAssetResourceLoadingRequest请求偏移量
     long long startOffset = loadingRequest.dataRequest.requestedOffset;
@@ -279,19 +290,19 @@
         startOffset = loadingRequest.dataRequest.currentOffset;
     }
     //判断当前缓存数据量是否大于请求偏移量
-    if (self.data.length < startOffset) {
+    if (_data.length < startOffset) {
         return NO;
     }
     //计算还未装载到缓存数据
-    NSUInteger unreadBytes = self.data.length - (NSUInteger)startOffset;
+    NSUInteger unreadBytes = _data.length - (NSUInteger)startOffset;
     //判断当前请求到的数据大小
     NSUInteger numberOfBytesToRespondWidth = MIN((NSUInteger)loadingRequest.dataRequest.requestedLength, unreadBytes);
     //将缓存数据的指定片段装载到视频加载请求中
-    [loadingRequest.dataRequest respondWithData:[self.data subdataWithRange:NSMakeRange((NSUInteger)startOffset, numberOfBytesToRespondWidth)]];
+    [loadingRequest.dataRequest respondWithData:[_data subdataWithRange:NSMakeRange((NSUInteger)startOffset, numberOfBytesToRespondWidth)]];
     //计算装载完毕后的数据偏移量
     long long endOffset = startOffset + loadingRequest.dataRequest.requestedLength;
     //判断请求是否完成
-    BOOL didRespondFully = self.data.length >= endOffset;
+    BOOL didRespondFully = _data.length >= endOffset;
     
     return didRespondFully;
 }
@@ -322,6 +333,15 @@
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     //AVPlayerItem.status
     if([keyPath isEqualToString:@"status"]) {
+        if(_playerItem.status == AVPlayerItemStatusFailed) {
+            NSError *error = _playerItem.error;
+            if(!_retried) {
+                [self retry];
+            }
+            NSLog(@"================================");
+            NSLog(@"%@", error);
+            NSLog(@"================================");
+        }
         //视频源装备完毕，则显示playerLayer
         if(_playerItem.status == AVPlayerItemStatusReadyToPlay) {
             [CATransaction begin];
@@ -330,8 +350,8 @@
             [CATransaction commit];
         }
         //视频播放状体更新方法回调
-        if(self.delegate) {
-            [self.delegate onPlayItemStatusUpdate:_playerItem.status];
+        if(_delegate) {
+            [_delegate onPlayItemStatusUpdate:_playerItem.status];
         }
     }else {
         return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];

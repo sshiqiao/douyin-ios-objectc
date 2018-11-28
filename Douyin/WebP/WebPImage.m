@@ -167,6 +167,14 @@ static void freeWebpFrameImageData(void *info, const void *data, size_t size) {
     
     UIImage *image = [UIImage imageWithCGImage:imageRef];
     
+//    CGFloat scaleRatio = image.size.width / image.size.height;
+//    CGFloat scaleWidth = ScreenWidth / 3;
+//    CGFloat scaleHeight = scaleWidth / scaleRatio;
+//    UIGraphicsBeginImageContext(CGSizeMake(scaleWidth, scaleHeight));
+//    [image drawInRect:CGRectMake(0.0, 0.0, scaleWidth, scaleHeight)];
+//    image = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+    
     CGImageRelease(imageRef);
     CGDataProviderRelease(provider);
     

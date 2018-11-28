@@ -7,7 +7,6 @@
 //
 
 #import "CircleTextView.h"
-#import "Constants.h"
 #import "NSString+Extension.h"
 
 NSString * const kCircleTextViewAnim           = @"CircleAnim";

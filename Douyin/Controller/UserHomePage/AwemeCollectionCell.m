@@ -7,8 +7,6 @@
 //
 
 #import "AwemeCollectionCell.h"
-#import "Constants.h"
-#import "Masonry.h"
 #import "WebPImageView.h"
 #import "Aweme.h"
 

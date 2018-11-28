@@ -61,6 +61,7 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
 }
 
 - (void)setUpView {
+    self.view.layer.masksToBounds = YES;
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -ScreenHeight, ScreenWidth, ScreenHeight * 5)];
     _tableView.contentInset = UIEdgeInsetsMake(ScreenHeight, 0, ScreenHeight * 3, 0);
     

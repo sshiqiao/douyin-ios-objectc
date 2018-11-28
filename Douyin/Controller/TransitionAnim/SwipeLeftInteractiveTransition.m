@@ -8,7 +8,6 @@
 
 #import "SwipeLeftInteractiveTransition.h"
 #import "AwemeListController.h"
-#import "Constants.h"
 
 @interface SwipeLeftInteractiveTransition()
 @property (nonatomic, strong) UIViewController *presentingVC;
