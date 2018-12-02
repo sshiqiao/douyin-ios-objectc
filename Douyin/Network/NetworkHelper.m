@@ -187,6 +187,10 @@ NSString *const FindComentByPagePath = @"comment/list";
     return [NetworkHelper shareReachabilityManager].networkReachabilityStatus;
 }
 
++ (BOOL)isWifiStatus {
+    return [NetworkHelper shareReachabilityManager].networkReachabilityStatus == AFNetworkReachabilityStatusReachableViaWiFi;
+}
+
 + (BOOL)isNotReachableStatus:(AFNetworkReachabilityStatus)status {
     return status == AFNetworkReachabilityStatusNotReachable;
 }

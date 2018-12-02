@@ -105,6 +105,8 @@ typedef void (^HttpFailure)(NSError *error);
 
 + (AFNetworkReachabilityStatus)networkStatus;
 
++ (BOOL)isWifiStatus;
+
 + (BOOL)isNotReachableStatus:(AFNetworkReachabilityStatus)status;
 
 @end

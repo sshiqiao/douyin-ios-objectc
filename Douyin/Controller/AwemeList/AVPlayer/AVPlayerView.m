@@ -11,25 +11,24 @@
 #import "AVPlayerManager.h"
 
 @interface AVPlayerView () <NSURLSessionTaskDelegate, NSURLSessionDataDelegate,  AVAssetResourceLoaderDelegate>
-@property (nonatomic ,strong) NSURL                *sourceURL;        //视频路径
-@property (nonatomic ,strong) NSString             *sourceScheme;     //路径Scheme
-@property (nonatomic ,strong) AVURLAsset           *urlAsset;         //视频资源
-@property (nonatomic ,strong) AVPlayerItem         *playerItem;       //视频资源载体
-@property (nonatomic ,strong) AVPlayer             *player;           //视频播放器
-@property (nonatomic ,strong) AVPlayerLayer        *playerLayer;      //视频播放器图形化载体
-@property (nonatomic ,strong) id                   timeObserver;      //视频播放器周期性调用的观察者
+@property (nonatomic ,strong) NSURL                *sourceURL;              //视频路径
+@property (nonatomic ,strong) NSString             *sourceScheme;           //路径Scheme
+@property (nonatomic ,strong) AVURLAsset           *urlAsset;               //视频资源
+@property (nonatomic ,strong) AVPlayerItem         *playerItem;             //视频资源载体
+@property (nonatomic ,strong) AVPlayer             *player;                 //视频播放器
+@property (nonatomic ,strong) AVPlayerLayer        *playerLayer;            //视频播放器图形化载体
+@property (nonatomic ,strong) id                   timeObserver;            //视频播放器周期性调用的观察者
 
-@property (nonatomic, strong) NSMutableData        *data;             //视频缓冲数据
+@property (nonatomic, strong) NSMutableData        *data;                   //视频缓冲数据
+@property (nonatomic, copy) NSString               *mimeType;               //资源格式
+@property (nonatomic, assign) long long            expectedContentLength;   //资源大小
+@property (nonatomic, strong) NSMutableArray       *pendingRequests;        //存储AVAssetResourceLoadingRequest的数组
 
-@property (nonatomic, strong) NSURLSession         *session;          //视频下载session
-@property (nonatomic, strong) NSURLSessionDataTask *task;             //视频下载NSURLSessionDataTask
-
-@property (nonatomic, strong) NSHTTPURLResponse    *response;         //视频下载请求响应
-@property (nonatomic, strong) NSMutableArray       *pendingRequests;  //存储AVAssetResourceLoadingRequest的数组
-
-@property (nonatomic, copy) NSString               *cacheFileKey;     //缓存文件key值
-@property (nonatomic, strong) NSOperation          *queryCacheOperation;  //查找本地视频缓存数据的NSOperation
+@property (nonatomic, copy) NSString               *cacheFileKey;           //缓存文件key值
+@property (nonatomic, strong) NSOperation          *queryCacheOperation;    //查找本地视频缓存数据的NSOperation
 @property (nonatomic, strong) dispatch_queue_t     cancelLoadingQueue;
+
+@property (nonatomic, strong) WebCombineOperation  *combineOperation;
 
 @property (nonatomic, assign) BOOL                 retried;
 @end
@@ -39,8 +38,6 @@
 -(instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if(self) {
-        //初始化NSURLSession
-        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[NSOperationQueue mainQueue]];
         //初始化存储AVAssetResourceLoadingRequest的数组
         _pendingRequests = [NSMutableArray array];
         
@@ -53,7 +50,6 @@
         
         //初始化取消视频加载的队列
         _cancelLoadingQueue = dispatch_queue_create("com.start.cancelloadingqueue", DISPATCH_QUEUE_CONCURRENT);
-        
     }
     return self;
 }
@@ -100,7 +96,6 @@
             //观察playerItem.status属性
             [wself.playerItem addObserver:wself forKeyPath:@"status" options:NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew context:nil];
             //切换当前AVPlayer播放器的视频源
-//            [wself.player replaceCurrentItemWithPlayerItem:wself.playerItem];
             wself.player = [[AVPlayer alloc] initWithPlayerItem:wself.playerItem];
             wself.playerLayer.player = wself.player;
             //给AVPlayerLayer添加周期性调用的观察者，用于更新视频播放进度
@@ -111,42 +106,36 @@
 
 //取消播放
 -(void)cancelLoading {
-    //隐藏playerLayer
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [_playerLayer setHidden:YES];
-    [CATransaction commit];
+    //暂停视频播放
+    [self pause];
     
+    //隐藏playerLayer
+    [_playerLayer setHidden:YES];
+    
+    //取消下载任务
+    if(_combineOperation) {
+        [_combineOperation cancel];
+        _combineOperation = nil;
+    }
     
     //取消查找本地视频缓存数据的NSOperation任务
     [_queryCacheOperation cancel];
     
-    //移除kvo
-    [self removeObserver];
-    
-    //暂停视频播放
-    [self pause];
     _player = nil;
     _playerItem = nil;
     _playerLayer.player = nil;
-    
     
     __weak __typeof(self) wself = self;
     dispatch_async(self.cancelLoadingQueue, ^{
         //取消AVURLAsset加载，这一步很重要，及时取消到AVAssetResourceLoaderDelegate视频源的加载，避免AVPlayer视频源切换时发生的错位现象
         [wself.urlAsset cancelLoading];
-        //取消网络下载请求
-        [wself.task cancel];
-        wself.task = nil;
         wself.data = nil;
-        wself.response = nil;
-        
         //结束所有视频数据加载请求
-        for(AVAssetResourceLoadingRequest *loadingRequest in wself.pendingRequests) {
+        [wself.pendingRequests enumerateObjectsUsingBlock:^(id loadingRequest, NSUInteger idx, BOOL * stop) {
             if(![loadingRequest isFinished]) {
                 [loadingRequest finishLoading];
             }
-        }
+        }];
         [wself.pendingRequests removeAllObjects];
     });
     
@@ -154,11 +143,37 @@
     
 }
 
--(void)retry {
-    [self cancelLoading];
-    _sourceURL = [_sourceURL.absoluteString urlScheme:_sourceScheme];
-    [self setPlayerWithUrl:_sourceURL.absoluteString];
-    _retried = YES;
+//开始视频资源下载任务
+- (void)startDownloadTask:(NSURL *)URL isBackground:(BOOL)isBackground {
+    __weak __typeof(self) wself = self;
+    _queryCacheOperation = [[WebCacheHelpler sharedWebCache] queryURLFromDiskMemory:_cacheFileKey cacheQueryCompletedBlock:^(id data, BOOL hasCache) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if(hasCache) {
+                return;
+            }
+            
+            if(wself.combineOperation != nil) {
+                [wself.combineOperation cancel];
+            }
+            
+            wself.combineOperation = [[WebDownloader sharedDownloader] downloadWithURL:URL responseBlock:^(NSHTTPURLResponse *response) {
+                wself.data = [NSMutableData data];
+                wself.mimeType = response.MIMEType;
+                wself.expectedContentLength = response.expectedContentLength;
+                [wself processPendingRequests];
+            } progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSData *data) {
+                [wself.data appendData:data];
+                //处理视频数据加载请求
+                [wself processPendingRequests];
+            } completedBlock:^(NSData *data, NSError *error, BOOL finished) {
+                if(!error && finished) {
+                    //下载完毕，将缓存数据保存到本地
+                    [[WebCacheHelpler sharedWebCache] storeDataToDiskCache:wself.data key:wself.cacheFileKey extension:@"mp4"];
+                }
+            } cancelBlock:^{
+            } isBackground:isBackground];
+        });
+    }];
 }
 
 //更新AVPlayer状态，当前播放则暂停，当前暂停则播放
@@ -167,16 +182,6 @@
         [self play];
     }else {
         [self pause];
-    }
-}
-
-//移除KVO
-- (void)removeObserver {
-    @try {
-        [_playerItem removeObserver:self forKeyPath:@"status"];
-        [_player removeTimeObserver:_timeObserver];
-    } @catch (NSException *exception) {
-//        NSLog(@"%@", exception.description);
     }
 }
 
@@ -200,55 +205,23 @@
     return [_player rate];
 }
 
-//NSURLSessionDataDelegate
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completionHandler {
-    //继续加载网络数据
-    completionHandler(NSURLSessionResponseAllow);
-    //初始化缓存数据
-    _data = [NSMutableData data];
-    //初始化网络请求响应体
-    _response = (NSHTTPURLResponse *)response;
-    //处理视频数据加载请求
-    [self processPendingRequests];
+//重新请求
+-(void)retry {
+    [self cancelLoading];
+    _sourceURL = [_sourceURL.absoluteString urlScheme:_sourceScheme];
+    [self setPlayerWithUrl:_sourceURL.absoluteString];
+    _retried = YES;
 }
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
-    //填充下载的部分缓存数据
-    [_data appendData:data];
-    //处理视频数据加载请求
-    [self processPendingRequests];
-}
 
-//NSURLSessionTaskDelegate
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
-    if(!error) {
-        //下载完毕，将缓存数据保存到本地
-        [[WebCacheHelpler sharedWebCache] storeDataToDiskCache:_data key:_cacheFileKey extension:@"mp4"];
-    }else {
-//        NSLog(@"%@", error.description);
-    }
-}
+#pragma AVAssetResourceLoaderDelegate
 
--(void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask willCacheResponse:(NSCachedURLResponse *)proposedResponse completionHandler:(void (^)(NSCachedURLResponse * _Nullable))completionHandler {
-    NSCachedURLResponse *cachedResponse = proposedResponse;
-    if (dataTask.currentRequest.cachePolicy == NSURLRequestReloadIgnoringLocalCacheData
-        || [dataTask.currentRequest.URL.absoluteString isEqualToString:_task.currentRequest.URL.absoluteString]) {
-        cachedResponse = nil;
-    }
-    if (completionHandler) {
-        completionHandler(cachedResponse);
-    }
-}
-
-//AVAssetResourceLoaderDelegate
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
     //创建用于下载视频源的NSURLSessionDataTask，当前方法会多次调用，所以需判断self.task == nil
-    if(_task == nil) {
-        //将当前的请求路径的scheme换成https，进行普通的网球请求
+    if(_combineOperation == nil) {
+        //将当前的请求路径的scheme换成https，进行普通的网络请求
         NSURL *URL = [[loadingRequest.request URL].absoluteString urlScheme:_sourceScheme];
-        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:15];
-        _task = [_session dataTaskWithRequest:request];
-        [_task resume];
+        [self startDownloadTask:URL isBackground:YES];
     }
     //将视频加载请求依此存储到pendingRequests中，因为当前方法会多次调用，所以需用数组缓存
     [_pendingRequests addObject:loadingRequest];
@@ -259,11 +232,11 @@
     //AVAssetResourceLoadingRequest请求被取消，移除视频加载请求
     [_pendingRequests removeObject:loadingRequest];
 }
-//AVURLAsset resource loading
+
 - (void)processPendingRequests {
     NSMutableArray *requestsCompleted = [NSMutableArray array];
     //获取所有已完成AVAssetResourceLoadingRequest
-    for (AVAssetResourceLoadingRequest *loadingRequest in _pendingRequests) {
+    [_pendingRequests enumerateObjectsUsingBlock:^(AVAssetResourceLoadingRequest *loadingRequest, NSUInteger idx, BOOL * stop) {
         //判断AVAssetResourceLoadingRequest是否完成
         BOOL didRespondCompletely = [self respondWithDataForRequest:loadingRequest];
         //结束AVAssetResourceLoadingRequest
@@ -271,18 +244,17 @@
             [requestsCompleted addObject:loadingRequest];
             [loadingRequest finishLoading];
         }
-    }
+    }];
     //移除所有已完成AVAssetResourceLoadingRequest
     [self.pendingRequests removeObjectsInArray:requestsCompleted];
 }
 
 - (BOOL)respondWithDataForRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
     //设置AVAssetResourceLoadingRequest的类型、支持断点下载、内容大小
-    NSString *mimeType = [_response MIMEType];
-    CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
+    CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef)(_mimeType), NULL);
     loadingRequest.contentInformationRequest.byteRangeAccessSupported = YES;
     loadingRequest.contentInformationRequest.contentType = CFBridgingRelease(contentType);
-    loadingRequest.contentInformationRequest.contentLength = [_response expectedContentLength];
+    loadingRequest.contentInformationRequest.contentLength = _expectedContentLength;
     
     //AVAssetResourceLoadingRequest请求偏移量
     long long startOffset = loadingRequest.dataRequest.requestedOffset;
@@ -307,7 +279,9 @@
     return didRespondFully;
 }
 
-//给AVPlayerLayer添加周期性调用的观察者，用于更新视频播放进度
+#pragma kvo
+
+// 给AVPlayerLayer添加周期性调用的观察者，用于更新视频播放进度
 -(void)addProgressObserver{
     __weak __typeof(self) weakSelf = self;
     //AVPlayer添加周期性回调观察者，一秒调用一次block，用于更新视频播放进度
@@ -329,25 +303,18 @@
     }];
 }
 
-//响应KVO值变化的方法
+// 响应KVO值变化的方法
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     //AVPlayerItem.status
     if([keyPath isEqualToString:@"status"]) {
         if(_playerItem.status == AVPlayerItemStatusFailed) {
-            NSError *error = _playerItem.error;
             if(!_retried) {
                 [self retry];
             }
-            NSLog(@"================================");
-            NSLog(@"%@", error);
-            NSLog(@"================================");
         }
         //视频源装备完毕，则显示playerLayer
         if(_playerItem.status == AVPlayerItemStatusReadyToPlay) {
-            [CATransaction begin];
-            [CATransaction setDisableActions:YES];
             [self.playerLayer setHidden:NO];
-            [CATransaction commit];
         }
         //视频播放状体更新方法回调
         if(_delegate) {
@@ -359,6 +326,8 @@
 }
 
 - (void)dealloc {
-    [self removeObserver];
+    [_playerItem removeObserver:self forKeyPath:@"status"];
+    [_player removeTimeObserver:_timeObserver];
 }
+
 @end

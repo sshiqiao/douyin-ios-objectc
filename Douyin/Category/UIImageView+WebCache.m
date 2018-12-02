@@ -39,7 +39,7 @@
 
 - (void)setImageWithURL:(NSURL *)imageURL progressBlock:(WebImageProgressBlock)progressBlock completedBlock:(WebImageCompletedBlock)completedBlock {
     [self cancelOperation];
-    WebCombineOperation *operation = [[WebDownloader sharedDownloader] downloadWithURL:imageURL progressBlock:^(NSInteger receivedSize, NSInteger expectedSize) {
+    WebCombineOperation *operation = [[WebDownloader sharedDownloader] downloadWithURL:imageURL progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSData *data) {
         NSString *percentStr = [NSString stringWithFormat:@"%.1fw",(CGFloat)receivedSize/(CGFloat)expectedSize];
         CGFloat percent = [percentStr floatValue];
         dispatch_main_sync_safe(^{
@@ -58,7 +58,7 @@
 
 - (void)setWebPImageWithURL:(NSURL *)imageURL progressBlock:(WebImageProgressBlock)progressBlock completedBlock:(WebImageCompletedBlock)completedBlock {
     [self cancelOperation];
-    WebCombineOperation *operation = [[WebDownloader sharedDownloader] downloadWithURL:imageURL progressBlock:^(NSInteger receivedSize, NSInteger expectedSize) {
+    WebCombineOperation *operation = [[WebDownloader sharedDownloader] downloadWithURL:imageURL progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSData *data) {
         NSString *percentStr = [NSString stringWithFormat:@"%.1fw",(CGFloat)receivedSize/(CGFloat)expectedSize];
         CGFloat percent = [percentStr floatValue];
         dispatch_main_sync_safe(^{

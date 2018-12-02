@@ -62,8 +62,9 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
 
 - (void)setUpView {
     self.view.layer.masksToBounds = YES;
-    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -ScreenHeight, ScreenWidth, ScreenHeight * 5)];
-    _tableView.contentInset = UIEdgeInsetsMake(ScreenHeight, 0, ScreenHeight * 3, 0);
+    
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, -ScreenHeight, ScreenWidth, ScreenHeight * 3)];
+    _tableView.contentInset = UIEdgeInsetsMake(ScreenHeight, 0, ScreenHeight * 1, 0);
     
     _tableView.backgroundColor = ColorClear;
     _tableView.delegate = self;
@@ -126,7 +127,8 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     //填充视频数据
     AwemeListCell *cell = [tableView dequeueReusableCellWithIdentifier:kAwemeListCell forIndexPath:indexPath];
-    [cell initData:[_data objectAtIndex:indexPath.row]];
+    [cell initData:_data[indexPath.row]];
+    [cell startDownloadBackgroundTask];
     return cell;
 }
 
@@ -157,6 +159,35 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
 }
 
 #pragma KVO
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    //观察currentIndex变化
+    if ([keyPath isEqualToString:@"currentIndex"]) {
+        //设置用于标记当前视频是否播放的BOOL值为NO
+        _isCurPlayerPause = NO;
+        //获取当前显示的cell
+        AwemeListCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:_currentIndex inSection:0]];
+        [cell startDownloadHighPriorityTask];
+        __weak typeof (cell) wcell = cell;
+        __weak typeof (self) wself = self;
+        //判断当前cell的视频源是否已经准备播放
+        if(cell.isPlayerReady) {
+            //播放视频
+            [cell replay];
+        }else {
+            [[AVPlayerManager shareManager] pauseAll];
+            //当前cell的视频源还未准备好播放，则实现cell的OnPlayerReady Block 用于等待视频准备好后通知播放
+            cell.onPlayerReady = ^{
+                NSIndexPath *indexPath = [wself.tableView indexPathForCell:wcell];
+                if(!wself.isCurPlayerPause && indexPath && indexPath.row == wself.currentIndex) {
+                    [wcell play];
+                }
+            };
+        }
+    } else {
+        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 - (void)statusBarTouchBegin {
     _currentIndex = 0;
 }
@@ -172,34 +203,6 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
     AwemeListCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:_currentIndex inSection:0]];
     _isCurPlayerPause = ![cell.playerView rate];
     [cell.playerView pause];
-}
-
-//观察currentIndex变化
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"currentIndex"]) {
-        //设置用于标记当前视频是否播放的BOOL值为NO
-        _isCurPlayerPause = NO;
-        //获取当前显示的cell
-        AwemeListCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:_currentIndex inSection:0]];
-        __weak typeof (cell) wcell = cell;
-        __weak typeof (self) wself = self;
-        //判断当前cell的视频源是否已经准备播放
-        if(cell.isPlayerReady) {
-            //播放视频
-            [cell replay];
-        }else {
-            [[AVPlayerManager shareManager] pauseAll];
-            //当前cell的视频源还未准备好播放，则实现cell的OnPlayerReady Block 用于等带视频准备好后通知播放
-            cell.onPlayerReady = ^{
-                NSIndexPath *indexPath = [wself.tableView indexPathForCell:wcell];
-                if(!wself.isCurPlayerPause && indexPath && indexPath.row == wself.currentIndex) {
-                    [wcell play];
-                }
-            };
-        }
-    } else {
-        return [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
 }
 
 #pragma load data

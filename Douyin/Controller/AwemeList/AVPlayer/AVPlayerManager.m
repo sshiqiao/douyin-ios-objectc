@@ -72,11 +72,6 @@
 
 - (void)removeAllPlayers {
     [_playerArray removeAllObjects];
-//    [_playerArray enumerateObjectsUsingBlock:^(AVPlayer * obj, NSUInteger idx, BOOL *stop) {
-//        [obj pause];
-//        [self.playerArray removeObject:obj];
-//        obj = nil;
-//    }];
 }
 
 @end
