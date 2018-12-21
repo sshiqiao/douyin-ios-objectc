@@ -241,8 +241,15 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
             NSArray<Aweme *> *array = response.data;
             if(array.count > 0) {
                 wself.pageIndex++;
+                [wself.tableView beginUpdates];
                 [wself.data addObjectsFromArray:array];
-                [wself.tableView reloadData];
+                NSMutableArray<NSIndexPath *> *indexPaths = [NSMutableArray array];
+                for(NSInteger row = wself.data.count - array.count; row<wself.data.count; row++) {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+                    [indexPaths addObject:indexPath];
+                }
+                [wself.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:NO];
+                [wself.tableView endUpdates];
                 [wself.loadMore endLoading];
             }else {
                 [wself.loadMore loadingAll];

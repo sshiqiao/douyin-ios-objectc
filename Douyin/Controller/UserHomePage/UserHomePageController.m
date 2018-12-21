@@ -70,6 +70,12 @@ NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
 }
 
 
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    [self initCollectionView];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNetworkStatusChange:) name:NetworkStatesChangeNotification object:nil];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self setNavigationBarTitleColor:ColorClear];
@@ -77,13 +83,6 @@ NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
     [self setStatusBarBackgroundColor:ColorClear];
     [self setStatusBarHidden:NO];
 }
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    [self initCollectionView];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNetworkStatusChange:) name:NetworkStatesChangeNotification object:nil];
-}
-
 
 - (void)initCollectionView {
     _itemWidth = (ScreenWidth - (CGFloat)(((NSInteger)(ScreenWidth)) % 3) ) / 3.0f - 1.0f;
