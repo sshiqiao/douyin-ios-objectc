@@ -122,6 +122,7 @@
     [_queryCacheOperation cancel];
     
     _player = nil;
+    [_playerItem removeObserver:self forKeyPath:@"status"];
     _playerItem = nil;
     _playerLayer.player = nil;
     
