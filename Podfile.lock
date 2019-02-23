@@ -50,7 +50,7 @@ DEPENDENCIES:
   - SocketRocket
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  https://github.com/cocoapods/specs.git:
     - AFNetworking
     - JSONModel
     - libwebp
@@ -60,10 +60,10 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   AFNetworking: 8ac6017b94ea105479f7776e5288e48ae9c59bb4
   JSONModel: 840bc0fcffb24b8454d2c026bf26fea454b8e98d
-  libwebp: 38b601da310fe7c329c638d0c0d10aed006a54fe
+  libwebp: 0f01098c6c17175391af621b2f14150f3ca16e16
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
 
 PODFILE CHECKSUM: f544de4fee93a48088699126933b29785868a933
 
-COCOAPODS: 1.5.0
+COCOAPODS: 1.5.3

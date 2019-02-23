@@ -58,7 +58,7 @@ NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
         _workAwemes = [[NSMutableArray alloc]init];
         _favoriteAwemes = [[NSMutableArray alloc]init];
         _pageIndex = 0;
-        _pageSize = 21;
+        _pageSize = 18;
         
         _tabIndex = 0;
         
@@ -74,6 +74,13 @@ NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
     [super viewDidLoad];
     [self initCollectionView];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onNetworkStatusChange:) name:NetworkStatesChangeNotification object:nil];
+    
+    dispatch_async(dispatch_queue_create(0, 0), ^{
+        [self performSelector:@selector(performTest)];
+    });
+}
+-(void)performTest {
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -107,7 +114,7 @@ NSString * const kAwemeCollectionCell  = @"AwemeCollectionCell";
     [_collectionView registerClass:[AwemeCollectionCell class] forCellWithReuseIdentifier:kAwemeCollectionCell];
     [self.view addSubview:_collectionView];
     
-    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, kUserInfoHeaderHeight, ScreenWidth, 50) surplusCount:15];
+    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, kUserInfoHeaderHeight, ScreenWidth, 50) surplusCount:3];
     [_loadMore startLoading];
     __weak __typeof(self) wself = self;
     [_loadMore setOnLoad:^{

@@ -45,6 +45,7 @@
     }
     [player play];
 }
+
 - (void)pause:(AVPlayer *)player {
     if([_playerArray containsObject:player]) {
         [player pause];

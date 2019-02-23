@@ -67,7 +67,7 @@
         _fileManager = [NSFileManager defaultManager];
         
         //获取本地磁盘缓存文件夹路径
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask,YES);
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory,NSUserDomainMask,YES);
         NSString *path = [paths lastObject];
         NSString *diskCachePath = [NSString stringWithFormat:@"%@%@",path,@"/webCache"];
         //判断是否创建本地磁盘缓存文件夹

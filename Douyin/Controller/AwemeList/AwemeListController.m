@@ -78,7 +78,7 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
     }
     [self.tableView registerClass:AwemeListCell.class forCellReuseIdentifier:kAwemeListCell];
     
-    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, ScreenWidth, 50) surplusCount:10];
+    _loadMore = [[LoadMoreControl alloc] initWithFrame:CGRectMake(0, 100, ScreenWidth, 50) surplusCount:3];
     __weak __typeof(self) wself = self;
     [_loadMore setOnLoad:^{
         [wself loadData:wself.pageIndex pageSize:wself.pageSize];
@@ -258,6 +258,10 @@ NSString * const kAwemeListCell   = @"AwemeListCell";
             [wself.loadMore loadingFailed];
         }];
     }
+}
+
+- (void)dealloc {
+    NSLog(@"======== dealloc =======");
 }
 
 @end
