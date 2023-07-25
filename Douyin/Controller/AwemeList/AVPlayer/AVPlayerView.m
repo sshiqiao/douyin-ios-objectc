@@ -9,6 +9,7 @@
 #import "AVPlayerView.h"
 #import "NetworkHelper.h"
 #import "AVPlayerManager.h"
+#import <MobileCoreServices/MobileCoreServices.h>
 
 @interface AVPlayerView () <NSURLSessionTaskDelegate, NSURLSessionDataDelegate,  AVAssetResourceLoaderDelegate>
 @property (nonatomic ,strong) NSURL                *sourceURL;              //视频路径

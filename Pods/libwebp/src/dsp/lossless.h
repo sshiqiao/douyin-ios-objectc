@@ -25,16 +25,42 @@
 extern "C" {
 #endif
 
-#ifdef WEBP_EXPERIMENTAL_FEATURES
-#include "src/enc/delta_palettization_enc.h"
-#endif  // WEBP_EXPERIMENTAL_FEATURES
-
 //------------------------------------------------------------------------------
 // Decoding
 
-typedef uint32_t (*VP8LPredictorFunc)(uint32_t left, const uint32_t* const top);
+typedef uint32_t (*VP8LPredictorFunc)(const uint32_t* const left,
+                                      const uint32_t* const top);
 extern VP8LPredictorFunc VP8LPredictors[16];
-extern VP8LPredictorFunc VP8LPredictors_C[16];
+
+uint32_t VP8LPredictor0_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor1_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor2_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor3_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor4_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor5_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor6_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor7_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor8_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor9_C(const uint32_t* const left,
+                          const uint32_t* const top);
+uint32_t VP8LPredictor10_C(const uint32_t* const left,
+                           const uint32_t* const top);
+uint32_t VP8LPredictor11_C(const uint32_t* const left,
+                           const uint32_t* const top);
+uint32_t VP8LPredictor12_C(const uint32_t* const left,
+                           const uint32_t* const top);
+uint32_t VP8LPredictor13_C(const uint32_t* const left,
+                           const uint32_t* const top);
+
 // These Add/Sub function expects upper[-1] and out[-1] to be readable.
 typedef void (*VP8LPredictorAddSubFunc)(const uint32_t* in,
                                         const uint32_t* upper, int num_pixels,
@@ -156,9 +182,9 @@ extern VP8LPredictorAddSubFunc VP8LPredictorsSub_C[16];
 // -----------------------------------------------------------------------------
 // Huffman-cost related functions.
 
-typedef double (*VP8LCostFunc)(const uint32_t* population, int length);
-typedef double (*VP8LCostCombinedFunc)(const uint32_t* X, const uint32_t* Y,
-                                       int length);
+typedef float (*VP8LCostFunc)(const uint32_t* population, int length);
+typedef float (*VP8LCostCombinedFunc)(const uint32_t* X, const uint32_t* Y,
+                                      int length);
 typedef float (*VP8LCombinedShannonEntropyFunc)(const int X[256],
                                                 const int Y[256]);
 
@@ -167,12 +193,12 @@ extern VP8LCostCombinedFunc VP8LExtraCostCombined;
 extern VP8LCombinedShannonEntropyFunc VP8LCombinedShannonEntropy;
 
 typedef struct {        // small struct to hold counters
-  int counts[2];        // index: 0=zero steak, 1=non-zero streak
+  int counts[2];        // index: 0=zero streak, 1=non-zero streak
   int streaks[2][2];    // [zero/non-zero][streak<3 / streak>=3]
 } VP8LStreaks;
 
 typedef struct {            // small struct to hold bit entropy results
-  double entropy;           // entropy
+  float entropy;            // entropy
   uint32_t sum;             // sum of the population
   int nonzeros;             // number of non-zero elements in the population
   uint32_t max_val;         // maximum value in the population
@@ -198,10 +224,14 @@ extern VP8LGetEntropyUnrefinedFunc VP8LGetEntropyUnrefined;
 void VP8LBitsEntropyUnrefined(const uint32_t* const array, int n,
                               VP8LBitEntropy* const entropy);
 
-typedef void (*VP8LHistogramAddFunc)(const VP8LHistogram* const a,
-                                     const VP8LHistogram* const b,
-                                     VP8LHistogram* const out);
-extern VP8LHistogramAddFunc VP8LHistogramAdd;
+typedef void (*VP8LAddVectorFunc)(const uint32_t* a, const uint32_t* b,
+                                  uint32_t* out, int size);
+extern VP8LAddVectorFunc VP8LAddVector;
+typedef void (*VP8LAddVectorEqFunc)(const uint32_t* a, uint32_t* out, int size);
+extern VP8LAddVectorEqFunc VP8LAddVectorEq;
+void VP8LHistogramAdd(const VP8LHistogram* const a,
+                      const VP8LHistogram* const b,
+                      VP8LHistogram* const out);
 
 // -----------------------------------------------------------------------------
 // PrefixEncode()

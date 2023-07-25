@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <webp/decode.h>
-#import <webp/demux.h>
-#import <webp/mux_types.h>
+#import <libwebp/decode.h>
+#import <libwebp/demux.h>
+#import <libwebp/mux_types.h>
 
 @interface WebPFrame : NSObject
 

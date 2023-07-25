@@ -42,6 +42,10 @@ extern "C" {
 #endif
 #endif  // WEBP_MAX_ALLOCABLE_MEMORY
 
+static WEBP_INLINE int CheckSizeOverflow(uint64_t size) {
+  return size == (size_t)size;
+}
+
 // size-checking safe malloc/calloc: verify that the requested size is not too
 // large, or return NULL. You don't need to call these for constructs like
 // malloc(sizeof(foo)), but only if there's picture-dependent size involved
@@ -92,14 +96,14 @@ static WEBP_INLINE uint32_t GetLE32(const uint8_t* const data) {
 // Store 16, 24 or 32 bits in little-endian order.
 static WEBP_INLINE void PutLE16(uint8_t* const data, int val) {
   assert(val < (1 << 16));
-  data[0] = (val >> 0);
-  data[1] = (val >> 8);
+  data[0] = (val >> 0) & 0xff;
+  data[1] = (val >> 8) & 0xff;
 }
 
 static WEBP_INLINE void PutLE24(uint8_t* const data, int val) {
   assert(val < (1 << 24));
   PutLE16(data, val & 0xffff);
-  data[2] = (val >> 16);
+  data[2] = (val >> 16) & 0xff;
 }
 
 static WEBP_INLINE void PutLE32(uint8_t* const data, uint32_t val) {
@@ -107,6 +111,33 @@ static WEBP_INLINE void PutLE32(uint8_t* const data, uint32_t val) {
   PutLE16(data + 2, (int)(val >> 16));
 }
 
+// use GNU builtins where available.
+#if defined(__GNUC__) && \
+    ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ >= 4)
+// Returns (int)floor(log2(n)). n must be > 0.
+static WEBP_INLINE int BitsLog2Floor(uint32_t n) {
+  return 31 ^ __builtin_clz(n);
+}
+// counts the number of trailing zero
+static WEBP_INLINE int BitsCtz(uint32_t n) { return __builtin_ctz(n); }
+#elif defined(_MSC_VER) && _MSC_VER > 1310 && \
+      (defined(_M_X64) || defined(_M_IX86))
+#include <intrin.h>
+#pragma intrinsic(_BitScanReverse)
+#pragma intrinsic(_BitScanForward)
+
+static WEBP_INLINE int BitsLog2Floor(uint32_t n) {
+  unsigned long first_set_bit;  // NOLINT (runtime/int)
+  _BitScanReverse(&first_set_bit, n);
+  return first_set_bit;
+}
+static WEBP_INLINE int BitsCtz(uint32_t n) {
+  unsigned long first_set_bit;  // NOLINT (runtime/int)
+  _BitScanForward(&first_set_bit, n);
+  return first_set_bit;
+}
+#else   // default: use the (slow) C-version.
+#define WEBP_HAVE_SLOW_CLZ_CTZ   // signal that the Clz/Ctz function are slow
 // Returns 31 ^ clz(n) = log2(n). This is the default C-implementation, either
 // based on table or not. Can be used as fallback if clz() is not available.
 #define WEBP_NEED_LOG_TABLE_8BIT
@@ -120,25 +151,16 @@ static WEBP_INLINE int WebPLog2FloorC(uint32_t n) {
   return log_value + WebPLogTable8bit[n];
 }
 
-// Returns (int)floor(log2(n)). n must be > 0.
-// use GNU builtins where available.
-#if defined(__GNUC__) && \
-    ((__GNUC__ == 3 && __GNUC_MINOR__ >= 4) || __GNUC__ >= 4)
-static WEBP_INLINE int BitsLog2Floor(uint32_t n) {
-  return 31 ^ __builtin_clz(n);
-}
-#elif defined(_MSC_VER) && _MSC_VER > 1310 && \
-      (defined(_M_X64) || defined(_M_IX86))
-#include <intrin.h>
-#pragma intrinsic(_BitScanReverse)
-
-static WEBP_INLINE int BitsLog2Floor(uint32_t n) {
-  unsigned long first_set_bit;
-  _BitScanReverse(&first_set_bit, n);
-  return first_set_bit;
-}
-#else   // default: use the C-version.
 static WEBP_INLINE int BitsLog2Floor(uint32_t n) { return WebPLog2FloorC(n); }
+
+static WEBP_INLINE int BitsCtz(uint32_t n) {
+  int i;
+  for (i = 0; i < 32; ++i, n >>= 1) {
+    if (n & 1) return i;
+  }
+  return 32;
+}
+
 #endif
 
 //------------------------------------------------------------------------------
@@ -175,4 +197,4 @@ WEBP_EXTERN int WebPGetColorPalette(const struct WebPPicture* const pic,
 }    // extern "C"
 #endif
 
-#endif  /* WEBP_UTILS_UTILS_H_ */
+#endif  // WEBP_UTILS_UTILS_H_

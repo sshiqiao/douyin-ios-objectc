@@ -10,7 +10,7 @@
 // inline YUV<->RGB conversion function
 //
 // The exact naming is Y'CbCr, following the ITU-R BT.601 standard.
-// More information at: http://en.wikipedia.org/wiki/YCbCr
+// More information at: https://en.wikipedia.org/wiki/YCbCr
 // Y = 0.2569 * R + 0.5044 * G + 0.0979 * B + 16
 // U = -0.1483 * R - 0.2911 * G + 0.4394 * B + 128
 // V = 0.4394 * R - 0.3679 * G - 0.0715 * B + 128
@@ -166,6 +166,19 @@ void VP8YuvToRgb56532_SSE2(const uint8_t* y, const uint8_t* u, const uint8_t* v,
 
 #endif    // WEBP_USE_SSE2
 
+//-----------------------------------------------------------------------------
+// SSE41 extra functions (mostly for upsampling_sse41.c)
+
+#if defined(WEBP_USE_SSE41)
+
+// Process 32 pixels and store the result (16b, 24b or 32b per pixel) in *dst.
+void VP8YuvToRgb32_SSE41(const uint8_t* y, const uint8_t* u, const uint8_t* v,
+                         uint8_t* dst);
+void VP8YuvToBgr32_SSE41(const uint8_t* y, const uint8_t* u, const uint8_t* v,
+                         uint8_t* dst);
+
+#endif    // WEBP_USE_SSE41
+
 //------------------------------------------------------------------------------
 // RGB -> YUV conversion
 
@@ -194,4 +207,4 @@ static WEBP_INLINE int VP8RGBToV(int r, int g, int b, int rounding) {
 }    // extern "C"
 #endif
 
-#endif  /* WEBP_DSP_YUV_H_ */
+#endif  // WEBP_DSP_YUV_H_

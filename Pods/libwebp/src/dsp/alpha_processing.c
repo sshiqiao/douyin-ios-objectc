@@ -157,7 +157,8 @@ void WebPMultARGBRow_C(uint32_t* const ptr, int width, int inverse) {
   }
 }
 
-void WebPMultRow_C(uint8_t* const ptr, const uint8_t* const alpha,
+void WebPMultRow_C(uint8_t* WEBP_RESTRICT const ptr,
+                   const uint8_t* WEBP_RESTRICT const alpha,
                    int width, int inverse) {
   int x;
   for (x = 0; x < width; ++x) {
@@ -178,7 +179,8 @@ void WebPMultRow_C(uint8_t* const ptr, const uint8_t* const alpha,
 #undef MFIX
 
 void (*WebPMultARGBRow)(uint32_t* const ptr, int width, int inverse);
-void (*WebPMultRow)(uint8_t* const ptr, const uint8_t* const alpha,
+void (*WebPMultRow)(uint8_t* WEBP_RESTRICT const ptr,
+                    const uint8_t* WEBP_RESTRICT const alpha,
                     int width, int inverse);
 
 //------------------------------------------------------------------------------
@@ -193,8 +195,8 @@ void WebPMultARGBRows(uint8_t* ptr, int stride, int width, int num_rows,
   }
 }
 
-void WebPMultRows(uint8_t* ptr, int stride,
-                  const uint8_t* alpha, int alpha_stride,
+void WebPMultRows(uint8_t* WEBP_RESTRICT ptr, int stride,
+                  const uint8_t* WEBP_RESTRICT alpha, int alpha_stride,
                   int width, int num_rows, int inverse) {
   int n;
   for (n = 0; n < num_rows; ++n) {
@@ -290,9 +292,9 @@ static void ApplyAlphaMultiply_16b_C(uint8_t* rgba4444,
 }
 
 #if !WEBP_NEON_OMIT_C_CODE
-static int DispatchAlpha_C(const uint8_t* alpha, int alpha_stride,
+static int DispatchAlpha_C(const uint8_t* WEBP_RESTRICT alpha, int alpha_stride,
                            int width, int height,
-                           uint8_t* dst, int dst_stride) {
+                           uint8_t* WEBP_RESTRICT dst, int dst_stride) {
   uint32_t alpha_mask = 0xff;
   int i, j;
 
@@ -309,9 +311,10 @@ static int DispatchAlpha_C(const uint8_t* alpha, int alpha_stride,
   return (alpha_mask != 0xff);
 }
 
-static void DispatchAlphaToGreen_C(const uint8_t* alpha, int alpha_stride,
-                                   int width, int height,
-                                   uint32_t* dst, int dst_stride) {
+static void DispatchAlphaToGreen_C(const uint8_t* WEBP_RESTRICT alpha,
+                                   int alpha_stride, int width, int height,
+                                   uint32_t* WEBP_RESTRICT dst,
+                                   int dst_stride) {
   int i, j;
   for (j = 0; j < height; ++j) {
     for (i = 0; i < width; ++i) {
@@ -322,9 +325,9 @@ static void DispatchAlphaToGreen_C(const uint8_t* alpha, int alpha_stride,
   }
 }
 
-static int ExtractAlpha_C(const uint8_t* argb, int argb_stride,
+static int ExtractAlpha_C(const uint8_t* WEBP_RESTRICT argb, int argb_stride,
                           int width, int height,
-                          uint8_t* alpha, int alpha_stride) {
+                          uint8_t* WEBP_RESTRICT alpha, int alpha_stride) {
   uint8_t alpha_mask = 0xff;
   int i, j;
 
@@ -340,7 +343,8 @@ static int ExtractAlpha_C(const uint8_t* argb, int argb_stride,
   return (alpha_mask == 0xff);
 }
 
-static void ExtractGreen_C(const uint32_t* argb, uint8_t* alpha, int size) {
+static void ExtractGreen_C(const uint32_t* WEBP_RESTRICT argb,
+                           uint8_t* WEBP_RESTRICT alpha, int size) {
   int i;
   for (i = 0; i < size; ++i) alpha[i] = argb[i] >> 8;
 }
@@ -359,6 +363,11 @@ static int HasAlpha32b_C(const uint8_t* src, int length) {
   return 0;
 }
 
+static void AlphaReplace_C(uint32_t* src, int length, uint32_t color) {
+  int x;
+  for (x = 0; x < length; ++x) if ((src[x] >> 24) == 0) src[x] = color;
+}
+
 //------------------------------------------------------------------------------
 // Simple channel manipulations.
 
@@ -366,8 +375,23 @@ static WEBP_INLINE uint32_t MakeARGB32(int a, int r, int g, int b) {
   return (((uint32_t)a << 24) | (r << 16) | (g << 8) | b);
 }
 
-static void PackRGB_C(const uint8_t* r, const uint8_t* g, const uint8_t* b,
-                      int len, int step, uint32_t* out) {
+#ifdef WORDS_BIGENDIAN
+static void PackARGB_C(const uint8_t* WEBP_RESTRICT a,
+                       const uint8_t* WEBP_RESTRICT r,
+                       const uint8_t* WEBP_RESTRICT g,
+                       const uint8_t* WEBP_RESTRICT b,
+                       int len, uint32_t* WEBP_RESTRICT out) {
+  int i;
+  for (i = 0; i < len; ++i) {
+    out[i] = MakeARGB32(a[4 * i], r[4 * i], g[4 * i], b[4 * i]);
+  }
+}
+#endif
+
+static void PackRGB_C(const uint8_t* WEBP_RESTRICT r,
+                      const uint8_t* WEBP_RESTRICT g,
+                      const uint8_t* WEBP_RESTRICT b,
+                      int len, int step, uint32_t* WEBP_RESTRICT out) {
   int i, offset = 0;
   for (i = 0; i < len; ++i) {
     out[i] = MakeARGB32(0xff, r[offset], g[offset], b[offset]);
@@ -377,15 +401,26 @@ static void PackRGB_C(const uint8_t* r, const uint8_t* g, const uint8_t* b,
 
 void (*WebPApplyAlphaMultiply)(uint8_t*, int, int, int, int);
 void (*WebPApplyAlphaMultiply4444)(uint8_t*, int, int, int);
-int (*WebPDispatchAlpha)(const uint8_t*, int, int, int, uint8_t*, int);
-void (*WebPDispatchAlphaToGreen)(const uint8_t*, int, int, int, uint32_t*, int);
-int (*WebPExtractAlpha)(const uint8_t*, int, int, int, uint8_t*, int);
-void (*WebPExtractGreen)(const uint32_t* argb, uint8_t* alpha, int size);
-void (*WebPPackRGB)(const uint8_t* r, const uint8_t* g, const uint8_t* b,
-                    int len, int step, uint32_t* out);
+int (*WebPDispatchAlpha)(const uint8_t* WEBP_RESTRICT, int, int, int,
+                         uint8_t* WEBP_RESTRICT, int);
+void (*WebPDispatchAlphaToGreen)(const uint8_t* WEBP_RESTRICT, int, int, int,
+                                 uint32_t* WEBP_RESTRICT, int);
+int (*WebPExtractAlpha)(const uint8_t* WEBP_RESTRICT, int, int, int,
+                        uint8_t* WEBP_RESTRICT, int);
+void (*WebPExtractGreen)(const uint32_t* WEBP_RESTRICT argb,
+                         uint8_t* WEBP_RESTRICT alpha, int size);
+#ifdef WORDS_BIGENDIAN
+void (*WebPPackARGB)(const uint8_t* a, const uint8_t* r, const uint8_t* g,
+                     const uint8_t* b, int, uint32_t*);
+#endif
+void (*WebPPackRGB)(const uint8_t* WEBP_RESTRICT r,
+                    const uint8_t* WEBP_RESTRICT g,
+                    const uint8_t* WEBP_RESTRICT b,
+                    int len, int step, uint32_t* WEBP_RESTRICT out);
 
 int (*WebPHasAlpha8b)(const uint8_t* src, int length);
 int (*WebPHasAlpha32b)(const uint8_t* src, int length);
+void (*WebPAlphaReplace)(uint32_t* src, int length, uint32_t color);
 
 //------------------------------------------------------------------------------
 // Init function
@@ -395,16 +430,14 @@ extern void WebPInitAlphaProcessingSSE2(void);
 extern void WebPInitAlphaProcessingSSE41(void);
 extern void WebPInitAlphaProcessingNEON(void);
 
-static volatile VP8CPUInfo alpha_processing_last_cpuinfo_used =
-    (VP8CPUInfo)&alpha_processing_last_cpuinfo_used;
-
-WEBP_TSAN_IGNORE_FUNCTION void WebPInitAlphaProcessing(void) {
-  if (alpha_processing_last_cpuinfo_used == VP8GetCPUInfo) return;
-
+WEBP_DSP_INIT_FUNC(WebPInitAlphaProcessing) {
   WebPMultARGBRow = WebPMultARGBRow_C;
   WebPMultRow = WebPMultRow_C;
   WebPApplyAlphaMultiply4444 = ApplyAlphaMultiply_16b_C;
 
+#ifdef WORDS_BIGENDIAN
+  WebPPackARGB = PackARGB_C;
+#endif
   WebPPackRGB = PackRGB_C;
 #if !WEBP_NEON_OMIT_C_CODE
   WebPApplyAlphaMultiply = ApplyAlphaMultiply_C;
@@ -416,13 +449,14 @@ WEBP_TSAN_IGNORE_FUNCTION void WebPInitAlphaProcessing(void) {
 
   WebPHasAlpha8b = HasAlpha8b_C;
   WebPHasAlpha32b = HasAlpha32b_C;
+  WebPAlphaReplace = AlphaReplace_C;
 
   // If defined, use CPUInfo() to overwrite some pointers with faster versions.
   if (VP8GetCPUInfo != NULL) {
-#if defined(WEBP_USE_SSE2)
+#if defined(WEBP_HAVE_SSE2)
     if (VP8GetCPUInfo(kSSE2)) {
       WebPInitAlphaProcessingSSE2();
-#if defined(WEBP_USE_SSE41)
+#if defined(WEBP_HAVE_SSE41)
       if (VP8GetCPUInfo(kSSE4_1)) {
         WebPInitAlphaProcessingSSE41();
       }
@@ -436,7 +470,7 @@ WEBP_TSAN_IGNORE_FUNCTION void WebPInitAlphaProcessing(void) {
 #endif
   }
 
-#if defined(WEBP_USE_NEON)
+#if defined(WEBP_HAVE_NEON)
   if (WEBP_NEON_OMIT_C_CODE ||
       (VP8GetCPUInfo != NULL && VP8GetCPUInfo(kNEON))) {
     WebPInitAlphaProcessingNEON();
@@ -451,9 +485,11 @@ WEBP_TSAN_IGNORE_FUNCTION void WebPInitAlphaProcessing(void) {
   assert(WebPDispatchAlphaToGreen != NULL);
   assert(WebPExtractAlpha != NULL);
   assert(WebPExtractGreen != NULL);
+#ifdef WORDS_BIGENDIAN
+  assert(WebPPackARGB != NULL);
+#endif
   assert(WebPPackRGB != NULL);
   assert(WebPHasAlpha8b != NULL);
   assert(WebPHasAlpha32b != NULL);
-
-  alpha_processing_last_cpuinfo_used = VP8GetCPUInfo;
+  assert(WebPAlphaReplace != NULL);
 }

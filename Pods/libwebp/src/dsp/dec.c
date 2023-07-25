@@ -741,12 +741,7 @@ extern void VP8DspInitMIPS32(void);
 extern void VP8DspInitMIPSdspR2(void);
 extern void VP8DspInitMSA(void);
 
-static volatile VP8CPUInfo dec_last_cpuinfo_used =
-    (VP8CPUInfo)&dec_last_cpuinfo_used;
-
-WEBP_TSAN_IGNORE_FUNCTION void VP8DspInit(void) {
-  if (dec_last_cpuinfo_used == VP8GetCPUInfo) return;
-
+WEBP_DSP_INIT_FUNC(VP8DspInit) {
   VP8InitClipTables();
 
 #if !WEBP_NEON_OMIT_C_CODE
@@ -812,10 +807,10 @@ WEBP_TSAN_IGNORE_FUNCTION void VP8DspInit(void) {
 
   // If defined, use CPUInfo() to overwrite some pointers with faster versions.
   if (VP8GetCPUInfo != NULL) {
-#if defined(WEBP_USE_SSE2)
+#if defined(WEBP_HAVE_SSE2)
     if (VP8GetCPUInfo(kSSE2)) {
       VP8DspInitSSE2();
-#if defined(WEBP_USE_SSE41)
+#if defined(WEBP_HAVE_SSE41)
       if (VP8GetCPUInfo(kSSE4_1)) {
         VP8DspInitSSE41();
       }
@@ -839,7 +834,7 @@ WEBP_TSAN_IGNORE_FUNCTION void VP8DspInit(void) {
 #endif
   }
 
-#if defined(WEBP_USE_NEON)
+#if defined(WEBP_HAVE_NEON)
   if (WEBP_NEON_OMIT_C_CODE ||
       (VP8GetCPUInfo != NULL && VP8GetCPUInfo(kNEON))) {
     VP8DspInitNEON();
@@ -889,6 +884,4 @@ WEBP_TSAN_IGNORE_FUNCTION void VP8DspInit(void) {
   assert(VP8PredChroma8[5] != NULL);
   assert(VP8PredChroma8[6] != NULL);
   assert(VP8DitherCombine8x8 != NULL);
-
-  dec_last_cpuinfo_used = VP8GetCPUInfo;
 }
