@@ -55,6 +55,7 @@
 }
 
 - (void) setStatusBarBackgroundColor:(UIColor *)color {
+    if (@available(iOS 13.0, *)) return;
     UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
     if ([statusBar respondsToSelector:@selector(setBackgroundColor:)]) {
         statusBar.backgroundColor = color;
