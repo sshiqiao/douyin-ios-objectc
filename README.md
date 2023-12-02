@@ -48,4 +48,4 @@
 
 ## 作者
 
-Qiao Shi, [sqshiqiao@gmail.com](sqshiqiao@gmail.com)  
+Qiao Shi
