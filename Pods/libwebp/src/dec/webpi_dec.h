@@ -77,6 +77,10 @@ VP8StatusCode WebPParseHeaders(WebPHeaderStructure* const headers);
 //------------------------------------------------------------------------------
 // Misc utils
 
+// Returns true if crop dimensions are within image bounds.
+int WebPCheckCropDimensions(int image_width, int image_height,
+                            int x, int y, int w, int h);
+
 // Initializes VP8Io with custom setup, io and teardown functions. The default
 // hooks will use the supplied 'params' as io->opaque handle.
 void WebPInitCustomIo(WebPDecParams* const params, VP8Io* const io);
@@ -130,4 +134,4 @@ int WebPAvoidSlowMemory(const WebPDecBuffer* const output,
 }    // extern "C"
 #endif
 
-#endif  /* WEBP_DEC_WEBPI_DEC_H_ */
+#endif  // WEBP_DEC_WEBPI_DEC_H_

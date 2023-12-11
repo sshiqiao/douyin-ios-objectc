@@ -30,7 +30,7 @@
 
 #define DFIX 4           // extra precision for ordered dithering
 #define DSIZE 4          // dithering size (must be a power of two)
-// cf. http://en.wikipedia.org/wiki/Ordered_dithering
+// cf. https://en.wikipedia.org/wiki/Ordered_dithering
 static const uint8_t kOrderedDither[DSIZE][DSIZE] = {
   {  0,  8,  2, 10 },     // coefficients are in DFIX fixed-point precision
   { 12,  4, 14,  6 },
@@ -261,9 +261,15 @@ static void CleanupParams(SmoothParams* const p) {
 
 int WebPDequantizeLevels(uint8_t* const data, int width, int height, int stride,
                          int strength) {
-  const int radius = 4 * strength / 100;
+  int radius = 4 * strength / 100;
+
   if (strength < 0 || strength > 100) return 0;
   if (data == NULL || width <= 0 || height <= 0) return 0;  // bad params
+
+  // limit the filter size to not exceed the image dimensions
+  if (2 * radius + 1 > width) radius = (width - 1) >> 1;
+  if (2 * radius + 1 > height) radius = (height - 1) >> 1;
+
   if (radius > 0) {
     SmoothParams p;
     memset(&p, 0, sizeof(p));

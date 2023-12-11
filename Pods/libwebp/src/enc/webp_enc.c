@@ -159,12 +159,16 @@ static VP8Encoder* InitVP8Encoder(const WebPConfig* const config,
       + WEBP_ALIGN_CST;                      // align all
   const size_t lf_stats_size =
       config->autofilter ? sizeof(*enc->lf_stats_) + WEBP_ALIGN_CST : 0;
+  const size_t top_derr_size =
+      (config->quality <= ERROR_DIFFUSION_QUALITY || config->pass > 1) ?
+          mb_w * sizeof(*enc->top_derr_) : 0;
   uint8_t* mem;
   const uint64_t size = (uint64_t)sizeof(*enc)   // main struct
                       + WEBP_ALIGN_CST           // cache alignment
                       + info_size                // modes info
                       + preds_size               // prediction modes
                       + samples_size             // top/left samples
+                      + top_derr_size            // top diffusion error
                       + nz_size                  // coeff context bits
                       + lf_stats_size;           // autofilter stats
 
@@ -175,11 +179,12 @@ static VP8Encoder* InitVP8Encoder(const WebPConfig* const config,
          "                info: %ld\n"
          "               preds: %ld\n"
          "         top samples: %ld\n"
+         "       top diffusion: %ld\n"
          "            non-zero: %ld\n"
          "            lf-stats: %ld\n"
          "               total: %ld\n",
          sizeof(*enc) + WEBP_ALIGN_CST, info_size,
-         preds_size, samples_size, nz_size, lf_stats_size, size);
+         preds_size, samples_size, top_derr_size, nz_size, lf_stats_size, size);
   printf("Transient object sizes:\n"
          "      VP8EncIterator: %ld\n"
          "        VP8ModeScore: %ld\n"
@@ -219,6 +224,8 @@ static VP8Encoder* InitVP8Encoder(const WebPConfig* const config,
   enc->y_top_ = mem;
   enc->uv_top_ = enc->y_top_ + top_stride;
   mem += 2 * top_stride;
+  enc->top_derr_ = top_derr_size ? (DError*)mem : NULL;
+  mem += top_derr_size;
   assert(mem <= (uint8_t*)enc + size);
 
   enc->config_ = config;
@@ -329,9 +336,7 @@ int WebPEncode(const WebPConfig* config, WebPPicture* pic) {
   if (!WebPValidateConfig(config)) {
     return WebPEncodingSetError(pic, VP8_ENC_ERROR_INVALID_CONFIGURATION);
   }
-  if (pic->width <= 0 || pic->height <= 0) {
-    return WebPEncodingSetError(pic, VP8_ENC_ERROR_BAD_DIMENSION);
-  }
+  if (!WebPValidatePicture(pic)) return 0;
   if (pic->width > WEBP_MAX_DIMENSION || pic->height > WEBP_MAX_DIMENSION) {
     return WebPEncodingSetError(pic, VP8_ENC_ERROR_BAD_DIMENSION);
   }
@@ -393,7 +398,7 @@ int WebPEncode(const WebPConfig* config, WebPPicture* pic) {
     }
 
     if (!config->exact) {
-      WebPCleanupTransparentAreaLossless(pic);
+      WebPReplaceTransparentPixels(pic, 0x000000);
     }
 
     ok = VP8LEncodeImage(config, pic);  // Sets pic->error in case of problem.

@@ -84,7 +84,7 @@ NSString *const FindComentByPagePath = @"comment/list";
 
 +(NSURLSessionDataTask *)getWithUrlPath:(NSString *)urlPath request:(BaseRequest *)request success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
-    return [[NetworkHelper sharedManager] GET:[BaseUrl stringByAppendingString:urlPath] parameters:parameters progress:^(NSProgress *downloadProgress) {
+    return [[NetworkHelper sharedManager] GET:[BaseUrl stringByAppendingString:urlPath] parameters:parameters headers:nil progress:^(NSProgress *downloadProgress) {
     } success:^(NSURLSessionDataTask *task, id responseObject) {
         [NetworkHelper processResponseData:responseObject success:success failure:failure];
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -115,7 +115,7 @@ NSString *const FindComentByPagePath = @"comment/list";
 
 +(NSURLSessionDataTask *)deleteWithUrlPath:(NSString *)urlPath request:(BaseRequest *)request success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
-    return [[NetworkHelper sharedManager] DELETE:[BaseUrl stringByAppendingString:urlPath] parameters:parameters success:^(NSURLSessionDataTask *task, id responseObject) {
+    return [[NetworkHelper sharedManager] DELETE:[BaseUrl stringByAppendingString:urlPath] parameters:parameters headers:nil success:^(NSURLSessionDataTask *task, id responseObject) {
         [NetworkHelper processResponseData:responseObject success:success failure:failure];
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
         failure(error);
@@ -124,7 +124,7 @@ NSString *const FindComentByPagePath = @"comment/list";
 
 +(NSURLSessionDataTask *)postWithUrlPath:(NSString *)urlPath request:(BaseRequest *)request success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
-    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters progress:^(NSProgress *uploadProgress) {
+    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters headers:nil progress:^(NSProgress *uploadProgress) {
     } success:^(NSURLSessionDataTask * task, id responseObject) {
         [NetworkHelper processResponseData:responseObject success:success failure:failure];
     } failure:^(NSURLSessionDataTask *task, NSError *error) {
@@ -134,7 +134,7 @@ NSString *const FindComentByPagePath = @"comment/list";
 
 +(NSURLSessionDataTask *)uploadWithUrlPath:(NSString *)urlPath data:(NSData *)data request:(BaseRequest *)request progress:(UploadProgress)progress success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
-    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [formData appendPartWithFileData:data name:@"file" fileName:@"file" mimeType:@"multipart/form-data"];
     } progress:^(NSProgress *uploadProgress) {
         dispatch_main_sync_safe(^{
@@ -149,7 +149,7 @@ NSString *const FindComentByPagePath = @"comment/list";
 
 +(NSURLSessionDataTask *)uploadWithUrlPath:(NSString *)urlPath dataArray:(NSArray<NSData *> *)dataArray request:(BaseRequest *)request progress:(UploadProgress)progress success:(HttpSuccess)success failure:(HttpFailure)failure {
     NSDictionary *parameters = [request toDictionary];
-    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+    return [[NetworkHelper sharedManager] POST:[BaseUrl stringByAppendingString:urlPath] parameters:parameters headers:nil constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         for(NSData *data in dataArray) {
             NSString *fileName = [NSString  stringWithFormat:@"%@.jpg", [NSString currentTime]];
             [formData appendPartWithFileData:data name:@"files" fileName:fileName mimeType:@"multipart/form-data"];

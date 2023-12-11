@@ -933,7 +933,7 @@
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
 				GCC_PREFIX_HEADER = "$SRCROOT/Douyin/Douyin+prefix+Header.pch";
 				INFOPLIST_FILE = Douyin/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -956,7 +956,7 @@
 				DEVELOPMENT_TEAM = 6ZMJ9V9VNQ;
 				GCC_PREFIX_HEADER = "$SRCROOT/Douyin/Douyin+prefix+Header.pch";
 				INFOPLIST_FILE = Douyin/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -16,6 +16,7 @@
 
 #include "src/dsp/lossless.h"
 #include "src/dsp/lossless_common.h"
+#include "src/enc/vp8i_enc.h"
 #include "src/enc/vp8li_enc.h"
 
 #define MAX_DIFF_COST (1e30f)
@@ -31,10 +32,10 @@ static WEBP_INLINE int GetMin(int a, int b) { return (a > b) ? b : a; }
 // Methods to calculate Entropy (Shannon).
 
 static float PredictionCostSpatial(const int counts[256], int weight_0,
-                                   double exp_val) {
+                                   float exp_val) {
   const int significant_symbols = 256 >> 4;
-  const double exp_decay_factor = 0.6;
-  double bits = weight_0 * counts[0];
+  const float exp_decay_factor = 0.6f;
+  float bits = (float)weight_0 * counts[0];
   int i;
   for (i = 1; i < significant_symbols; ++i) {
     bits += exp_val * (counts[i] + counts[256 - i]);
@@ -46,9 +47,9 @@ static float PredictionCostSpatial(const int counts[256], int weight_0,
 static float PredictionCostSpatialHistogram(const int accumulated[4][256],
                                             const int tile[4][256]) {
   int i;
-  double retval = 0;
+  float retval = 0.f;
   for (i = 0; i < 4; ++i) {
-    const double kExpValue = 0.94;
+    const float kExpValue = 0.94f;
     retval += PredictionCostSpatial(tile[i], 1, kExpValue);
     retval += VP8LCombinedShannonEntropy(tile[i], accumulated[i]);
   }
@@ -177,12 +178,15 @@ static uint8_t NearLosslessComponent(uint8_t value, uint8_t predict,
   }
 }
 
+static WEBP_INLINE uint8_t NearLosslessDiff(uint8_t a, uint8_t b) {
+  return (uint8_t)((((int)(a) - (int)(b))) & 0xff);
+}
+
 // Quantize every component of the difference between the actual pixel value and
 // its prediction to a multiple of a quantization (a power of 2, not larger than
 // max_quantization which is a power of 2, smaller than max_diff). Take care if
 // value and predict have undergone subtract green, which means that red and
 // blue are represented as offsets from green.
-#define NEAR_LOSSLESS_DIFF(a, b) (uint8_t)((((int)(a) - (int)(b))) & 0xff)
 static uint32_t NearLossless(uint32_t value, uint32_t predict,
                              int max_quantization, int max_diff,
                              int used_subtract_green) {
@@ -199,7 +203,7 @@ static uint32_t NearLossless(uint32_t value, uint32_t predict,
   }
   if ((value >> 24) == 0 || (value >> 24) == 0xff) {
     // Preserve transparency of fully transparent or fully opaque pixels.
-    a = NEAR_LOSSLESS_DIFF(value >> 24, predict >> 24);
+    a = NearLosslessDiff((value >> 24) & 0xff, (predict >> 24) & 0xff);
   } else {
     a = NearLosslessComponent(value >> 24, predict >> 24, 0xff, quantization);
   }
@@ -212,16 +216,15 @@ static uint32_t NearLossless(uint32_t value, uint32_t predict,
     // The amount by which green has been adjusted during quantization. It is
     // subtracted from red and blue for compensation, to avoid accumulating two
     // quantization errors in them.
-    green_diff = NEAR_LOSSLESS_DIFF(new_green, value >> 8);
+    green_diff = NearLosslessDiff(new_green, (value >> 8) & 0xff);
   }
-  r = NearLosslessComponent(NEAR_LOSSLESS_DIFF(value >> 16, green_diff),
+  r = NearLosslessComponent(NearLosslessDiff((value >> 16) & 0xff, green_diff),
                             (predict >> 16) & 0xff, 0xff - new_green,
                             quantization);
-  b = NearLosslessComponent(NEAR_LOSSLESS_DIFF(value, green_diff),
+  b = NearLosslessComponent(NearLosslessDiff(value & 0xff, green_diff),
                             predict & 0xff, 0xff - new_green, quantization);
   return ((uint32_t)a << 24) | ((uint32_t)r << 16) | ((uint32_t)g << 8) | b;
 }
-#undef NEAR_LOSSLESS_DIFF
 #endif  // (WEBP_NEAR_LOSSLESS == 1)
 
 // Stores the difference between the pixel and its prediction in "out".
@@ -247,7 +250,7 @@ static WEBP_INLINE void GetResidual(
       } else if (x == 0) {
         predict = upper_row[x];  // Top.
       } else {
-        predict = pred_func(current_row[x - 1], upper_row + x);
+        predict = pred_func(&current_row[x - 1], upper_row + x);
       }
 #if (WEBP_NEAR_LOSSLESS == 1)
       if (max_quantization == 1 || mode == 0 || y == 0 || y == height - 1 ||
@@ -470,12 +473,15 @@ static void CopyImageWithPrediction(int width, int height,
 // with respect to predictions. If near_lossless_quality < 100, applies
 // near lossless processing, shaving off more bits of residuals for lower
 // qualities.
-void VP8LResidualImage(int width, int height, int bits, int low_effort,
-                       uint32_t* const argb, uint32_t* const argb_scratch,
-                       uint32_t* const image, int near_lossless_quality,
-                       int exact, int used_subtract_green) {
+int VP8LResidualImage(int width, int height, int bits, int low_effort,
+                      uint32_t* const argb, uint32_t* const argb_scratch,
+                      uint32_t* const image, int near_lossless_quality,
+                      int exact, int used_subtract_green,
+                      const WebPPicture* const pic, int percent_range,
+                      int* const percent) {
   const int tiles_per_row = VP8LSubSampleSize(width, bits);
   const int tiles_per_col = VP8LSubSampleSize(height, bits);
+  int percent_start = *percent;
   int tile_y;
   int histo[4][256];
   const int max_quantization = 1 << VP8LNearLosslessBits(near_lossless_quality);
@@ -489,10 +495,16 @@ void VP8LResidualImage(int width, int height, int bits, int low_effort,
     for (tile_y = 0; tile_y < tiles_per_col; ++tile_y) {
       int tile_x;
       for (tile_x = 0; tile_x < tiles_per_row; ++tile_x) {
-        const int pred = GetBestPredictorForTile(width, height, tile_x, tile_y,
-            bits, histo, argb_scratch, argb, max_quantization, exact,
-            used_subtract_green, image);
+        const int pred = GetBestPredictorForTile(
+            width, height, tile_x, tile_y, bits, histo, argb_scratch, argb,
+            max_quantization, exact, used_subtract_green, image);
         image[tile_y * tiles_per_row + tile_x] = ARGB_BLACK | (pred << 8);
+      }
+
+      if (!WebPReportProgress(
+              pic, percent_start + percent_range * tile_y / tiles_per_col,
+              percent)) {
+        return 0;
       }
     }
   }
@@ -500,6 +512,7 @@ void VP8LResidualImage(int width, int height, int bits, int low_effort,
   CopyImageWithPrediction(width, height, bits, image, argb_scratch, argb,
                           low_effort, max_quantization, exact,
                           used_subtract_green);
+  return WebPReportProgress(pic, percent_start + percent_range, percent);
 }
 
 //------------------------------------------------------------------------------
@@ -530,7 +543,7 @@ static float PredictionCostCrossColor(const int accumulated[256],
                                       const int counts[256]) {
   // Favor low entropy, locally and globally.
   // Favor small absolute values for PredictionCostSpatial
-  static const double kExpValue = 2.4;
+  static const float kExpValue = 2.4f;
   return VP8LCombinedShannonEntropy(counts, accumulated) +
          PredictionCostSpatial(counts, 3, kExpValue);
 }
@@ -585,7 +598,7 @@ static void GetBestGreenToRed(
       }
     }
   }
-  best_tx->green_to_red_ = green_to_red_best;
+  best_tx->green_to_red_ = (green_to_red_best & 0xff);
 }
 
 static float GetPredictionCostCrossColorBlue(
@@ -664,8 +677,8 @@ static void GetBestGreenRedToBlue(
       break;  // out of iter-loop.
     }
   }
-  best_tx->green_to_blue_ = green_to_blue_best;
-  best_tx->red_to_blue_ = red_to_blue_best;
+  best_tx->green_to_blue_ = green_to_blue_best & 0xff;
+  best_tx->red_to_blue_ = red_to_blue_best & 0xff;
 }
 #undef kGreenRedToBlueMaxIters
 #undef kGreenRedToBlueNumAxis
@@ -712,11 +725,14 @@ static void CopyTileWithColorTransform(int xsize, int ysize,
   }
 }
 
-void VP8LColorSpaceTransform(int width, int height, int bits, int quality,
-                             uint32_t* const argb, uint32_t* image) {
+int VP8LColorSpaceTransform(int width, int height, int bits, int quality,
+                            uint32_t* const argb, uint32_t* image,
+                            const WebPPicture* const pic, int percent_range,
+                            int* const percent) {
   const int max_tile_size = 1 << bits;
   const int tile_xsize = VP8LSubSampleSize(width, bits);
   const int tile_ysize = VP8LSubSampleSize(height, bits);
+  int percent_start = *percent;
   int accumulated_red_histo[256] = { 0 };
   int accumulated_blue_histo[256] = { 0 };
   int tile_x, tile_y;
@@ -766,5 +782,11 @@ void VP8LColorSpaceTransform(int width, int height, int bits, int quality,
         }
       }
     }
+    if (!WebPReportProgress(
+            pic, percent_start + percent_range * tile_y / tile_ysize,
+            percent)) {
+      return 0;
+    }
   }
+  return 1;
 }
